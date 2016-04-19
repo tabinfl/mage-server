@@ -13,6 +13,8 @@ var migrateConfig = {
   directory: "migrations"
 };
 
+console.log('Migration env: ', migrateConfig);
+
 mongoose.connect(environment.mongo.uri, function(err) {
   if (err) {
     log.error('Error connecting to mongo database, please make sure mongodbConfig is running...');
