@@ -49,13 +49,18 @@ describe("MAGE-server API JSON test", function(){
         'password': "password"
       }
     };
-    //request(tokenOptions, function(err, response, body){
-      //if (err) return done(err);
 
-      //var tokenObj = JSON.parse(body);
-      //myToken = tokenObj.token;
-      done();
-    //});
+    // set request token
+    // request(tokenOptions, function(err, response, body){
+    //   if (err) return done(err);
+    //   var tokenObj = JSON.parse(body);
+    //   myToken = tokenObj.token;
+    //   done();
+    // });
+
+
+    done();
+
   });
 
   // ----- make sure the recorder saves to file
@@ -80,19 +85,19 @@ describe("MAGE-server API JSON test", function(){
     });
   });
 
-  // // ----- Should be unauthorized without token
-  // it("Verify request is denied when token isn't given : /api/users/{id}", function(done){
-  //   var tokenOptions = {
-  //     url: conUrl + "/users/" + testUser.userId,
-  //     method: 'GET'
-  //   };
-  //   request(tokenOptions, function(err, response){
-  //     expect(response.statusCode).to.equal(401);
-  //     done(err);
-  //   });
-  // });
+  // ----- Should be unauthorized without token
+  it("Verify request is denied when token isn't given : /api/users/{id}", function(done){
+    var tokenOptions = {
+      url: conUrl + "/users/" + testUser.userId,
+      method: 'GET'
+    };
+    request(tokenOptions, function(err, response){
+      expect(response.statusCode).to.equal(401);
+      done(err);
+    });
+  });
 
-  // // ------ Get user info
+  // ------ Get user info
   // it("Verify response from /api/users/{id}", function(done){
   //   var tokenOptions = {
   //     url: conUrl + "/users/" + testUser.userId,
