@@ -87,16 +87,16 @@ describe("MAGE-server API JSON test", function(){
   });
 
   // ----- Should be unauthorized without token
-  it("Verify request is denied when token isn't given : /api/users/{id}", function(done){
-    var tokenOptions = {
-      url: conUrl + "/users/" + testUser.userId,
-      method: 'GET'
-    };
-    request(tokenOptions, function(err, response){
-      expect(response.statusCode).to.equal(401);
-      done(err);
-    });
-  });
+  // it("Verify request is denied when token isn't given : /api/users/{id}", function(done){
+  //   var tokenOptions = {
+  //     url: conUrl + "/users/" + testUser.userId,
+  //     method: 'GET'
+  //   };
+  //   request(tokenOptions, function(err, response){
+  //     expect(response.statusCode).to.equal(401);
+  //     done(err);
+  //   });
+  // });
 
   // ------ Get user info
   // it("Verify response from /api/users/{id}", function(done){
