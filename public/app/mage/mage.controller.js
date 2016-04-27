@@ -24,7 +24,7 @@ MageController.$inject = [
 
 function MageController($scope, $compile, $timeout, $http, $animate, $document, $uibModal, UserService, FilterService, EventService, MapService, LocalStorageService, Observation, Location, LocationService, FeatureService) {
   $scope.hideFeed = false;
-  
+
   var observationsById = {};
   var newObservation = null;
   var firstObservationChange = true;
@@ -40,8 +40,8 @@ function MageController($scope, $compile, $timeout, $http, $animate, $document, 
   $scope.filteredEvent = FilterService.getEvent();
   $scope.filteredInterval = FilterService.getIntervalChoice().label;
 
-  //$animate.on('addClass', $document.find('.feed'), resolveMapAfterFeaturesPaneTransition);
-  //$animate.on('removeClass', $document.find('.feed'), resolveMapAfterFeaturesPaneTransition);
+  $animate.on('addClass', $document.find('.feed'), resolveMapAfterFeaturesPaneTransition);
+  $animate.on('removeClass', $document.find('.feed'), resolveMapAfterFeaturesPaneTransition);
 
   function resolveMapAfterFeaturesPaneTransition($mapPane, animationPhase) {
     if (animationPhase === 'close') {
