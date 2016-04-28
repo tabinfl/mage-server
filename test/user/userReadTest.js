@@ -40,7 +40,7 @@ describe("user read tests", function() {
 
     sandbox.mock(UserModel)
       .expects('count')
-      .yields(null, 4);
+      .yields(null, 5);
 
     request(app)
       .get('/api/users/count')
