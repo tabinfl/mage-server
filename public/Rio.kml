@@ -1,0 +1,2660 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml>
+   <Document>
+      <name>Rio - sept 2013</name>
+      <Placemark>
+         <name>Hotel Mar Ipanema</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.21118,-22.984058,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Apa Hotel Rio de Janeiro</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.182844,-22.966529,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>ARENA COPACABANA HOTEL</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.181753,-22.969074,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Astoria Palace Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.180257,-22.96812,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Atlantico Sul Hotel</name>
+         <description><![CDATA[Av. Lucio Costa, 18000http://www.atlanticosulhotel.com.br/index.html]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.471861,-23.030915,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Atlantis Copacabana Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.192252,-22.98667,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Benidorm Palace Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.18884,-22.970999,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Caesar Park</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.207381,-22.986165,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Califórnia Othon Classic</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.185773000000005,-22.97254,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>CASABLANCA CENTER HOTEL PETRÓPOLIS</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.178771,-22.512066,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Casablanca Koeler</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.180011,-22.506846,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Clube Militar</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.212658,-22.961291,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Copacabana Mar Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.178913,-22.96512,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Copacabana Praia Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.189998,-22.986624,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Copacabana Rio Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.191192,-22.982706,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Copacabana Sol Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.188781,-22.969906,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Diamond Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.177234,-22.917407,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Entremares Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.306755,-23.009837,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Gaivota Rio Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.308455,-23.011743,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Golden Park Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.17436,-22.922139,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Golden Tulip</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.168448,-22.96212,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Golden Tulip Ipanema Plaza</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.2007,-22.985808,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Golden Tulip Regente</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.190327,-22.981415,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Grande Hotel Canadá</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.186843,-22.971301,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Angrense</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.187522,-22.971852,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Astoria Copacabana</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.18312900000001,-22.966248,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Atlantico Business Centro</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.176934,-22.911436,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Atlantico Praia</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.176892,-22.966199000000003,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Atlântico Copacabana</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.186115,-22.967034,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Bandeirantes</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.189031,-22.970779,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Barão do Flamengo</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.176298,-22.932974,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Casablanca Palace</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.177512,-22.510287,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Mercure Rio De Janeiro Arpoador</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.190739,-22.987059,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Mirador</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.18917,-22.96867,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Novo Mundo</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.173281,-22.92526,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Novotel Rio de Janeiro Santos Dumont</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.169402,-22.908763,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Oceano Copacabana</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.18312,-22.969607,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Ok</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.176667,-22.911266,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Pouso Real</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.183533,-22.912353,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Praia Ipanema</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.214492,-22.985901,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Real Rio</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.19322400000001,-22.953851000000004,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Regina</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.174696,-22.927517,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Rio Roiss</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.189549,-22.977242,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Sofitel Rio de Janeiro</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.189324000000006,-22.985436,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Vilamar Copacabana</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.190512,-22.975916,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotéis Vermont</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.202396,-22.984233,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Ibis Budget</name>
+         <description><![CDATA[Formule1 - Ibis Budget | Hotel no Rio de Janeiro]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.18218,-22.907991,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>ibis RJ Centro</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.18177,-22.907543,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Ibis Santos Dumont</name>
+         <description><![CDATA[Ibis Rio de Janeiro Santos Dumont]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.169638,-22.908519,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Imperial Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.176799,-22.927107,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>JW Marriott Hotel Rio de Janeiro</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.185617,-22.972337,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Lancaster Othon Travel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.176952,-22.966303,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>MAGIC PALACE HOTEL</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.177418,-22.921946,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Majestic Rio Palace Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.190182,-22.971204,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mar Palace Copacabana Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.184528,-22.968797,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Marina All Suites Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.222657,-22.986829,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>MARINA PALACE</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.221872,-22.986771,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mengo Palace Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.175076,-22.92813,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mercure Apartments</name>
+         <description><![CDATA[Mercure Apartments Rio de Janeiro Botafogo]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.189948,-22.952624,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>MERCURE BOTAFOGO MOURISCO</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.182025,-22.951683,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mercure Niteroi Orizzonte Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.134481,-22.902906,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mercure Rio De Janeiro Ipanema Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.193728,-22.985613,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mercure RJ Leblon</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.222357,-22.984365,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Olinda Othon Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.183146,-22.970072,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Orla Copacabana Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.18978,-22.984968,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Porto Bay Rio Internacional Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.177251,-22.966333,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Pousada Alto de Geribá</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-41.90507,-22.773438,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Pousada Arcadia e Lazer</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.134234,-22.401273000000003,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Pousada do Mar</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.567604,-23.06447,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Pousada Paraíso</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.095865,-22.305588,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Premier Copacabana Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.187294,-22.967801000000005,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Real Palace Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.17815,-22.964915,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Rio Othon Palace</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.189058,-22.977467,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Ritz Plaza Hotel Leblon</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.228028,-22.9858,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Royal Rio Palace Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.17848,-22.964401000000002,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Royal Tulip Rio de Janeiro</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.258498,-22.998061,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Royalty Barra Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.304807,-23.014883,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Royalty Copacabana Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.184434,-22.966152,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Savoy Othon Travel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.190289,-22.977203000000003,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Sheraton Barra Hotel &amp; Suites</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.326901,-23.010493,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Sheraton Rio</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.233327,-22.992304,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>South American Copacabana Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.193283,-22.983459,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Tulip Inn</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.185455,-22.972112000000003,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Windsor Atlantica Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.173312,-22.96469,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Windsor Atlântica Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.173312,-22.96469,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Frontera</name>
+         <styleUrl>#icon-ci-2-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.198899,-22.984463,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Satyricon Ristorante</name>
+         <styleUrl>#icon-ci-2-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.20164,-22.983245,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Nespresso Boutique</name>
+         <styleUrl>#icon-ci-2-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.2092,-22.983435,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Terzetto Ristorante</name>
+         <styleUrl>#icon-ci-2-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.196792,-22.984858,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Studio RJ</name>
+         <styleUrl>#icon-ci-2-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.197239,-22.986792,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>MARINA PALACE</name>
+         <styleUrl>#icon-ci-3-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.221897,-22.987106,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Restaurante Aprazível</name>
+         <styleUrl>#icon-ci-2-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.187553,-22.924996,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Relais et Chateaux Santa Teresa</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.187697,-22.921889,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Bar dos Descasados</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.187722,-22.921992,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Fogo de Chão - Botafogo</name>
+         <styleUrl>#icon-ci-2-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.180211,-22.949067,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Restaurante Albamar</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.170746,-22.903795,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Paissandú Atlético Clube</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.21811,-22.980212000000005,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Windsor Flórida</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.176463,-22.927179,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Clube Marimbas</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.18841,-22.9866,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Altos Estudos</name>
+         <description><![CDATA[Colégio Brasileiro de Altos Estudos]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <Point>
+            <coordinates>-43.174618,-22.942897,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Botafogo de Futebol e Regatas</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.17759,-22.954617,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Clube Marapendi</name>
+         <description><![CDATA[HospitalityAv. das Américas, 3979 - Barra da Tijuca, Rio de Janeiro - RJ, Brazil]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <Point>
+            <coordinates>-43.354004,-23.000325,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Clube Monte Líbano</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.215682,-22.980272,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Clube Naval</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.21704900000001,-22.96723,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Espaço Franklin</name>
+         <description><![CDATA[Espaço Franklin	Av. Passos, 36. Centro	http://www.espacofranklin.com.br/	Venue largely rented for functions. Located in Downtown Rio. Near the cruise ships and far from the Olympic Park]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <Point>
+            <coordinates>-43.182829,-22.905097,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Estr. da Gávea</name>
+         <description><![CDATA[, 728 - Gávea, Rio de Janeiro - RJ, 22610-002, Brazil]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <Point>
+            <coordinates>-43.259249,-22.995443,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Fluminense F.C.</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.185007,-22.93628,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Gavea 150</name>
+         <description><![CDATA[Gavea 150	 Estrada do Joá, 150 – São Conrado	http://www.gavea150.com.br/	New venue used for events. Also located in São Conrado]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <Point>
+            <coordinates>-43.270786,-22.99876,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hípica</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.213812,-22.961405,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Jockey Club</name>
+         <description><![CDATA[Jockey Club Brasileiro]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <Point>
+            <coordinates>-43.224346,-22.972178000000003,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Julieta de Serpa</name>
+         <description><![CDATA[Casa de Arte e Cultura Julieta de Serpa]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <Point>
+            <coordinates>-43.174225,-22.936382,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Limartine - wedding</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.302288,-22.986567,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mansão Gávea</name>
+         <description><![CDATA[Mansão Gávea	Caio Mário Bairro Gávea, Rio de Janeiro	http://www.luxoimoveis.com/?p=1312	Private house to rent in Gávea. A little up a hill. Location may not be ideal]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <Point>
+            <coordinates>-43.239441,-22.985916,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mansão Novo Leblon</name>
+         <description><![CDATA[Mansão Novo Leblon	Rua Fala Amendoeira, 457 Cond Novo Leblon - Barra	http://www.anunciodetemporada.com.br/maison.blanche	Private house to rent on a condo in the end of Barra. Quite close to the Olympic Park]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <Point>
+            <coordinates>-43.383204,-23.00479,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Museo de Arte Moderno</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.171143,-22.913622,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>National Historical Museum</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.169434,-22.905836,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>OI Futuro</name>
+         <description><![CDATA[R. Visc. de Pirajá, 54 - Ipanema, Rio de Janeiro - RJ, 22410-000, Brazil]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <Point>
+            <coordinates>-43.196759,-22.98463,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Palácio Universitário</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.175583,-22.950904000000005,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Parque Lage</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.213107,-22.961226,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Paço Imperial</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.174435,-22.903712,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>R. São Clemente</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.189806,-22.949726,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Real Astoria</name>
+         <description><![CDATA[Restaurante Real Astoria]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <Point>
+            <coordinates>-43.178954,-22.949328,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Ribalta</name>
+         <description><![CDATA[<img src="https://lh3.googleusercontent.com/proxy/_oD9IedUx88LDN-4x7DqIJStDlLc8KlH_nVUSghEX6b5dPh6LGGmdIzydU4yW1m0xGxE5wS7haDf6Tc4ZsT3rId42rugcr78GgV-c0NdqOdt0RajI9VNIMbDu69Fy5PsDF22NxvLiJWbb2s" height="200" width="auto" /><br><br>www.ribalta.com.br]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <ExtendedData>
+            <Data name="gx_media_links">
+               <value>https://lh3.googleusercontent.com/proxy/_oD9IedUx88LDN-4x7DqIJStDlLc8KlH_nVUSghEX6b5dPh6LGGmdIzydU4yW1m0xGxE5wS7haDf6Tc4ZsT3rId42rugcr78GgV-c0NdqOdt0RajI9VNIMbDu69Fy5PsDF22NxvLiJWbb2s</value>
+            </Data>
+         </ExtendedData>
+         <Point>
+            <coordinates>-43.409317,-22.999491,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Rio Scenarium</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.183927,-22.908241,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Veneza</name>
+         <description><![CDATA[Espaço Veneza]]></description>
+         <styleUrl>#icon-ci-4-normal</styleUrl>
+         <Point>
+            <coordinates>-43.175847,-22.950754000000003,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Villa Philippe</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.181477,-22.920499,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Villa Riso</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.262401,-22.994281,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Yacht Club</name>
+         <styleUrl>#icon-ci-4-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.17242,-22.952334000000004,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Che Lagarto</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.214191,-22.984552,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Pousada Bonita</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.199574,-22.983496,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Rio Hostel Ipanema</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.194607,-22.985407,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Ipanema Beach House</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.208736,-22.983065,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Leblon Spot Design Hostel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.224426,-22.981873,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>POUSADA BARRA RIOCENTRO</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.416664,-22.976645,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Rio Presidente</name>
+         <description><![CDATA[wrestling hotel tamara stayed here]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.182395,-22.907842000000002,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Ipanema Tower Residence</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.206207,-22.985088,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>KS Residence</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.307814,-23.008827,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>- Caravel Hotel</name>
+         <description><![CDATA[- Caravel Hotel - Avenda Sernambetiba, 17686 -  Recreio dos Bandeirantes]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.46794,-23.028784,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Albergue dos Esquilos</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.414078,-22.971008,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Arpoador Inn</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.193864,-22.987815,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Atlantico</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.186179,-22.967077,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>atlanticobusiness</name>
+         <description><![CDATA[www.atlanticobusiness.com.brR. Sen. Dantas, 25 - Centro, Rio de Janeiro - RJ, 20031-202, Brazil]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.177043,-22.911426,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>?</name>
+         <styleUrl>#icon-ci-5-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.351541,-23.00124,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>?</name>
+         <styleUrl>#icon-ci-6-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.330648,-23.011444,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>?</name>
+         <styleUrl>#icon-ci-7-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.43811,-23.008055,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>?</name>
+         <styleUrl>#icon-ci-8-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.374074,-22.973083,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>?</name>
+         <styleUrl>#icon-ci-9-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.306278,-23.012025,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Barrabella Hotel Residencia</name>
+         <description><![CDATA[http://www.barrabella.com.br/fotos]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.344933,-23.010078,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Barão Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.354573,-22.901095,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Caricia Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.344128,-22.871452,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Condomínio Casa Del Mar</name>
+         <description><![CDATA[http://www.barraleme.com/Hoteis/Casa%20del%20Mar/casadelmar.htm]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.35477800000001,-23.010113,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Everest</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.207305000000005,-22.985665,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Everest Park Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.207257,-22.985804,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hilton (2014)</name>
+         <description><![CDATA[http://news.hilton.com/index.cfm/property/detail/7094]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.373951,-22.971858,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Atlântico Sul</name>
+         <description><![CDATA[http://www.atlanticosulhotel.com.br/]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.469967,-23.030048,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Praia Linda</name>
+         <description><![CDATA[http://www.hotelpraialinda.com.br/]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.312931,-23.013998,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotels
+Entremares</name>
+         <description><![CDATA[Av. Érico Veríssimo, 846 - Barra da Tijuca, Rio de Janeiro - RJ, BrazilHotelsEntremares]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.306723,-23.009807,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotels
+Gaivota</name>
+         <description><![CDATA[HotelsGaivotaAv. Belisário Leite D Andrade Neto, 406 - Barra da Tijuca, Rio de Janeiro - RJ, Brazil]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.30841,-23.011727,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Ibis Santos Dumont</name>
+         <description><![CDATA[Ibis Rio de Janeiro Santos Dumont]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.169675,-22.908176,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Leblon Flat</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.21796,-22.982978,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mirador</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.189132,-22.96872,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Miramar Palace Hotel</name>
+         <description><![CDATA[World Press Briefing]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.190122,-22.981057,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mirasol</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.178902,-22.965116000000002,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Monsieur Le Blond</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.223545,-22.982803,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Motel Shelton</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.354985,-22.879887,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mykonos Hotel Residence</name>
+         <description><![CDATA[http://www.mykonoshotel.com.br/frame.htm - Estrada do Pontal, 8000 - Recreio dos Bandeirantes]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.471569,-23.031991,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Pousada da Praia</name>
+         <description><![CDATA[-  Estrada do Pontal , 6516 -  Recreio dos Bandeirantes]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.487557,-23.03375,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Premier</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.187311,-22.9678,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Promenade Barra First</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.391843,-23.000748000000005,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Promenade Paradiso All Suites</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.319774,-23.005406000000004,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Promenade Paradiso All Suítes</name>
+         <description><![CDATA[Av. das Américas, 487 - Barra da Tijuca, Rio de Janeiro - RJ, Brazil]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.319669,-23.005455,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Queen Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.39382,-22.899345,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Ramada Riocentro</name>
+         <description><![CDATA[http://www.ramada.com/hotels/brazil/rio-de-janeiro/ramada-hotel-and-suites-rio-de-janeiro-riocentro/hotel-overview]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.396927,-22.966169,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>RioCentro Hotel</name>
+         <description><![CDATA[RioCentro HotelEstr. dos Bandeirantes, 8586 - Camorim, Rio de Janeiro - RJ, Brazil]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.416624,-22.976647,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Ritz Plaza Hotel Leblon</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.22798,-22.985894,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Royalty Barra</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.304808,-23.014988,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Sheraton Barra</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.326944,-23.011131,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Tropical Bara Hotel</name>
+         <description><![CDATA[http://www.tropicalbarrahotel.com.br/]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.301948,-23.014629,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>VILLA DEL SOL</name>
+         <description><![CDATA[Canadian friendly - PROTELOS -  Estrada do Pontal , 7100 - Recreio dos Bandeirantes]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.475964,-23.030898,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Windsor Asturias</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.176626,-22.911776,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Windsor Barra</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.321928,-23.011954,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Windsor Guanabara</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.179511,-22.901102000000005,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Windsor Martinique</name>
+         <description><![CDATA[for world press briefing]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.19066500000001,-22.98073,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Ipanema Tower Residence</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.206207,-22.985088,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>KS Residence</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.307814,-23.008827,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Atlantico</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.186179,-22.967077,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotels
+Gaivota</name>
+         <description><![CDATA[HotelsGaivotaAv. Belisário Leite D Andrade Neto, 406 - Barra da Tijuca, Rio de Janeiro - RJ, Brazil]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.30841,-23.011727,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Promenade Paradiso All Suítes</name>
+         <description><![CDATA[Av. das Américas, 487 - Barra da Tijuca, Rio de Janeiro - RJ, Brazil]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.319669,-23.005455,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Royalty Barra</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.304808,-23.014988,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Tropical Bara Hotel</name>
+         <description><![CDATA[http://www.tropicalbarrahotel.com.br/]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.301948,-23.014629,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Sheraton Barra</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.326944,-23.011131,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Caesar Park</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.207381,-22.986165,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Everest</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.207305000000005,-22.985665,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Everest Park Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.207257,-22.985804,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Golden Tulip Ipanema Plaza</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.2007,-22.985808,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Mar Ipanema</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.21118,-22.984058,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Novo Mundo</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.173281,-22.92526,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Novotel Rio de Janeiro Santos Dumont</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.169402,-22.908763,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Hotel Vilamar Copacabana</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.190512,-22.975916,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Ibis Santos Dumont</name>
+         <description><![CDATA[Ibis Rio de Janeiro Santos Dumont]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <Point>
+            <coordinates>-43.169675,-22.908176,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>JW Marriott Hotel Rio de Janeiro</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.185617,-22.972337,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>MERCURE BOTAFOGO MOURISCO</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.182025,-22.951683,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mercure Rio De Janeiro Ipanema Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.193728,-22.985613,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Royal Rio Palace Hotel</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.17848,-22.964401000000002,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Barra da Tijuca</name>
+         <description><![CDATA[Barra da Tijuca, Rio de Janeiro, Brazil]]></description>
+         <styleUrl>#icon-ci-10-normal</styleUrl>
+         <Point>
+            <coordinates>-43.365833,-23.0,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Christ The Redeemer</name>
+         <styleUrl>#icon-ci-11-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.210446,-22.951987,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Copacabana</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.182769,-22.977534,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Deodoro</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.403583,-22.858387,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>IBC/MPC</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.400753,-22.975293,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Lagoa</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.211944,-22.971111,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Maracanã</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.228798,-22.913417,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Olympic Park</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.395299,-22.97774,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>OV</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.413882,-22.984202,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Rio 2016 Office</name>
+         <styleUrl>#icon-ci-11-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.206083,-22.912548,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Sambadrome</name>
+         <description><![CDATA[Sambadrome Marquês de Sapucaí]]></description>
+         <styleUrl>#icon-ci-12-normal</styleUrl>
+         <Point>
+            <coordinates>-43.196339,-22.912201,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Sugarloaf</name>
+         <description><![CDATA[(Pão de Açúcar)]]></description>
+         <styleUrl>#icon-ci-11-normal</styleUrl>
+         <Point>
+            <coordinates>-43.16688200000001,-22.955543,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Zona Portuária</name>
+         <styleUrl>#icon-ci-11-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.211385,-22.893505,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Dona Marta, Humaitá, Rio de Janeiro - RJ, Brazil</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.198971,-22.950976,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Praça São Salvador - Laranjeiras, Rio de Janeiro - RJ, 22231-170, Brazil</name>
+         <styleUrl>#icon-ci-10-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.180601,-22.93421,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Santa Teresa, Rio de Janeiro, Brazil</name>
+         <styleUrl>#icon-ci-10-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.18812,-22.917686,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Lapa, Rio de Janeiro, Brazil</name>
+         <styleUrl>#icon-ci-10-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.181667,-22.913611,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Major Shopping</name>
+         <styleUrl>#icon-ci-13-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.321814,-23.00328,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Petrópolis - Rio de Janeiro, Brazil</name>
+         <styleUrl>#icon-ci-11-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.182329,-22.504639,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Niterói</name>
+         <styleUrl>#icon-ci-11-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.104335,-22.880766,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mangaratiba</name>
+         <styleUrl>#icon-ci-11-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-44.0409,-22.959465,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Arroio Pavuna</name>
+         <description><![CDATA[Arroio Pavuna, Jacarepaguá, Rio de Janeiro, Brazil]]></description>
+         <styleUrl>#icon-ci-11-normal</styleUrl>
+         <Point>
+            <coordinates>-43.381172,-22.973285,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Steps Selarón</name>
+         <styleUrl>#icon-ci-11-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.179234,-22.915331,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Canadian Embassy</name>
+         <description><![CDATA[Av. Atlântica, 1130 - Copacabana, Rio de Janeiro - RJ, Brazil]]></description>
+         <styleUrl>#icon-ci-11-normal</styleUrl>
+         <Point>
+            <coordinates>-43.173687,-22.965052,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Mall</name>
+         <styleUrl>#icon-ci-13-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.386017,-23.001548,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Zona Portuária</name>
+         <styleUrl>#icon-ci-11-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.211385,-22.893505,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Christ the Redeemer</name>
+         <description><![CDATA[Located in Rio, Brazil]]></description>
+         <styleUrl>#icon-ci-11-normal</styleUrl>
+         <Point>
+            <coordinates>-43.209536,-22.950407,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Christ The Redeemer, Brazil</name>
+         <styleUrl>#icon-ci-11-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.210446,-22.951987,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Sugarloaf (P&amp;atilde;o de A&amp;ccedil;&amp;uacute;car)</name>
+         <styleUrl>#icon-ci-11-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.16688200000001,-22.955543,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Av. Olegário Maciel</name>
+         <styleUrl>#icon-ci-11-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.305037,-23.01178,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Canadian Embassy</name>
+         <description><![CDATA[Av. Atlântica, 1130 - Copacabana, Rio de Janeiro - RJ, Brazil]]></description>
+         <styleUrl>#icon-ci-11-normal</styleUrl>
+         <Point>
+            <coordinates>-43.173687,-22.965052,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Clube Aeronautica Barra</name>
+         <styleUrl>#icon-ci-1-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.379946,-22.983997,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Sítio Santo Agostinho - COC PC</name>
+         <description><![CDATA[Sítio Santo Agostinho]]></description>
+         <styleUrl>#icon-ci-14-normal</styleUrl>
+         <Point>
+            <coordinates>-43.418563,-22.97181,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Flamengo - USA</name>
+         <description><![CDATA[Clube de Regatas do Flamengo - Leblon, Rio de Janeiro - RJ, BrazilUSA Performance Ctr]]></description>
+         <styleUrl>#icon-ci-14-normal</styleUrl>
+         <Point>
+            <coordinates>-43.220416,-22.978458,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Garden Party</name>
+         <styleUrl>#icon-ci-14-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.374908,-22.914101,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Lajedo</name>
+         <styleUrl>#icon-ci-14-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.461813,-22.980501,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Lonier - USA PC</name>
+         <description><![CDATA[Estr. Frei Tibúrcio - Vargem Pequena, Rio de Janeiro - RJ, 22783-120, Brazil]]></description>
+         <styleUrl>#icon-ci-14-normal</styleUrl>
+         <Point>
+            <coordinates>-43.443407,-22.982867,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Maringá - Paraná, Brazil</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-51.937505,-23.427304,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Bragança Paulista - São Paulo, Brazil</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-46.54056,-22.951181,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Secretaria de Estado dos Negócios de Esporte e Turismo</name>
+         <description><![CDATA[I think that is it - http://rio2016.com/pregamestraining/en/node/880With directions from the Pullman hotel - http://maps.google.com.br/?q=-23.577200+-46.656890+%28Rua+Manoel+da+N%C3%B3brega%2C+1.361%2C+S%C3%A3o+Paulo%2C+SP%2C+%2C+br%29]]></description>
+         <styleUrl>#icon-ci-15-normal</styleUrl>
+         <Point>
+            <coordinates>-46.654021,-23.578906,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Centro Olímpico de Treinamento e Pesquisa</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-46.656245,-23.597791,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Universidade Positivo</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-49.362054,-25.446184,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Associação Desportiva São Caetano</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-46.573785,-23.630717,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Curitiba - Paraná, Brazil</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-49.273252,-25.428356000000004,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Radisson Hotel Sao Paulo Faria Lima</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-46.685475,-23.58211,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Sport Club Corinthians Paulista</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-46.565023,-23.525933,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>R. da Bahia, 2244 - Lourdes, Belo Horizonte - MG, Brazil</name>
+         <description><![CDATA[Rua da Bahia, 2244Bairro de LourdesBelo Horizonte - MGCEP 30160-012http://www.minastenisclube.com.br/cmi/Pagina.aspx?6409]]></description>
+         <styleUrl>#icon-ci-15-normal</styleUrl>
+         <Point>
+            <coordinates>-43.940033,-19.934388,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Belo Horizonte - Minas Gerais, Brazil</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.938575,-19.919068,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Guarulhos International</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-46.47165,-23.433941,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Congonhas Domestic</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-46.65542,-23.627463,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Guaruja</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-46.235475,-23.981851,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Campinas</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-47.077884,-22.905956000000003,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Esporte Clube Pinheiros</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-46.691,-23.579699,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Fortaleza de São João</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.156296,-22.944156,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Jardim Guaiuba, Guarujá - São Paulo, Brazil</name>
+         <styleUrl>#icon-ci-15-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-46.271381,-24.015296,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Colégio Santo Agostinho - NL</name>
+         <styleUrl>#icon-ci-16-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.383688,-23.001668,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Colégio Bahiense</name>
+         <styleUrl>#icon-ci-17-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.389544,-23.000129,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Clube Marapendi</name>
+         <styleUrl>#icon-ci-17-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.354004,-23.000325,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>MHS</name>
+         <styleUrl>#icon-ci-17-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.347288,-22.99979,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Veiga de Almeida</name>
+         <styleUrl>#icon-ci-17-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.353508,-23.000354,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Colégio Saint John</name>
+         <styleUrl>#icon-ci-17-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.353735,-23.000382000000002,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Football and UFC Academy</name>
+         <styleUrl>#icon-ci-14-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.40406,-22.994611,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Admiral Adalberto Nunes Physical Education Center (CEFAN)</name>
+         <styleUrl>#icon-ci-14-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.26109,-22.83244,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Barra da Tijuca // Recreio</name>
+         <description><![CDATA[Unidade Rio de JaneiroAv. das Américas, 5000 - Barra da Tijuca, Rio de Janeiro - RJ, Brazilhttp://www.companhiaathletica.com.br/unidade/rio-de-janeiro/]]></description>
+         <styleUrl>#icon-ci-14-normal</styleUrl>
+         <Point>
+            <coordinates>-43.360992,-22.999412,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Cefan</name>
+         <styleUrl>#icon-ci-14-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.26153,-22.834759,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Clube de Regatas Guanabara</name>
+         <styleUrl>#icon-ci-14-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.179744,-22.949724,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Escola Naval</name>
+         <description><![CDATA[Naval Academy - Guanabara bay]]></description>
+         <styleUrl>#icon-ci-14-normal</styleUrl>
+         <Point>
+            <coordinates>-43.160373,-22.914032,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Fluminense F.C.</name>
+         <styleUrl>#icon-ci-14-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.185007,-22.93628,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Tijuca Tênis Clube</name>
+         <styleUrl>#icon-ci-14-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.235153,-22.926324,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Santos Dumont</name>
+         <description><![CDATA[<img src="https://lh5.googleusercontent.com/proxy/L35RXx-D7t2dSFs_mSYzDifeDIcFGeO8vUoRcMMuXfyj3oFLsn5D22twAeLwol7JPrNRio04gwZtZl-F-nNTf6Mswj_NbiHKdLgNQNAE2cwzIxv4GcIWi2isrJWZ3DISbnwwklNEcEPNcjV77aj7SZm1KEvUl0F3hjqZ" height="200" width="auto" /><br><br>Santos Dumont (SDU)<br><br>$[geDirections]]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <ExtendedData>
+            <Data name="gx_media_links">
+               <value>https://lh5.googleusercontent.com/proxy/L35RXx-D7t2dSFs_mSYzDifeDIcFGeO8vUoRcMMuXfyj3oFLsn5D22twAeLwol7JPrNRio04gwZtZl-F-nNTf6Mswj_NbiHKdLgNQNAE2cwzIxv4GcIWi2isrJWZ3DISbnwwklNEcEPNcjV77aj7SZm1KEvUl0F3hjqZ</value>
+            </Data>
+         </ExtendedData>
+         <Point>
+            <coordinates>-43.170868000000006,-22.910157000000005,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Rio de Janeiro International</name>
+         <description><![CDATA[<img src="https://lh4.googleusercontent.com/proxy/FXl8a0gcSPxagSDq6cuTgiJQLoWLTkl_v1ulmkQNqt22QcGQF04BQhMjcyZO0kBwKgoB41HIZZxmLMgpdRBxkoe7NgeoHIldMppLTK6wWsWi-LUpx22v2aXp6A9pb4U1F8wlWgfCf7Voe50BUmyXYmJBXT_RD8Fj7_0eb50n5TLApOX3vj7SPiRs1FUjkA" height="200" width="auto" /><br><br>Rio de Janeiro International (GIG)<br><br>$[geDirections]]]></description>
+         <styleUrl>#icon-ci-1-normal</styleUrl>
+         <ExtendedData>
+            <Data name="gx_media_links">
+               <value>https://lh4.googleusercontent.com/proxy/FXl8a0gcSPxagSDq6cuTgiJQLoWLTkl_v1ulmkQNqt22QcGQF04BQhMjcyZO0kBwKgoB41HIZZxmLMgpdRBxkoe7NgeoHIldMppLTK6wWsWi-LUpx22v2aXp6A9pb4U1F8wlWgfCf7Voe50BUmyXYmJBXT_RD8Fj7_0eb50n5TLApOX3vj7SPiRs1FUjkA</value>
+            </Data>
+         </ExtendedData>
+         <Point>
+            <coordinates>-43.25,-22.809444,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Tijuca metro</name>
+         <styleUrl>#icon-ci-18-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.309752,-23.006978,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Belo Horizonte - Minas Gerais, Brazil</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.938575,-19.919068,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>São Paulo, Brazil</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-46.638818,-23.548943,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Brasília - Federal District, Brazil</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-47.92917,-15.780148,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Salvador - Bahia, Brazil</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-38.512382,-12.970382,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Athlete's Park</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.407403,-22.980859,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>BB</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.392733,-22.980048,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Beach VB</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.186525,-22.976076,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Copacabana</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.180697,-22.967033,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>CY-TR</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.39261,-22.976129,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Deodoro, Rio de Janeiro, Brazil</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.403583,-22.858387,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Diving</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.388275,-22.974667,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Equestrian</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.405932,-22.871786,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Estádio Olímpico João Havelange</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.292635,-22.893225,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Field Hockey</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.403728,-22.859657,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Golf</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.408054,-23.00424,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>GY</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.390654000000005,-22.975882000000002,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>HB</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.392731,-22.981627,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>IBC/MPC</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.400753,-22.975293,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>International Zone - Olympic Plaza</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.412746,-22.984419,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Maracanã, Rio de Janeiro, Brazil</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.228798,-22.913417,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Media Village</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.404284,-22.971602,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Modern pent - Pool</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.403436,-22.862027,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Olympic Beach</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.43042200000001,-23.019633,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Olympic Park</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.395299,-22.97774,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Olympic Village</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.413882,-22.984202,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Riocentro - bx, tt, wt, bd</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.41182,-22.97879,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Rowing / Canoe</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.215415,-22.976833,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Rugby &amp; Modern Pent - combined</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.406542,-22.861007000000004,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Sailing</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.170222,-22.917657,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Sambadrome</name>
+         <description><![CDATA[Sambadrome Marquês de Sapucaí]]></description>
+         <styleUrl>#icon-ci-12-normal</styleUrl>
+         <Point>
+            <coordinates>-43.196339,-22.912201,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Shooting</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.410698,-22.859108,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>SW+SY</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.395008,-22.981626,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>TK+FN</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.392612,-22.97896,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>TN</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.397016,-22.976726000000003,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Training Precinct</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.41876,-22.984293,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Transport Mall</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.417838,-22.980112,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Triathlon</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.188024000000006,-22.979785,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Welcome Ctr</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.412059,-22.982545,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>WP</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.387902,-22.974739,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>WR+JU</name>
+         <styleUrl>#icon-ci-12-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.392609,-22.977762,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>X-Park</name>
+         <description><![CDATA[Mtn Bike, Canoe-slalom, BMX]]></description>
+         <styleUrl>#icon-ci-12-normal</styleUrl>
+         <Point>
+            <coordinates>-43.40299,-22.854721,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Metro</name>
+         <styleUrl>#icon-ci-19-nodesc-normal-normal</styleUrl>
+         <Point>
+            <coordinates>-43.259544,-22.996644,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Placemark>
+         <name>Shopping Mall</name>
+         <styleUrl>#icon-ci-13-nodesc-normal</styleUrl>
+         <Point>
+            <coordinates>-43.2598,-22.996737,0.0</coordinates>
+         </Point>
+      </Placemark>
+      <Style id="icon-ci-1-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/shapes/lodging.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+      </Style>
+      <Style id="icon-ci-1-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/shapes/lodging.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-10-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+      </Style>
+      <Style id="icon-ci-10-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-11-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/ylw-stars.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+      </Style>
+      <Style id="icon-ci-11-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/ylw-stars.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-12-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/grn-stars.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+      </Style>
+      <Style id="icon-ci-12-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/grn-stars.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-13-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/shapes/shopping.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-14-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/shapes/webcam.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+      </Style>
+      <Style id="icon-ci-14-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/shapes/webcam.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-15-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/blu-diamond.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+      </Style>
+      <Style id="icon-ci-15-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/blu-diamond.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-16-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/A.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-17-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/pushpin/pink-pushpin.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-18-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/shapes/tram.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-19-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/shapes/subway.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-2-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/shapes/dining.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-3-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/shapes/bars.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-4-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/shapes/ranger_station.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+      </Style>
+      <Style id="icon-ci-4-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/shapes/ranger_station.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-5-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/1.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-6-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/2.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-7-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/3.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-8-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/4.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+      <Style id="icon-ci-9-nodesc-normal">
+         <IconStyle>
+            <scale>1.1</scale>
+            <Icon>
+               <href>http://maps.google.com/mapfiles/kml/paddle/5.png</href>
+            </Icon>
+         </IconStyle>
+         <LabelStyle>
+            <scale>0.0</scale>
+         </LabelStyle>
+         <BalloonStyle>
+            <text><![CDATA[<h3>$[name]</h3>]]></text>
+         </BalloonStyle>
+      </Style>
+
+   </Document>
+</kml>
