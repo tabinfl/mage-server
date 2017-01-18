@@ -22,6 +22,7 @@ function ObservationNewsItemController($scope, $window, $uibModal, EventService,
   $scope.isUserFavorite = _.contains($scope.observation.favoriteUserIds, UserService.myself.id);
   $scope.canEditImportant = _.contains(UserService.myself.role.permissions, 'UPDATE_EVENT');
   $scope.importantPopoverIsOpen = false;
+  $scope.sharePopoverIsOpen = false;
   $scope.canEdit = UserService.hasPermission('UPDATE_OBSERVATION_EVENT') || UserService.hasPermission('UPDATE_OBSERVATION_ALL');
   $scope.fromNow = moment($scope.observation.properties.timestamp).fromNow();
 
@@ -85,6 +86,21 @@ function ObservationNewsItemController($scope, $window, $uibModal, EventService,
     });
   };
 
+  $scope.sharePopover = {
+    isOpen: false,
+    link: $scope.observation.share ? $scope.observation.share.link :  null
+  };
+
+  $scope.share = function() {
+    EventService.shareObservation($scope.observation).then(function(observation) {
+      $scope.sharePopover.share = observation.share;
+    });
+  };
+
+  $scope.closeSharePopover = function() {
+    $scope.sharePopover.isOpen = false;
+  };
+
   $scope.download = function() {
     var url = '/api/events/' + $scope.observation.eventId + '/observations/' + $scope.observation.id + '.zip?access_token=' +  LocalStorageService.getToken();
     $.fileDownload(url)
@@ -131,6 +147,15 @@ function ObservationNewsItemController($scope, $window, $uibModal, EventService,
     $scope.importantPopover.description = important.description;
     UserService.getUser(important.userId).then(function(user) {
       $scope.importantUser = user.data || user;
+    });
+  });
+
+  $scope.$watch('observation.share', function(share) {
+    if (!share) return;
+
+    $scope.sharePopover.url = share.url;
+    UserService.getUser(share.userId).then(function(user) {
+      $scope.shareUser = user.data || user;
     });
   });
 }

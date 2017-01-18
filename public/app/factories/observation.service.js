@@ -2,9 +2,9 @@ angular
   .module('mage')
   .factory('ObservationService', ObservationService);
 
-ObservationService.$inject = ['$q', 'Observation', 'ObservationAttachment', 'ObservationState', 'ObservationImportant', 'ObservationFavorite', 'LocalStorageService'];
+ObservationService.$inject = ['$q', 'Observation', 'ObservationAttachment', 'ObservationState', 'ObservationImportant', 'ObservationFavorite', 'ObservationShare', 'LocalStorageService'];
 
-function ObservationService($q, Observation, ObservationAttachment, ObservationState, ObservationImportant, ObservationFavorite, LocalStorageService) {
+function ObservationService($q, Observation, ObservationAttachment, ObservationState, ObservationImportant, ObservationFavorite, ObservationShare, LocalStorageService) {
   var service = {
     getObservationsForEvent: getObservationsForEvent,
     saveObservationForEvent: saveObservationForEvent,
@@ -13,6 +13,7 @@ function ObservationService($q, Observation, ObservationAttachment, ObservationS
     removeObservationFavorite: removeObservationFavorite,
     markObservationAsImportantForEvent: markObservationAsImportantForEvent,
     clearObservationAsImportantForEvent: clearObservationAsImportantForEvent,
+    shareObservationForEvent: shareObservationForEvent,
     addAttachmentToObservationForEvent: addAttachmentToObservationForEvent,
     deleteAttachmentInObservationForEvent: deleteAttachmentInObservationForEvent
   };
@@ -88,6 +89,18 @@ function ObservationService($q, Observation, ObservationAttachment, ObservationS
 
     ObservationImportant.delete({eventId: event.id, observationId: observation.id}, function(updatedObservation) {
       observation.important = updatedObservation.important;
+
+      deferred.resolve(observation);
+    });
+
+    return deferred.promise;
+  }
+
+  function shareObservationForEvent(event, observation) {
+    var deferred = $q.defer();
+
+    ObservationShare.save({eventId: event.id, observationId: observation.id}, function(updatedObservation) {
+      observation.share = updatedObservation.share;
 
       deferred.resolve(observation);
     });

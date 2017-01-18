@@ -48,7 +48,11 @@
         </span>
 
         <span class="observation-action observation-action-email">
-          <i class="fa fa-download observation-action-email pointer" uib-tooltip="Download" ng-click="download()"></i>
+          <i class="fa fa-share observation-action-email pointer"
+          uib-tooltip="Share"
+          uib-popover-template="'/app/observation/observation-share.html'"
+          popover-placement="auto"
+          popover-is-open="sharePopover.isOpen"></i>
         </span>
       </div>
 

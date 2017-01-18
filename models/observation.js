@@ -52,7 +52,12 @@ var ObservationSchema = new Schema({
     timestamp: {type: Date, required: false},
     description: {type: String, required: false}
   },
-  favoriteUserIds: [{type: Schema.Types.ObjectId, ref: 'User'}]
+  favoriteUserIds: [{type: Schema.Types.ObjectId, ref: 'User'}],
+  share: {
+    userId: {type: Schema.Types.ObjectId, ref: 'User', required: false},
+    timestamp: {type: Date, required: false},
+    token: {type: String, required: false}
+  }
 },{
   strict: false
 });
@@ -106,6 +111,11 @@ function transform(observation, ret, options) {
     if (observation.states && observation.states.length) {
       ret.state = transformState(ret.states[0], ret);
       delete ret.states;
+    }
+
+    if (observation.share) {
+      ret.share.url = [path, observation.id, 'share', observation.share.token];
+      delete ret.share.token;
     }
   }
 }
@@ -347,6 +357,16 @@ exports.removeImportant = function(event, id, callback) {
   };
 
   observationModel(event).findByIdAndUpdate(id, update, {new: true}, callback);
+};
+
+exports.share = function(event, observationId, share, callback) {
+  var update = {
+    '$set': {
+      share: share
+    }
+  };
+
+  observationModel(event).findByIdAndUpdate(observationId, update, {new: true}, callback);
 };
 
 exports.getAttachment = function(event, observationId, attachmentId, callback) {

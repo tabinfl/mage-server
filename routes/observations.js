@@ -393,6 +393,21 @@ module.exports = function(app, security) {
     }
   );
 
+  app.put(
+    '/api/events/:eventId/observations/:id/share',
+    passport.authenticate('bearer'),
+    access.authorize('UPDATE_EVENT'),
+    function (req, res, next) {
+      new api.Observation(req.event).share(req.params.id, req.user._id, function(err, updatedObservation) {
+        if (err) return next(err);
+
+        var response = observationXform.transform(updatedObservation, transformOptions(req));
+
+        res.json(response);
+      });
+    }
+  );
+
   app.post(
     '/api/events/:eventId/observations/:id/states',
     passport.authenticate('bearer'),

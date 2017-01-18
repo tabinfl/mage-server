@@ -65,6 +65,23 @@ angular.module('mage').factory('Observation', ['$resource', function($resource) 
 
   return ObservationImportant;
 }])
+.factory('ObservationShare', ['$resource', function($resource) {
+
+  var ObservationShare = $resource('/api/events/:eventId/observations/:observationId/share', {
+    id: '@id',
+    observationId: '@observationId',
+    eventId: '@eventId'
+  },{
+    save: {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  });
+
+  return ObservationShare;
+}])
 .factory('ObservationState', ['$resource', function($resource) {
 
   var ObservationState = $resource('/api/events/:eventId/observations/:observationId/states/:id', {

@@ -1,4 +1,5 @@
-var async = require('async')
+var crypto = require('crypto')
+  , async = require('async')
   , FieldFactory = require('./field')
   , ObservationModel = require('../models/observation');
 
@@ -107,6 +108,19 @@ Observation.prototype.addImportant = function(observationId, important, callback
 
 Observation.prototype.removeImportant = function(observation, callback) {
   ObservationModel.removeImportant(this._event, observation, callback);
+};
+
+Observation.prototype.share = function(observationId, userId, callback) {
+  var seed = crypto.randomBytes(20);
+  var token = crypto.createHash('sha1').update(seed).digest('hex');
+
+  var share = {
+    userId: userId,
+    timestamp: new Date(),
+    token: token
+  };
+
+  ObservationModel.share(this._event, observationId, share, callback);
 };
 
 Observation.prototype.addState = function(observationId, state, callback) {

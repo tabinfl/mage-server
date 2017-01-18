@@ -159,6 +159,7 @@ function EventService($rootScope, $q, $timeout, $http, Event, ObservationService
     removeObservationFavorite: removeObservationFavorite,
     markObservationAsImportant: markObservationAsImportant,
     clearObservationAsImportant: clearObservationAsImportant,
+    shareObservation: shareObservation,
     archiveObservation: archiveObservation,
     addAttachmentToObservation: addAttachmentToObservation,
     deleteAttachmentForObservation: deleteAttachmentForObservation,
@@ -282,6 +283,14 @@ function EventService($rootScope, $q, $timeout, $http, Event, ObservationService
   function clearObservationAsImportant(observation) {
     var event = eventsById[observation.eventId];
     return ObservationService.clearObservationAsImportantForEvent(event, observation).then(function(updatedObservation) {
+      event.observationsById[updatedObservation.id] = updatedObservation;
+      observationsChanged({updated: [updatedObservation]});
+    });
+  }
+
+  function shareObservation(observation) {
+    var event = eventsById[observation.eventId];
+    return ObservationService.shareObservationForEvent(event, observation).then(function(updatedObservation) {
       event.observationsById[updatedObservation.id] = updatedObservation;
       observationsChanged({updated: [updatedObservation]});
     });
