@@ -13,8 +13,11 @@ function FilterController($scope, $uibModalInstance, EventService, FilterService
 
   $scope.intervalChoices = FilterService.intervals;
   $scope.intervalChoice = FilterService.getIntervalChoice();
+  $scope.locationIntervalChoices = FilterService.locationIntervals;
+  $scope.locationIntervalChoice = FilterService.getLocationIntervalChoice();
   $scope.localTime = true;
   $scope.localOffset = moment().format('Z');
+  $scope.peopleFilter = 'all';
 
   if ($scope.interval.options && $scope.interval.options.startDate) {
     $scope.startDate = $scope.interval.options.startDate;
@@ -34,6 +37,10 @@ function FilterController($scope, $uibModalInstance, EventService, FilterService
     $scope.filterTeams = {};
   };
 
+  $scope.locationIntervalChanged = function(choice) {
+    $scope.locationIntervalChoice = choice;
+  }
+  
   $scope.performFilter = function() {
     var options = {};
     if ($scope.intervalChoice.filter === 'custom') {
@@ -48,6 +55,9 @@ function FilterController($scope, $uibModalInstance, EventService, FilterService
       timeInterval: {
         choice: $scope.intervalChoice,
         options: options
+      },
+      locationInterval: {
+        choice: $scope.locationIntervalChoice
       }
     });
 

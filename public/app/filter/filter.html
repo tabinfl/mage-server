@@ -34,7 +34,7 @@
       </div>
 
       <div class="form-group">
-        <label>Time</label>
+        <label>Observation Time</label>
         <select ng-model="intervalChoice" ng-options="intervalChoice.label for intervalChoice in intervalChoices" class="form-control"></select>
       </div>
 
@@ -85,6 +85,15 @@
                 </button>
               </p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>People To Show</label>
+        <div class="btn-group btn-group-justified">
+          <div ng-repeat="choice in locationIntervalChoices" class="btn-group" role="group">
+            <button type="button" class="btn btn-default" ng-class="{'active':choice.label === locationIntervalChoice.label}" ng-click="locationIntervalChanged(choice)">{{choice.label}}</button>
           </div>
         </div>
       </div>
