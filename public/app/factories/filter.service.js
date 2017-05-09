@@ -10,7 +10,7 @@ function FilterService(UserService) {
   var listeners = [];
 
   var interval = {};
-  var locationInterval = {};
+  var hideInactive = false;
   var filterLocalOffset = moment().format('Z');
   var actionFilter = {};
 
@@ -39,19 +39,11 @@ function FilterService(UserService) {
   setTimeInterval({choice: intervalChoices[1]});
   filterChanged({intervalChoice: interval.choice});
 
-  var locationIntervalChoices = [{
-    filter: 'all',
-    label: 'All'
-  },{
-    filter: 1800,
-    label: 'Active'
-  }];
-  setLocationInterval({choice: locationIntervalChoices[0]})
-  filterChanged({locationIntervalChoice: locationInterval.choice});
+  setHideInactive(hideInactive);
+  filterChanged({hideInactive: hideInactive});
 
   var service = {
     intervals: intervalChoices,
-    locationIntervals: locationIntervalChoices,
     addListener: addListener,
     removeListener: removeListener,
     setFilter: setFilter,
@@ -64,8 +56,7 @@ function FilterService(UserService) {
     formatInterval: formatInterval,
     getInterval: getInterval,
     getIntervalChoice: getIntervalChoice,
-    getLocationInterval: getLocationInterval,
-    getLocationIntervalChoice: getLocationIntervalChoice
+    isHideInactive: isHideInactive
   };
 
   return service;
@@ -80,9 +71,7 @@ function FilterService(UserService) {
         timeInterval: {
           choice: interval.choice
         },
-        locationInterval: {
-          choice: locationInterval.choice
-        }
+        hideInactive: hideInactive
       });
     }
   }
@@ -95,7 +84,7 @@ function FilterService(UserService) {
     var eventChanged = null;
     var teamsChanged = null;
     var timeIntervalChanged = null;
-    var locationIntervalChanged = null;
+    var hideInactiveChanged = null;
     var actionFilterChanged = null;
 
     if (filter.teams) {
@@ -121,8 +110,8 @@ function FilterService(UserService) {
       timeIntervalChanged = filter.timeInterval;
     }
 
-    if (filter.locationInterval && setLocationInterval(filter.locationInterval)) {
-      locationIntervalChanged = filter.locationInterval;
+    if (filter.hideInactive !== undefined && setHideInactive(filter.hideInactive)) {
+      hideInactiveChanged = filter.hideInactive;
     }
 
     var changed = {};
@@ -130,7 +119,7 @@ function FilterService(UserService) {
     if (teamsChanged) changed.teams = teamsChanged;
     if (actionFilterChanged) changed.actionFilter = actionFilterChanged;
     if (timeIntervalChanged) changed.timeInterval = timeIntervalChanged;
-    if (locationIntervalChanged) changed.locationInterval = locationIntervalChanged;
+    if (hideInactiveChanged !== undefined) changed.hideInactive = hideInactiveChanged;
 
     filterChanged(changed);
   }
@@ -208,20 +197,16 @@ function FilterService(UserService) {
     return teamsById;
   }
 
-  function getIntervalChoice() {
-    return interval.choice;
-  }
-
-  function getLocationIntervalChoice() {
-    return locationInterval.choice;
+  function isHideInactive() {
+    return hideInactive;
   }
 
   function getInterval() {
     return interval;
   }
 
-  function getLocationInterval() {
-    return locationInterval;
+  function getIntervalChoice() {
+    return interval.choice;
   }
 
   function setTimeInterval(newInterval) {
@@ -238,17 +223,12 @@ function FilterService(UserService) {
     return true;
   }
 
-  function setLocationInterval(newInterval) {
-    if (newInterval.choice.filter === 'custom') {
-      if (locationInterval.startDate && newInterval.options.startDate === locationInterval.options.startDate &&
-          locationInterval.endDate && newInterval.options.endDate === locationInterval.options.endDate) {
-        return false;
-      }
-    } else if (locationInterval.choice === newInterval.choice) {
+  function setHideInactive(newHideInactive) {
+    if (hideInactive === newHideInactive) {
       return false;
     }
 
-    locationInterval = newInterval;
+    hideInactive = newHideInactive;
     return true;
   }
 

@@ -90,12 +90,10 @@
       </div>
 
       <div class="form-group">
-        <label>People To Show</label>
-        <div class="btn-group btn-group-justified">
-          <div ng-repeat="choice in locationIntervalChoices" class="btn-group" role="group">
-            <button type="button" class="btn btn-default" ng-class="{'active':choice.label === locationIntervalChoice.label}" ng-click="locationIntervalChanged(choice)">{{choice.label}}</button>
-          </div>
-        </div>
+        <label>
+          <input type="checkbox" ng-model="hideInactive"> Hide Inactive People
+        </label>
+        <p style="margin-left: 15px;" class="help-block">Hides people who have not reported a location in the last 30 minutes.</p>
       </div>
     </div>
 

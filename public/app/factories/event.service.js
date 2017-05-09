@@ -18,7 +18,7 @@ function EventService($rootScope, $q, $timeout, $http, Event, ObservationService
         onEventChanged(filter.event);
       }
 
-      if (filter.event || filter.timeInterval || filter.locationInterval) { // requery server
+      if (filter.event || filter.timeInterval || filter.hideInactive !== undefined) { // requery server
         fetch();
       } else if (filter.teams) { // filter in memory
         onTeamsChanged(filter.teams);
@@ -416,9 +416,9 @@ function EventService($rootScope, $q, $timeout, $http, Event, ObservationService
       parameters.interval = time;
     }
 
-    var locationInterval = FilterService.getLocationInterval();
-    if (locationInterval) {
-      var time = FilterService.formatInterval(locationInterval);
+    var hideInactive = FilterService.isHideInactive();
+    if (hideInactive) {
+      var time = {start:moment().utc().subtract(30, 'minutes').toISOString()};
       locationParameters.interval = time;
     }
 
