@@ -39,6 +39,11 @@ module.exports = function(app, security) {
       parameters.filter.endDate = moment.utc(endDate).toDate();
     }
 
+    var userId = req.param('userId');
+    if (userId) {
+      parameters.filter.userId = userId;
+    }
+
     var lastLocationId = req.param('lastLocationId');
     if (lastLocationId) {
       parameters.filter.lastLocationId = lastLocationId;

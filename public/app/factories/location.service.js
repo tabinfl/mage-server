@@ -22,11 +22,27 @@ function LocationService($q, Location, UserService, LocalStorageService) {
   }];
 
   var service = {
+    getUserLocations: getUserLocations,
     getUserLocationsForEvent: getUserLocationsForEvent,
     colorBuckets: colorBuckets
   };
 
   return service;
+
+  function getUserLocations(event, user, options) {
+    var deferred = $q.defer();
+
+    var parameters = {eventId: event.id, userId: user.id};
+    if (options.duration) {
+      parameters.startDate = moment().subtract(options.duration, options.period).toDate();
+    }
+
+    Location.query(parameters, function(locations) {
+      deferred.resolve(locations);
+    });
+
+    return deferred.promise;
+  }
 
   function getUserLocationsForEvent(event, options) {
     var deferred = $q.defer();

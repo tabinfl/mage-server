@@ -34,10 +34,11 @@ exports.createLocations = function(locations, callback) {
 };
 
 exports.getLocations = function(options, callback) {
-  var limit = 2000;
-  if (options.limit && options.limit < 2000) {
-    limit = options.limit;
-  }
+  // TODO maybe only limit if no time field
+  // var limit = 2000;
+  // if (options.limit && options.limit < 2000) {
+  //   limit = options.limit;
+  // }
 
   var conditions = {};
 
@@ -68,7 +69,11 @@ exports.getLocations = function(options, callback) {
     if (filter.endDate) conditions['properties.timestamp']['$lt'] = filter.endDate;
   }
 
-  Location.find(conditions, {}, {sort: {"properties.timestamp": 1, _id: 1}, limit: limit}, function (err, locations) {
+
+  // Location.find(conditions, {}, {sort: {"properties.timestamp": 1, _id: 1}, limit: limit}, function (err, locations) {
+  //   callback(err, locations);
+  // });
+  Location.find(conditions, {}, {sort: {"properties.timestamp": 1, _id: 1}}, function (err, locations) {
     callback(err, locations);
   });
 };

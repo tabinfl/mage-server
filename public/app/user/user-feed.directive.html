@@ -27,4 +27,38 @@
       </div>
     </div>
   </div>
+
+  <div class="feed-card-content">
+    <div class="clearfix">
+      <span class="pull-right"><a class="pointer" ng-click="showMore=!showMore">More...</a></span>
+    </div>
+
+    <div ng-if="showMore">
+      <h4>Location Breadcrumbs</h4>
+      <form class="form-inline">
+        <div class="form-group">
+          <input type="text" class="form-control" ng-model="breadcrumbs.duration" style="width: 45px;">
+        </div>
+
+        <div class="form-group">
+          <select ng-model="breadcrumbs.period" ng-options="periodChoice as periodChoice for periodChoice in periodChoices" class="form-control"></select>
+        </div>
+
+        <div class="form-group right-gap">
+          <div class="form-group">
+            <div><input minicolors="minicolorSettings" class="form-control" type="text" ng-model="breadcrumbs.color"></div>
+          </div>
+        </div>
+
+        <button ng-if="!breadcrumb" class="btn btn-xs btn-success" data-toggle="button" ng-click="showBreadcrumbs($event, user)">
+          Show Breadcrumbs
+        </button>
+
+        <button ng-if="breadcrumb" class="btn btn-xs btn-danger" data-toggle="button" ng-click="showBreadcrumbs($event, user)">
+          Remove Breadcrumbs
+        </button>
+      </form>
+    </div>
+  </div>
+
 </div>

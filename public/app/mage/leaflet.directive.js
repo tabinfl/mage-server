@@ -237,6 +237,24 @@ function LeafletController($rootScope, $scope, $interval, $timeout, MapService, 
           }
 
           return L.locationMarker(latlng, temporalOptions);
+        } else if (layerInfo.options.color) {
+          // TODO for now user location layer
+          var minTimestamp = moment(json[0].properties.timestamp).valueOf();
+          var maxTimestamp = moment(json[json.length - 1].properties.timestamp).valueOf();
+          var range = maxTimestamp - minTimestamp;
+
+
+          var featureTimestamp = moment(feature.properties.timestamp).valueOf();
+          var percent = (featureTimestamp - minTimestamp) / range;
+
+          return L.circleMarker(latlng, {
+            color: layerInfo.options.color,
+            fillColor: layerInfo.options.color,
+            weight: 2,
+            opacity: percent,
+            fillOpacity: percent,
+            radius: 5
+          });
         } else {
           var options = {};
           if (feature.style && feature.style.iconUrl) {

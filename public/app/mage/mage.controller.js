@@ -429,6 +429,39 @@ function MageController($scope, $compile, $timeout, $animate, $document, $uibMod
     }
   });
 
+  var breadcrumbUsers = {};
+  $scope.$on('user:breadcrumb:on', function(e, user, options) {
+    // TODO query locations for this user
+    var event = FilterService.getEvent();
+    LocationService.getUserLocations(event, user, options).then(function(locations) {
+      var userLayer = {
+        name: user.displayName,
+        group: 'Breadcrumbs',
+        type: 'geojson',
+        geojson: locations,
+        options: {
+          selected: true,
+          cluster: false,
+          color: options.color
+        }
+      };
+
+      breadcrumbUsers[user.id] = userLayer;
+      MapService.createVectorLayer(userLayer);
+    });
+
+    // TODO Tell map service to show.
+  });
+
+  $scope.$on('user:breadcrumb:off', function(e, user) {
+    //TODO tell map service to turn off
+    var layer = breadcrumbUsers[user.id];
+
+    if (layer) {
+      MapService.removeLayer(layer);
+    }
+  });
+
   $scope.$on('observation:create', function(e, latlng) {
     $scope.hideFeed = false;
     MapService.hideFeed(false);
