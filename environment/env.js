@@ -5,21 +5,24 @@ cfenv = require('cfenv');
 
 const appEnv = cfenv.getAppEnv({
   vcap: {
-    services: [
-      {
-        name: 'MongoInstance',
-        credentials: {
-          scheme: process.env.MAGE_MONGO_SCHEME || 'mongodb',
-          host: process.env.MAGE_MONGO_HOST || 'localhost',
-          port: parseInt(process.env.MAGE_MONGO_PORT) || 27017,
-          db: process.env.MAGE_MONGO_DATABASE || 'magedb',
-          username: null,
-          password: null,
-          ssl: process.env.MAGE_MONGO_SSL,
-          poolSize: parseInt(process.env.MAGE_MONGO_POOL_SIZE) || 5
+    services: {
+      "user-provided": [
+        {
+          name: 'MongoInstance',
+          plan: 'unlimited',
+          credentials: {
+            scheme: process.env.MAGE_MONGO_SCHEME || 'mongodb',
+            host: process.env.MAGE_MONGO_HOST || 'localhost',
+            port: parseInt(process.env.MAGE_MONGO_PORT) || 27017,
+            db: process.env.MAGE_MONGO_DATABASE || 'magedb',
+            username: null,
+            password: null,
+            ssl: process.env.MAGE_MONGO_SSL,
+            poolSize: parseInt(process.env.MAGE_MONGO_POOL_SIZE) || 5
+          }
         }
-      }
-    ]
+      ]
+    }
   }
 });
 
@@ -41,18 +44,18 @@ const environment = {
   iconBaseDirectory: path.resolve(process.env.MAGE_ICON_DIR || '/var/lib/mage/icons'),
   attachmentBaseDirectory: path.resolve(process.env.MAGE_ATTACHMENT_DIR || '/var/lib/mage/attachments'),
   tokenExpiration: parseInt(process.env.MAGE_TOKEN_EXPIRATION) || 28800,
-  mongo = {
+  mongo: {
     options: {
-      userMongoClient: true, // this can be removed after upgrading to mongoose 5+ http://mongoosejs.com/docs/connections.html#v5-changes
+      useMongoClient: true, // this can be removed after upgrading to mongoose 5+ http://mongoosejs.com/docs/connections.html#v5-changes
       poolSize: mongoConfig.poolSize,
       ssl: mongoSsl,
       auth: {
-        user: mongoConfig.username || '',
+        user: mongoConfig.user || mongoConfig.username || '',
         password: mongoConfig.password || ''
       }
     },
     get uri() {
-      return `${mongoConfig.scheme}://${mongoConfig.host}:${mongoConfig.port}/${mongoConfig.db}?ssl=${this.options.ssl}`;
+      return `${mongoConfig.scheme}://${mongoConfig.host}:${mongoConfig.port}/${mongoConfig.db}`;
     }
   }
 };

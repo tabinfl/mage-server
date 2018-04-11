@@ -8,3 +8,4 @@ public/dist/*
 !public/dist/index.html
 
 coverage
+npm-debug.log

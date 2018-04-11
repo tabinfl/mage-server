@@ -1,4 +1,4 @@
-var environment = require('environment')
+var environment = require('../environment/env')
   , mongoose = require('mongoose')
   , log = require('winston');
 

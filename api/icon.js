@@ -5,7 +5,7 @@ var IconModel = require('../models/icon')
   , fs = require('fs-extra')
   , os = require('os')
   , archiver = require('archiver')
-  , environment = require('environment');
+  , environment = require('../environment/env');
 
 var appRoot = path.dirname(require.main.filename);
 var iconBase = environment.iconBaseDirectory;

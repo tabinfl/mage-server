@@ -26,7 +26,7 @@ describe("local environment tests", function() {
   });
 
   it("environment should provide mongo", function() {
-    var mongo = require('environment').mongo;
+    var mongo = require('../environment/env').mongo;
     should.exist(mongo);
     mongo.should.have.property('uri');
     mongo.should.have.property('scheme');

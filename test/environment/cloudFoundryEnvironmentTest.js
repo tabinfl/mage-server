@@ -1,63 +1,66 @@
 const 
-should = require('chai').should(),
+expect = require('chai').expect,
 proxyquire = require('proxyquire').noPreserveCache();
 
 describe("cloud foundry environment", function() {
 
+  process.env.PORT = '2424';
+  process.env.MAGE_TOKEN_EXPIRATION = '3600';
   process.env.VCAP_APPLICATION = '{}';
-  process.env.VCAP_SERVICES = JSON.stringify(
-    [
+  process.env.VCAP_SERVICES = JSON.stringify({
+    "user-provided": [
       {
         name: 'MongoInstance',
-        scheme: 'mongodb-cf',
-        host: 'test.cf.db.mage',
-        port: 2727,
-        database: 'magedbcf',
-        username: 'cloudfoundry',
-        password: 'foundrycloud',
-        poolSize: 1
+        credentials: {
+          scheme: 'mongodb-cf',
+          host: 'db.test.mage',
+          port: 27999,
+          db: 'magedb_cf',
+          username: 'cloudfoundry',
+          password: 'foundrycloud',
+          poolSize: 99
+        }
       }
     ]
-  );
-
-  var environment = proxyquire('../../environment/env');
-
-  it("environment should provide port", function() {
-    environment.should.have.property('port').that.is.not.null;
   });
 
-  it("environment should provide address", function() {
-    environment.should.have.property('address').that.is.not.null;
+  var environment = proxyquire('../../environment/env', {});
+
+  it("provides port", function() {
+    expect(environment).to.have.property('port', 2424);
   });
 
-  it("environment should provide attachment base directory", function() {
-    environment.should.have.property('attachmentBaseDirectory');
+  it("provides address", function() {
+    expect(environment).to.have.property('address', '0.0.0.0');
   });
 
-  it("environment should provide icon base directory", function() {
-    environment.should.have.property('iconBaseDirectory');
+  it("provides attachment base directory", function() {
+    expect(environment).to.have.property('attachmentBaseDirectory', '/var/lib/mage/attachments');
   });
 
-  it("environment should provide user base directory", function() {
-    environment.should.have.property('userBaseDirectory');
+  it("provides icon base directory", function() {
+    expect(environment).to.have.property('iconBaseDirectory', '/var/lib/mage/icons');
   });
 
-  it("environment should provide mongo", function() {
-    console.log('mongo is', environment.mongo);
-    var mongo = environment.mongo;
-    should.exist(mongo);
-    mongo.should.have.property('uri').to.exist;
-    mongo.should.have.property('scheme').to.exist;
-    mongo.should.have.property('host').to.exist;
-    mongo.should.have.property('port').to.exist;
-    mongo.should.have.property('db').to.exist;
-    mongo.should.have.property('username').to.exist;
-    mongo.should.have.property('password').to.exist;
-    mongo.should.have.property('poolSize').to.exist;
+  it("provides user base directory", function() {
+    expect(environment).to.have.property('userBaseDirectory', '/var/lib/mage/users');
   });
-
+  
   it("environment should provide token expiration", function() {
-    environment.should.have.property('tokenExpiration');
+    expect(environment).to.have.property('tokenExpiration', 3600);
+  });
+
+  it("provides mongo connection config", function() {
+    expect(environment).to.have.property('mongo');
+
+    const mongo = environment.mongo;
+    expect(mongo).to.have.property('uri', 'mongodb-cf://db.test.mage:27999/magedb_cf');
+    const options = mongo.options;
+    expect(options).to.have.property('useMongoClient', true);
+    expect(options).to.have.property('ssl', false);
+    expect(options).to.have.property('poolSize', 99);
+    console.log(options.auth);
+    expect(options).to.have.deep.property('auth', { "user": "cloudfoundry", "password": "foundrycloud" });
   });
 
 });
