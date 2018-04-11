@@ -9,10 +9,10 @@
   "author": {
     "name": "NGA"
   },
-  "contributors": {
+  "contributors": [{
     "name": "Billy Newman",
     "email": "newmanw10@gmail.com"
-  },
+  }],
   "homepage": "https://www1.nga.mil",
   "engines": {
     "node": ">= 6.12.3 < 9",
@@ -29,7 +29,6 @@
     "bower": "1.8.0",
     "cfenv": "1.0.3",
     "dbf": "0.1.0",
-    "environment": "file:environment",
     "express": "4.10.6",
     "file-type": "7.6.0",
     "fs-extra": "0.30.0",

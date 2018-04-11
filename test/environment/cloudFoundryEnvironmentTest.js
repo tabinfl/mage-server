@@ -1,30 +1,26 @@
-var should = require('chai').should()
-  , proxyquire = require('proxyquire');
+const 
+should = require('chai').should(),
+proxyquire = require('proxyquire').noPreserveCache();
 
-describe("cloud foundry environment tests", function() {
+describe("cloud foundry environment", function() {
 
-  process.env['CLOUDFOUNDRY'] = "cf";
-
-  var environment = proxyquire('../env', {
-    'cfenv': {
-      getAppEnv: function() {
-        return {
-          getServiceCreds: function() {
-            return {
-              uri: 'mongodb://127.0.0.1:2727/magedb',
-              scheme: 'mongodb',
-              host: '127.0.0.1',
-              port: 2727,
-              database: 'magedb',
-              username: 'username',
-              password: 'password',
-              poolSize: 5
-            };
-          }
-        };
+  process.env.VCAP_APPLICATION = '{}';
+  process.env.VCAP_SERVICES = JSON.stringify(
+    [
+      {
+        name: 'MongoInstance',
+        scheme: 'mongodb-cf',
+        host: 'test.cf.db.mage',
+        port: 2727,
+        database: 'magedbcf',
+        username: 'cloudfoundry',
+        password: 'foundrycloud',
+        poolSize: 1
       }
-    }
-  });
+    ]
+  );
+
+  var environment = proxyquire('../../environment/env');
 
   it("environment should provide port", function() {
     environment.should.have.property('port').that.is.not.null;
