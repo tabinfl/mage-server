@@ -1,0 +1,130 @@
+const
+expect = require('chai').expect,
+proxyquire = require('proxyquire').noPreserveCache();
+
+describe("environment", function() {
+
+  beforeEach("clear environment", function() {
+    console.log('clearing environment');
+    [
+      'MAGE_ADDRESS',
+      'MAGE_PORT',
+      'MAGE_USER_DIR',
+      'MAGE_ICON_DIR',
+      'MAGE_ATTACHMENT_DIR',
+      'MAGE_TOKEN_EXPIRATION',
+      'MAGE_MONGO_SCHEME',
+      'MAGE_MONGO_HOST',
+      'MAGE_MONGO_PORT',
+      'MAGE_MONGO_DATABASE',
+      'MAGE_MONGO_SSL',
+      'MAGE_MONGO_USER',
+      'MAGE_MONGO_PASSWORD',
+      'MAGE_MONGO_POOL_SIZE',
+      'PORT',
+      'ADDRESS',
+      'VCAP_APPLICATION',
+      'VCAP_SERVICES'
+    ].forEach(key => delete process.env[key]);
+  });
+
+  it("provides default values", function() {
+
+    const environment = proxyquire('../../environment/env', {});
+
+    expect(environment).to.have.property('address', '0.0.0.0');
+    expect(environment).to.have.property('port', 4242);
+    expect(environment).to.have.property('attachmentBaseDirectory', '/var/lib/mage/attachments');
+    expect(environment).to.have.property('iconBaseDirectory', '/var/lib/mage/icons');
+    expect(environment).to.have.property('userBaseDirectory', '/var/lib/mage/users');
+    expect(environment).to.have.property('tokenExpiration', 28800);
+    const mongo = environment.mongo;
+    expect(mongo).to.have.property('uri', 'mongodb://127.0.0.1:27017/magedb');
+    const options = mongo.options;
+    expect(options).to.have.property('useMongoClient', true);
+    expect(options).to.have.property('poolSize', 5);
+    expect(options).to.have.property('ssl', false);
+    expect(options).to.have.deep.property('auth', { "user": "", "password": "" });
+  });
+
+  describe("in default runtime", function() {
+    
+    it('loads values from env vars', function() {
+
+      Object.assign(process.env, {
+        MAGE_ADDRESS: '64.32.16.8',
+        MAGE_PORT: '2424',
+        MAGE_USER_DIR: '/test/users',
+        MAGE_ICON_DIR: '/test/icons',
+        MAGE_ATTACHMENT_DIR: '/test/attachments',
+        MAGE_TOKEN_EXPIRATION: '6000',
+        MAGE_MONGO_SCHEME: 'mongodb-test',
+        MAGE_MONGO_HOST: 'db.test.mage',
+        MAGE_MONGO_PORT: '54545',
+        MAGE_MONGO_DATABASE: 'magedbtest',
+        MAGE_MONGO_SSL: 'true',
+        MAGE_MONGO_USER: 'mage_test',
+        MAGE_MONGO_PASSWORD: 'test_mage',
+        MAGE_MONGO_POOL_SIZE: '87'
+      });
+      const environment = proxyquire('../../environment/env', {});
+
+      expect(environment).to.have.property('address', '64.32.16.8');
+      expect(environment).to.have.property('port', 2424);
+      expect(environment).to.have.property('attachmentBaseDirectory', '/test/attachments');
+      expect(environment).to.have.property('iconBaseDirectory', '/test/icons');
+      expect(environment).to.have.property('userBaseDirectory', '/test/users');
+      expect(environment).to.have.property('tokenExpiration', 6000);
+      const mongo = environment.mongo;
+      expect(mongo).to.have.property('uri', 'mongodb-test://db.test.mage:54545/magedbtest');
+      const options = mongo.options;
+      expect(options).to.have.property('useMongoClient', true);
+      expect(options).to.have.property('poolSize', 87);
+      expect(options).to.have.property('ssl', true);
+      expect(options).to.have.deep.property('auth', { "user": "mage_test", "password": "test_mage" });
+    });
+  });
+
+  describe("in cloud foundry", function() {
+    
+    it("loads values from vcap env vars", function() {
+
+      process.env.PORT = '2424';
+      process.env.MAGE_TOKEN_EXPIRATION = '3600';
+      process.env.VCAP_APPLICATION = '{}';
+      process.env.VCAP_SERVICES = JSON.stringify({
+        "user-provided": [
+          {
+            name: 'MongoInstance',
+            credentials: {
+              scheme: 'mongodb-cf',
+              host: 'db.test.mage',
+              port: 27999,
+              db: 'magedb_cf',
+              username: 'cloudfoundry',
+              password: 'foundrycloud',
+              poolSize: 99
+            }
+          }
+        ]
+      });
+      const environment = proxyquire('../../environment/env', {});
+
+      expect(environment).to.have.property('port', 2424);
+      expect(environment).to.have.property('address', '0.0.0.0');
+      expect(environment).to.have.property('attachmentBaseDirectory', '/var/lib/mage/attachments');
+      expect(environment).to.have.property('iconBaseDirectory', '/var/lib/mage/icons');
+      expect(environment).to.have.property('userBaseDirectory', '/var/lib/mage/users');
+      expect(environment).to.have.property('tokenExpiration', 3600);
+      expect(environment).to.have.property('mongo');
+      const mongo = environment.mongo;
+      expect(mongo).to.have.property('uri', 'mongodb-cf://db.test.mage:27999/magedb_cf');
+      const options = mongo.options;
+      expect(options).to.have.property('useMongoClient', true);
+      expect(options).to.have.property('ssl', false);
+      expect(options).to.have.property('poolSize', 99);
+      console.log(options.auth);
+      expect(options).to.have.deep.property('auth', { "user": "cloudfoundry", "password": "foundrycloud" });
+    });
+  });
+});

@@ -1,7 +1,18 @@
 
-const 
-path = require('path'),
-cfenv = require('cfenv');
+const proxyquire = require('proxyquire');
+const path = require('path');
+const cfenv = require('cfenv');
+
+if (!(process.env.MAGE_PORT || process.env.PORT || process.env.CF_INSTANCE_PORT || process.env.VCAP_APP_PORT)) {
+  // bit of whitebox to cfenv lib here, because it provides no
+  // way to override the port value in options at construction,
+  // and uses the ports (https://www.npmjs.com/package/ports) package
+  // to attempt to read or set a default port from a file based on 
+  // the current app's name. this always ends up being 6001, and once
+  // ports assigns that, it writes the value out to ~/.ports.json, 
+  // which i think is undesirable behavior.
+  process.env.MAGE_PORT = '4242';
+}
 
 const appEnv = cfenv.getAppEnv({
   vcap: {
@@ -12,11 +23,11 @@ const appEnv = cfenv.getAppEnv({
           plan: 'unlimited',
           credentials: {
             scheme: process.env.MAGE_MONGO_SCHEME || 'mongodb',
-            host: process.env.MAGE_MONGO_HOST || 'localhost',
+            host: process.env.MAGE_MONGO_HOST || '127.0.0.1',
             port: parseInt(process.env.MAGE_MONGO_PORT) || 27017,
             db: process.env.MAGE_MONGO_DATABASE || 'magedb',
-            username: null,
-            password: null,
+            username: process.env.MAGE_MONGO_USER,
+            password: process.env.MAGE_MONGO_PASSWORD,
             ssl: process.env.MAGE_MONGO_SSL,
             poolSize: parseInt(process.env.MAGE_MONGO_POOL_SIZE) || 5
           }
@@ -26,11 +37,7 @@ const appEnv = cfenv.getAppEnv({
   }
 });
 
-if (appEnv.isLocal && appEnv.port == 3000) {
-  // bit of whitebox to cfenv lib here, because it provides no
-  // way to override the port value in options at construction,
-  // and always sets the port to 3000 outside of Cloud Foundry
-  // if PORT env var is not present
+if (appEnv.isLocal) {
   appEnv.port = parseInt(process.env.MAGE_PORT || process.env.PORT) || 4242;
 }
 
