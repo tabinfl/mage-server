@@ -1,7 +1,7 @@
 var mongoose = require('mongoose')
   , fs = require('fs-extra')
   , util = require('util')
-  , environment = require('../environment/env')
+  , environment = require('./environment/env')
   , log = require('./logger');
 
 var mongooseLogger = log.loggers.get('mongoose');
