@@ -1,16 +1,11 @@
-var environment = require('../environment/env')
+const environment = require('../environment/env')
   , mongoose = require('mongoose')
   , log = require('winston');
 
-var mongo = environment.mongo;
+const mongo = environment.mongo;
 
-var migrateConfig = {
-  scheme: environment.mongo.scheme,
-  host: environment.mongo.host,
-  port: environment.mongo.port,
-  db: environment.mongo.db,
-  user: environment.mongo.username,
-  password: environment.mongo.password,
+const migrateConfig = {
+  url: mongo.uri,
   collection: "migrations",
   directory: "migrations",
   options: environment.mongo.options
