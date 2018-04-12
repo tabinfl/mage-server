@@ -55,17 +55,21 @@ const environment = {
     options: {
       useMongoClient: true, // this can be removed after upgrading to mongoose 5+ http://mongoosejs.com/docs/connections.html#v5-changes
       poolSize: mongoConfig.poolSize,
-      ssl: mongoSsl,
-      auth: {
-        user: mongoConfig.user || mongoConfig.username || '',
-        password: mongoConfig.password || ''
-      }
+      ssl: mongoSsl
     },
     get uri() {
       return `${mongoConfig.scheme}://${mongoConfig.host}:${mongoConfig.port}/${mongoConfig.db}`;
     }
   }
 };
+
+const user = mongoConfig.user || mongoConfig.username;
+const password = mongoConfig.password;
+if (user && password) {
+  environment.mongo.options.auth = {
+    user: user, password: password
+  }
+}
 
 /*
 SSL configuration

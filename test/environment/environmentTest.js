@@ -5,7 +5,6 @@ proxyquire = require('proxyquire').noPreserveCache();
 describe("environment", function() {
 
   beforeEach("clear environment", function() {
-    console.log('clearing environment');
     [
       'MAGE_ADDRESS',
       'MAGE_PORT',
@@ -44,7 +43,7 @@ describe("environment", function() {
     expect(options).to.have.property('useMongoClient', true);
     expect(options).to.have.property('poolSize', 5);
     expect(options).to.have.property('ssl', false);
-    expect(options).to.have.deep.property('auth', { "user": "", "password": "" });
+    expect(options).to.not.have.property('auth');
   });
 
   describe("in default runtime", function() {
