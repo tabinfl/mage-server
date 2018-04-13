@@ -12,10 +12,7 @@ describe("environment", function() {
       'MAGE_ICON_DIR',
       'MAGE_ATTACHMENT_DIR',
       'MAGE_TOKEN_EXPIRATION',
-      'MAGE_MONGO_SCHEME',
-      'MAGE_MONGO_HOST',
-      'MAGE_MONGO_PORT',
-      'MAGE_MONGO_DATABASE',
+      'MAGE_MONGO_URL',
       'MAGE_MONGO_SSL',
       'MAGE_MONGO_USER',
       'MAGE_MONGO_PASSWORD',
@@ -57,10 +54,7 @@ describe("environment", function() {
         MAGE_ICON_DIR: '/test/icons',
         MAGE_ATTACHMENT_DIR: '/test/attachments',
         MAGE_TOKEN_EXPIRATION: '6000',
-        MAGE_MONGO_SCHEME: 'mongodb-test',
-        MAGE_MONGO_HOST: 'db.test.mage',
-        MAGE_MONGO_PORT: '54545',
-        MAGE_MONGO_DATABASE: 'magedbtest',
+        MAGE_MONGO_URL: 'mongodb-test://db.test.mage:54545/magedbtest',
         MAGE_MONGO_SSL: 'true',
         MAGE_MONGO_USER: 'mage_test',
         MAGE_MONGO_PASSWORD: 'test_mage',
@@ -96,10 +90,7 @@ describe("environment", function() {
           {
             name: 'MongoInstance',
             credentials: {
-              scheme: 'mongodb-cf',
-              host: 'db.test.mage',
-              port: 27999,
-              db: 'magedb_cf',
+              url: 'mongodb-cf://db.test.mage:27999/magedb_cf',
               username: 'cloudfoundry',
               password: 'foundrycloud',
               poolSize: 99
@@ -122,7 +113,6 @@ describe("environment", function() {
       expect(options).to.have.property('useMongoClient', true);
       expect(options).to.have.property('ssl', false);
       expect(options).to.have.property('poolSize', 99);
-      console.log(options.auth);
       expect(options).to.have.deep.property('auth', { "user": "cloudfoundry", "password": "foundrycloud" });
     });
   });

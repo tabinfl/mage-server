@@ -22,10 +22,7 @@ const appEnv = cfenv.getAppEnv({
           name: 'MongoInstance',
           plan: 'unlimited',
           credentials: {
-            scheme: process.env.MAGE_MONGO_SCHEME || 'mongodb',
-            host: process.env.MAGE_MONGO_HOST || '127.0.0.1',
-            port: parseInt(process.env.MAGE_MONGO_PORT) || 27017,
-            db: process.env.MAGE_MONGO_DATABASE || 'magedb',
+            url: process.env.MAGE_MONGO_URL || 'mongodb://127.0.0.1:27017/magedb',
             username: process.env.MAGE_MONGO_USER,
             password: process.env.MAGE_MONGO_PASSWORD,
             ssl: process.env.MAGE_MONGO_SSL,
@@ -52,13 +49,11 @@ const environment = {
   attachmentBaseDirectory: path.resolve(process.env.MAGE_ATTACHMENT_DIR || '/var/lib/mage/attachments'),
   tokenExpiration: parseInt(process.env.MAGE_TOKEN_EXPIRATION) || 28800,
   mongo: {
+    uri: mongoConfig.url,
     options: {
       useMongoClient: true, // this can be removed after upgrading to mongoose 5+ http://mongoosejs.com/docs/connections.html#v5-changes
       poolSize: mongoConfig.poolSize,
       ssl: mongoSsl
-    },
-    get uri() {
-      return `${mongoConfig.scheme}://${mongoConfig.host}:${mongoConfig.port}/${mongoConfig.db}`;
     }
   }
 };
