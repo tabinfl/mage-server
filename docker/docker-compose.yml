@@ -1,0 +1,48 @@
+version: "3.4"
+
+x-mage:
+  version: &mage-version master
+  image-spec: &mage-image-spec mage-server:master
+  mongo-url: &mage-mongo-url mongodb://mage-db:27017/magedb
+  
+services:
+
+  mage-db:
+    image: mongo:3.6-jessie
+    volumes:
+      - ./database/data:/data/mage
+      - ./database/log:/var/log/mongodb
+    command: [mongod, --dbpath, /data/mage, --logpath, /var/log/mongodb/mongod.log, --smallfiles]
+    networks: 
+      - mage.net
+
+  mage-server:
+    depends_on: [mage-db]
+    image: *mage-image-spec
+    build:
+      context: ./server
+      args: 
+        MAGE_VER_IN: *mage-version
+    volumes:
+      - ./server/resources:/var/lib/mage
+    ports:
+      - 4242:4242
+    networks:
+      - mage.net
+    environment: 
+      MAGE_MONGO_URL: *mage-mongo-url
+
+  mage-server-migration:
+    depends_on: [mage-db]
+    image: *mage-image-spec
+    volumes:
+      - ./server/resources:/var/lib/mage
+    networks: 
+      - mage.net
+    environment: 
+      MAGE_MONGO_URL: *mage-mongo-url
+    entrypoint: [npm, run, migrate]
+
+networks: 
+  mage.net:
+    driver: bridge
