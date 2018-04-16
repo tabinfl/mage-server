@@ -17,6 +17,8 @@ describe("environment", function() {
       'MAGE_MONGO_USER',
       'MAGE_MONGO_PASSWORD',
       'MAGE_MONGO_POOL_SIZE',
+      'MAGE_MONGO_CONN_TIMEOUT',
+      'MAGE_MONGO_CONN_RETRY_DELAY',
       'PORT',
       'ADDRESS',
       'VCAP_APPLICATION',
@@ -36,6 +38,8 @@ describe("environment", function() {
     expect(environment).to.have.property('tokenExpiration', 28800);
     const mongo = environment.mongo;
     expect(mongo).to.have.property('uri', 'mongodb://127.0.0.1:27017/magedb');
+    expect(mongo).to.have.property('connectRetryDelay', 5000);
+    expect(mongo).to.have.property('connectTimeout', 300000);
     const options = mongo.options;
     expect(options).to.have.property('useMongoClient', true);
     expect(options).to.have.property('poolSize', 5);
@@ -58,7 +62,9 @@ describe("environment", function() {
         MAGE_MONGO_SSL: 'true',
         MAGE_MONGO_USER: 'mage_test',
         MAGE_MONGO_PASSWORD: 'test_mage',
-        MAGE_MONGO_POOL_SIZE: '87'
+        MAGE_MONGO_POOL_SIZE: '87',
+        MAGE_MONGO_CONN_TIMEOUT: '12345',
+        MAGE_MONGO_CONN_RETRY_DELAY: '15'
       });
       const environment = proxyquire('../../environment/env', {});
 
@@ -70,6 +76,8 @@ describe("environment", function() {
       expect(environment).to.have.property('tokenExpiration', 6000);
       const mongo = environment.mongo;
       expect(mongo).to.have.property('uri', 'mongodb-test://db.test.mage:54545/magedbtest');
+      expect(mongo).to.have.property('connectRetryDelay', 15000);
+      expect(mongo).to.have.property('connectTimeout', 12345000);
       const options = mongo.options;
       expect(options).to.have.property('useMongoClient', true);
       expect(options).to.have.property('poolSize', 87);
@@ -109,6 +117,8 @@ describe("environment", function() {
       expect(environment).to.have.property('mongo');
       const mongo = environment.mongo;
       expect(mongo).to.have.property('uri', 'mongodb-cf://db.test.mage:27999/magedb_cf');
+      expect(mongo).to.have.property('connectRetryDelay', 5000);
+      expect(mongo).to.have.property('connectTimeout', 300000);
       const options = mongo.options;
       expect(options).to.have.property('useMongoClient', true);
       expect(options).to.have.property('ssl', false);

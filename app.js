@@ -1,10 +1,9 @@
-var mongoose = require('mongoose')
+const mongoose = require('mongoose')
   , fs = require('fs-extra')
-  , util = require('util')
   , environment = require('./environment/env')
   , log = require('./logger');
 
-var mongooseLogger = log.loggers.get('mongoose');
+const mongooseLogger = log.loggers.get('mongoose');
 
 mongoose.set('debug', function(collection, method, query, doc, options) {
   mongooseLogger.log('mongoose', "%s.%s(%s, %s, %s)", collection, method, this.$format(query), this.$format(doc), this.$format(options));
@@ -15,7 +14,7 @@ mongoose.Error.messages.general.required = "{PATH} is required.";
 log.info('Starting MAGE');
 
 // Create directory for storing SAGE media attachments
-var attachmentBase = environment.attachmentBaseDirectory;
+const attachmentBase = environment.attachmentBaseDirectory;
 fs.mkdirp(attachmentBase, function(err) {
   if (err) {
     log.error("Could not create directory to store MAGE media attachments. "  + err);
@@ -25,7 +24,7 @@ fs.mkdirp(attachmentBase, function(err) {
   }
 });
 
-var iconBase = environment.iconBaseDirectory;
+const iconBase = environment.iconBaseDirectory;
 fs.mkdirp(iconBase, function(err) {
   if (err) {
     log.error("Could not create directory to store MAGE icons. "  + err);
@@ -34,21 +33,34 @@ fs.mkdirp(iconBase, function(err) {
   }
 });
 
-var mongo = environment.mongo;
-log.info('using mongodb connection from: ' + mongo.uri);
-mongoose.connect(mongo.uri, mongo.options, function(err) {
-  if (err) {
-    log.error('Error connecting to mongo database, please make sure mongodb is running...');
-    throw err;
-  }
+const app = require('./express.js');
+
+const mongo = environment.mongo;
+const connectTimeout = Date.now() + mongo.connectTimeout;
+const connectRetryDelay = mongo.connectRetryDelay;
+
+const attemptConnection = () => {
+  log.info(`connecting to mongodb at ${mongo.uri} ...`);
+  mongoose.connect(mongo.uri, mongo.options)
+    .catch(err => {
+      log.error('error connecting to mongodb database; please make sure mongodb is running: ' + !!err ? err : 'unknown error');
+      if (Date.now() < connectTimeout) {
+        log.info(`will retry connection in ${connectRetryDelay / 1000} seconds`);
+        setTimeout(attemptConnection, connectRetryDelay);
+      }
+      throw `timed out after ${connectTimeout / 1000} seconds waiting for mongodb connection`;
+    });
+};
+
+app.on('ready', () => {
+  app.listen(environment.port, environment.address, () => log.info(`MAGE Server: listening at address ${environment.address} on port ${environment.port}`));
 });
 
-var app = require('./express.js');
-
-// Launches the Node.js Express Server
-app.listen(environment.port, environment.address, function() {
-  log.info(util.format('MAGE Server: Started listening at address %s on port %s', environment.address, environment.port));
+mongoose.connection.once('open', () => {
+  log.info('database connection established; opening app for client connections ...');
+  // install all plugins
+  require('./plugins');
+  app.emit('ready');
 });
 
-// install all plugins
-require('./plugins');
+attemptConnection();
