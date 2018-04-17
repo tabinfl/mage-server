@@ -8,3 +8,5 @@ public/dist/*
 coverage
 npm-debug.log
 scratch
+docker/database
+docker/server/resources
