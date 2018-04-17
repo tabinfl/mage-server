@@ -1,6 +1,6 @@
 FROM node:8.11.1
 
-ARG MAGE_VER_IN=5.0.1
+ARG MAGE_VER=5.1.0
 
 LABEL author="NGA"
 
@@ -9,6 +9,7 @@ RUN apt-get update && apt-get -y install \
         git \
         unzip \
         curl \
+        graphicsmagick \
     && rm -rf /var/lib/apt/lists/* 
 
 RUN groupadd -r mage \
@@ -18,7 +19,6 @@ RUN groupadd -r mage \
 
 USER mage
 
-ENV MAGE_VER ${MAGE_VER_IN}
 ENV MAGE_HOME /home/mage/mage-server-${MAGE_VER}
 WORKDIR /home/mage
 

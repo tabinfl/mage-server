@@ -22,7 +22,7 @@ services:
     build:
       context: ./server
       args: 
-        MAGE_VER_IN: *mage-version
+        MAGE_VER: *mage-version
     volumes:
       - ./server/resources:/var/lib/mage
     ports:
