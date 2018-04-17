@@ -34,6 +34,6 @@ directory, and apply source maps so you can inspect the content in your browser'
 
 The `npm run build` command you ran earlier uses the webpack [production](webpack.prod.js) to minify, obfuscate, and bundle 
 all of the MAGE web app's JavaScript and CSS assets into the `dist` directory.  The MAGE server [Express](../express.js) 
-configuration will serve the assets from that directory.  You can also potentially server the contents of that directory 
+configuration will serve the assets from that directory.  You can also potentially serve the contents of that directory 
 from a separate reverse proxy server, such as nginx or Apache httpd, as they are just static web resources.
 
