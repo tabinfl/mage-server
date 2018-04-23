@@ -15,7 +15,9 @@ var CappedLocationSchema = new Schema({
   versionKey: false
 });
 
+// TODO: this seems superfluous - probably remove because there's already an index on eventId in the field definition
 CappedLocationSchema.index({'eventId': 1});
+// TODO: this seems superflous because there's already an index on properties.timestamp in LocationSchema. do child-schema indexes get created on parent collections?
 CappedLocationSchema.index({'locations.properties.timestamp': 1});
 CappedLocationSchema.index({'locations.properties.timestamp': 1, 'eventId': 1});
 
