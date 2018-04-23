@@ -82,10 +82,11 @@
     "test": "mocha --reporter spec",
     "coverage": "istanbul cover _mocha",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "create-migration": "mm create --config=mm-config.js",
     "build": "npm --prefix public install && npm --prefix public run build",
     "prestart": "sh bin/prestart.sh",
     "poststop": "sh bin/poststop.sh",
-    "migrate": "mm --config=migrations/mm-config.js",
+    "migrate": "mm --config=mm-config.js",
     "start": "node app.js"
   },
   "bundleDependencies": [],
