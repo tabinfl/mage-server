@@ -1,7 +1,9 @@
-const mongoose = require('mongoose')
-  , fs = require('fs-extra')
-  , environment = require('./environment/env')
-  , log = require('./logger');
+const 
+mongoose = require('mongoose'),
+waitForMongooseConnection = require('./utilities/waitForMongooseConnection'),
+fs = require('fs-extra'),
+environment = require('./environment/env'),
+log = require('./logger');
 
 const mongooseLogger = log.loggers.get('mongoose');
 
@@ -33,34 +35,23 @@ fs.mkdirp(iconBase, function(err) {
   }
 });
 
+require('./models').initializeModels();
+
 const app = require('./express.js');
 
-const mongo = environment.mongo;
-const connectTimeout = Date.now() + mongo.connectTimeout;
-const connectRetryDelay = mongo.connectRetryDelay;
-
-const attemptConnection = () => {
-  log.info(`connecting to mongodb at ${mongo.uri} ...`);
-  mongoose.connect(mongo.uri, mongo.options)
-    .catch(err => {
-      log.error('error connecting to mongodb database; please make sure mongodb is running: ' + !!err ? err : 'unknown error');
-      if (Date.now() < connectTimeout) {
-        log.info(`will retry connection in ${connectRetryDelay / 1000} seconds`);
-        setTimeout(attemptConnection, connectRetryDelay);
-      }
-      throw `timed out after ${connectTimeout / 1000} seconds waiting for mongodb connection`;
-    });
-};
-
-app.on('ready', () => {
+app.on('databaseReady', () => {
   app.listen(environment.port, environment.address, () => log.info(`MAGE Server: listening at address ${environment.address} on port ${environment.port}`));
 });
 
-mongoose.connection.once('open', () => {
-  log.info('database connection established; opening app for client connections ...');
-  // install all plugins
-  require('./plugins');
-  app.emit('ready');
-});
+waitForMongooseConnection()
+  .then(() => {
+    log.info('database connection established; loading plugins ...');
+    require('./plugins');
+    log.info('opening app for connections ...')
+    app.emit('datbaseReady');
+  })
+  .catch(err => {
+    log.error(err);
+    process.exitCode = 1;
+  });
 
-attemptConnection();

@@ -1,16 +1,16 @@
 var mongoose = require('mongoose')
-  , config = require('../config.js');
+  , config = require('../config.js')
+  , Location = require('./location');
 
 // Creates a new Mongoose Schema object
 var Schema = mongoose.Schema;
-var LocationSchema = mongoose.model('Location').schema;
 var locationLimit = config.server.locationServices.userCollectionLocationLimit;
 
 // Creates the Schema for FFT Locations
 var CappedLocationSchema = new Schema({
   userId: {type: Schema.Types.ObjectId, required: false, sparse: true, ref: 'User'},
   eventId: {type: Number, required: false, sparse: true, ref:'Event'},
-  locations: [LocationSchema]
+  locations: [Location.Model.schema]
 },{
   versionKey: false
 });
