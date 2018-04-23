@@ -1,5 +1,4 @@
 
-const proxyquire = require('proxyquire');
 const path = require('path');
 const cfenv = require('cfenv');
 
