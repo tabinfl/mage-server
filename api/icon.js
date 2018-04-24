@@ -7,7 +7,7 @@ var IconModel = require('../models/icon')
   , archiver = require('archiver')
   , environment = require('../environment/env');
 
-var appRoot = path.dirname(require.main.filename);
+var appRoot = path.resolve(__dirname, '..');
 var iconBase = environment.iconBaseDirectory;
 
 function Icon(eventId, formId, primary, variant) {
