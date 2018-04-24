@@ -7,6 +7,7 @@ const mongo = env.mongo;
 const connectRetryDelay = mongo.connectRetryDelay;
 
 class RetryConnection {
+  
   constructor(resolve, reject) {
     this.connectTimeout = Date.now() + mongo.connectTimeout;
     this.resolve = resolve;

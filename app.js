@@ -13,7 +13,7 @@ mongoose.set('debug', function(collection, method, query, doc, options) {
 
 mongoose.Error.messages.general.required = "{PATH} is required.";
 
-log.info('Starting MAGE');
+log.info('Starting MAGE Server ...');
 
 // Create directory for storing SAGE media attachments
 const attachmentBase = environment.attachmentBaseDirectory;
@@ -35,23 +35,20 @@ fs.mkdirp(iconBase, function(err) {
   }
 });
 
-require('./models').initializeModels();
-
-const app = require('./express.js');
-
-app.on('databaseReady', () => {
-  app.listen(environment.port, environment.address, () => log.info(`MAGE Server: listening at address ${environment.address} on port ${environment.port}`));
-});
-
-waitForMongooseConnection()
-  .then(() => {
-    log.info('database connection established; loading plugins ...');
+require('./migrate').runDatabaseMigrations()
+  .then(function() {
+    log.info('database initialized; loading plugins ...');
     require('./plugins');
     log.info('opening app for connections ...')
-    app.emit('datbaseReady');
+    app.emit('comingOfMage');
   })
   .catch(err => {
-    log.error(err);
+    log.error('error initializing database: ' + err);
     process.exitCode = 1;
   });
 
+const app = require('./express.js');
+
+app.on('comingOfMage', () => {
+  app.listen(environment.port, environment.address, () => log.info(`MAGE Server: listening at address ${environment.address} on port ${environment.port}`));
+});

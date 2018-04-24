@@ -86,7 +86,7 @@
     "build": "npm --prefix public install && npm --prefix public run build",
     "prestart": "sh bin/prestart.sh",
     "poststop": "sh bin/poststop.sh",
-    "migrate": "mm --config=mm-config.js",
+    "migrate": "node -e \"require('./migrate').runDatabaseMigrations().then(() => process.exit(0), err => {throw err})\"",
     "start": "node app.js"
   },
   "bundleDependencies": [],
