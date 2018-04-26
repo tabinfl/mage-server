@@ -30,9 +30,19 @@ $ docker-compose ps
 docker_mage-db_1       docker-entrypoint.sh mongo ...   Up       0.0.0.0:27017->27017/tcp
 docker_mage-server_1   node ./app.js                    Up       0.0.0.0:4242->4242/tcp
 ```
+You can use [`docker-compose logs <service>`](https://docs.docker.com/compose/reference/logs/) to display console logging for a service.
+```
+$ docker-compose logs mage-server
+mage-server_1  | 2018-04-26T23:30:30.684Z - info: Starting MAGE Server ...
+mage-server_1  | 2018-04-26T23:30:31.403Z - info: setting up provision uid
+mage-server_1  | (node:1) DeprecationWarning: Mongoose: mpromise (mongoose's default promise library) is deprecated, plug in your own promise library instead: http://mongoosejs.com/docs/promises.html
+mage-server_1  | 2018-04-26T23:30:31.861Z - info: Using '/var/lib/mage/attachments' as base directory for feature attachments.
+mage-server_1  | 2018-04-26T23:30:31.861Z - info: Using '/var/lib/mage/icons' as base directory for MAGE icons.
+# etc., etc.
+```
 While the service containers are up, you can interact with them using [`docker-compose exec`](https://docs.docker.com/compose/reference/exec/).
 For example, to get an interactive shell session in the MongoDB container, run
-```bash
+```
 $ docker-compose exec mage-db bash
 root@df8b00beafa2:/# ps -ef
 UID        PID  PPID  C STIME TTY          TIME CMD
