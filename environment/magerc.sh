@@ -22,7 +22,7 @@ export MAGE_MONGO_POOL_SIZE=5
 export MAGE_MONGO_USER=
 # the password MAGE uses to authenticate to mongodb
 export MAGE_MONGO_PASSWORD=
-# total seconds to attempt to establish a connection to mongodb
+# total seconds to attempt to establish a connection to mongodb before giving up and exiting
 export MAGE_MONGO_CONN_TIMEOUT=300
 # seconds between attempts to connect to mongodb
 export MAGE_MONGO_CONN_RETRY_DELAY=5
