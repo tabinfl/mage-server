@@ -8,8 +8,7 @@ MAGE Git repoistory.
 
 ```bash
 $ cd ./docker
-$ docker-compose build # build the service images
-$ docker-compose up -d # create and start the service containers for the first time
+$ docker-compose up -d # build the service images, then create and start the service containers for the first time
 ```
 
 With all the default settings, you should then be able to browse to http://localhost:4242 to interact with the MAGE web app.
@@ -132,11 +131,15 @@ node                8.11.1              4635bc7d130c        3 weeks ago         
 mongo               3.6-jessie          5b1317f8158f        6 weeks ago         366MB
 ```
 ... note you now have two `mage-server` images with different version tags, both occupying over 900MB, and both connecting
-to the same MongoDB instance.  In some cases you may actually want to do this, to test an upgrade, for example.  Just remember
- you can always remove images you don't need.
+to the same MongoDB instance.  In some cases you may actually want to do this, to test an upgrade, for example.  Remember 
+you can always remove images you don't need.
 ```bash
 $ docker rmi mage-server:develop
 ```
+Another consequence of building the images using the `MAGE_VER=xxx docker-compose build` syntax is that you must then 
+supply the same `MAGE_VER=xxx` value when you run the subsequent `docker-compose up -d` command.  Otherwise, `docker-compose`
+will rebuild the `mage-server` image with the version the Compose file defines if it differs from the one you specified on 
+the command line, and run a container with that version instead.
 
 ### Bind Mounts
 
