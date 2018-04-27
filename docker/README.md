@@ -18,8 +18,8 @@ With all the default settings, you should then be able to browse to http://local
 _NOTE:_ All of the following `docker-compose` commands described below assume you are operating from the 
 [`docker`](docker) directory.
 
-After the initial `build` and `up` commands, you can use `docker-compose stop` and `docker-compose start` to stop and start
-the service containers.
+After the initial `up` command, you can use `docker-compose stop` and `docker-compose start` to stop and start the service
+containers.
 
 You can use [`docker-compose ps`](https://docs.docker.com/compose/reference/ps/) to see the state of the MAGE service containers.
 ```bash
@@ -39,8 +39,8 @@ mage-server_1  | 2018-04-26T23:30:31.861Z - info: Using '/var/lib/mage/attachmen
 mage-server_1  | 2018-04-26T23:30:31.861Z - info: Using '/var/lib/mage/icons' as base directory for MAGE icons.
 # etc., etc.
 ```
-While the service containers are up, you can interact with them using [`docker-compose exec`](https://docs.docker.com/compose/reference/exec/).
-For example, to get an interactive shell session in the MongoDB container, run
+While the service containers are up, you can interact with them using [`docker-compose exec`](https://docs.docker.com/compose/reference/exec/)
+to run commands in the container.  For example, to get an interactive shell session in the MongoDB container, run
 ```
 $ docker-compose exec mage-db bash
 root@df8b00beafa2:/# ps -ef
@@ -48,7 +48,7 @@ UID        PID  PPID  C STIME TTY          TIME CMD
 mongodb      1     0  0 07:16 ?        00:03:47 mongod --dbpath /data/mage --logpath /var/log
 root        67     0  0 22:37 pts/0    00:00:00 bash
 root        73    67  0 22:37 pts/0    00:00:00 ps -ef
-root@df8b00beafa2:/# mongo # interact directly with the running MAGE database
+root@df8b00beafa2:/# mongo # interact directly with the running MAGE database # do some ill-advised things directly to the database
 MongoDB shell version v3.6.3
 connecting to: mongodb://127.0.0.1:27017
 MongoDB server version: 3.6.3
