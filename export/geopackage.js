@@ -79,7 +79,7 @@ GeoPackage.prototype.export = function(streamable) {
     .then(function(){
       console.log('GeoPackage created');
       archive.append(fs.createReadStream(filePath), {name: 'geopackage.gpkg'});
-      // archive.finalize();
+      archive.finalize();
     })
     .catch(function(error) {
       console.log('Error exporting GeoPackage', error);
