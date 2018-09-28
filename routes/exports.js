@@ -7,7 +7,7 @@ var moment = require('moment')
 
 module.exports = function(app, security) {
   app.get(
-    '/api/:exportType(geojson|kml|shapefile|csv)',
+    '/api/:exportType(geojson|kml|shapefile|csv|geopackage)',
     security.authentication.passport.authenticate('bearer'),
     parseQueryParams,
     getEvent,

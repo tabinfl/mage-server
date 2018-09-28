@@ -1,8 +1,9 @@
 var Shapefile = require('./shapefile')
   , Kml = require('./kml')
   , Csv = require('./csv')
-  , GeoJson = require('./geojson');
-  
+  , GeoJson = require('./geojson')
+  , GeoPackage = require('./geopackage');
+
 function ExporterFactory() {}
 
 ExporterFactory.prototype.createExporter = function(type, options) {
@@ -15,6 +16,8 @@ ExporterFactory.prototype.createExporter = function(type, options) {
     return new GeoJson(options);
   case 'csv':
     return new Csv(options);
+  case 'geopackage':
+    return new GeoPackage(options);
   }
 };
 

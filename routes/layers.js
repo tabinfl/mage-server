@@ -39,14 +39,17 @@ module.exports = function(app, security) {
       return res.send(400, 'cannot create layer "geopackage" file not specified');
     }
 
-    geopackage.open(req.files.geopackage, (err, result) => {
-      if (err) return res.status(400).send('cannot create layer, geopackage is not valid');
-      result.geopackage.close();
+    geopackage.open(req.files.geopackage)
+      .then(result => {
+        result.geopackage.close();
 
-      req.newLayer.geopackage = req.files.geopackage;
-      req.newLayer.tables = result.metadata.tables;
-      next(err);
-    });
+        req.newLayer.geopackage = req.files.geopackage;
+        req.newLayer.tables = result.metadata.tables;
+        return next();
+      })
+      .catch(err => {
+        return res.status(400).send('cannot create layer, geopackage is not valid');
+      });
   }
 
   function validateEventAccess(req, res, next) {
@@ -194,22 +197,20 @@ module.exports = function(app, security) {
           return res.status(400).send('Cannot request vector tile from a tile layer');
         }
 
-        geopackage.features(req.layer, req.params.tableName, tileParams, tileBuffer, function(err, featureCollection) {
-          if (err) return next(err);
-
-          const tileIndex = geojsonvt(featureCollection, {buffer: tileBuffer * 8, maxZoom: tileParams.z});
-          const tile = tileIndex.getTile(tileParams.z, tileParams.x, tileParams.y);
-          const vectorTile = vtpbf.fromGeojsonVt({ [table.name]: tile || { features: [] } });
+        geopackage.vectorTile(req.layer, req.params.tableName, tileParams)
+        .then(vectorTile => {
           res.contentType('application/x-protobuf');
           res.send(Buffer.from(vectorTile));
-        });
+        })
+        .catch(err => next(err));
       } else {
-        geopackage.tile(req.layer, req.params.tableName, tileParams, function(err, tile) {
-          if (err) return next(err);
+        geopackage.tile(req.layer, req.params.tableName, tileParams)
+        .then(tile => {
           if (!tile) return res.status(404);
           res.contentType('image/jpeg');
           res.send(tile);
-        });
+        })
+        .catch(err => next(err));
       }
     }
   );
