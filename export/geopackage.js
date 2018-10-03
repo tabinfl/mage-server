@@ -1,17 +1,14 @@
 var util = require('util')
   , fs = require('fs')
   , api = require('../api')
-  , async = require('async')
   , archiver = require('archiver')
-  , mgrs = require('mgrs')
   , moment = require('moment')
   , log = require('winston')
-  , stream = require('stream')
   , path = require('path')
   , Exporter = require('./exporter')
   , GeoPackageAPI = require('@ngageoint/geopackage')
-  , turfCentroid = require('@turf/centroid')
-  , environment = require('../environment/env');
+  , environment = require('../environment/env')
+  , os = require('os');
 
 var userBase = environment.userBaseDirectory;
 var attachmentBase = environment.attachmentBaseDirectory;
@@ -24,69 +21,64 @@ util.inherits(GeoPackage, Exporter);
 module.exports = GeoPackage;
 
 GeoPackage.prototype.export = function(streamable) {
-  console.log('Export the GeoPackage');
+  log.info('Export the GeoPackage');
   var self = this;
 
+  var downloadedFileName = 'mage-' + self._event.name;
+
   streamable.type('application/zip');
-  streamable.attachment("mage-geopackage.zip");
+  streamable.attachment(downloadedFileName + '.zip');
 
   var archive = archiver('zip');
   archive.pipe(streamable);
 
-  var iconPath = path.join(new api.Icon(self._event._id).getBasePath());
+  var filePath;
 
-  this.createGeoPackageFile(function(err, filePath) {
-    return GeoPackageAPI.create(filePath)
-    .then(function(geopackage) {
-      return self.createUserTable(geopackage)
-      .then(function() {
-        return geopackage;
+  return this.createGeoPackageFile()
+  .then(function(fp) {
+    filePath = fp;
+    return fp;
+  })
+  .then(GeoPackageAPI.create)
+  .then(this.createUserTable.bind(this))
+  .then(this.addFormDataToGeoPackage.bind(this))
+  .then(this.createFormAttributeTables.bind(this))
+  .then(this.addObservationIcons.bind(this))
+  .then(this.addObservationsToGeoPackage.bind(this))
+  .then(this.addLocationsToGeoPackage.bind(this))
+  .then(this.addUsersToUsersTable.bind(this))
+  .then(function(){
+    log.info('GeoPackage created');
+    archive.append(fs.createReadStream(filePath), {name: downloadedFileName + '.gpkg'});
+    archive.on('end', function(){
+      log.info('Removing temporary GeoPackage file: %s', filePath);
+      fs.unlink(filePath, function() {
       });
-    })
-    .then(function(geopackage) {
-      return self.addFormDataToGeoPackage(geopackage)
-      .then(function() {
-        return geopackage;
-      });
-    })
-    .then(function(geopackage) {
-      return self.createFormAttributeTables(geopackage)
-      .then(function() {
-        return geopackage;
-      });
-    })
-    .then(function(geopackage) {
-      return self.addObservationIcons(geopackage, iconPath)
-      .then(function() {
-        return geopackage;
-      });
-    })
-    .then(function(geopackage) {
-      return self.addObservationsToGeoPackage(geopackage)
-      .then(function() {
-        return geopackage;
-      })
-      .catch(function(error) {
-        console.log('Error adding observations to GeoPackage', error);
-      });
-    })
-    .then(function(geopackage) {
-      return self.addLocationsToGeoPackage(geopackage)
-      .then(function() {
-        return geopackage;
-      });
-    })
-    .then(function(){
-      console.log('GeoPackage created');
-      archive.append(fs.createReadStream(filePath), {name: 'geopackage.gpkg'});
-      archive.finalize();
-    })
-    .catch(function(error) {
-      console.log('Error exporting GeoPackage', error);
+    });
+    archive.finalize();
+  })
+  .catch(function(error) {
+    log.info('Error exporting GeoPackage', error);
+    fs.unlink(filePath, function() {
     });
   });
 };
 
+GeoPackage.prototype.createGeoPackageFile = function() {
+  log.info('Create GeoPackage File');
+  var filename = moment().format('YYYMMDD_hhmmssSSS') + '.gpkg';
+  var filePath = path.join(os.tmpdir(), filename);
+  return new Promise(function(resolve, reject) {
+    fs.unlink(filePath, function() {
+      fs.mkdir(path.dirname(filePath), function() {
+        fs.open(filePath, 'w', function(err) {
+          if (err) return reject(err);
+          resolve(filePath);
+        });
+      });
+    });
+  });
+}
 
 GeoPackage.prototype.getObservations = function() {
   var self = this;
@@ -100,27 +92,22 @@ GeoPackage.prototype.getObservations = function() {
 
   return observationsGeoJson.features;
 }
-GeoPackage.prototype.getLocations = function() {
+
+GeoPackage.prototype.getLocations = function(lastLocationId, startDate, endDate) {
   var self = this;
   var limit = 2000;
-
-  var startDate = self._filter.startDate ? moment(self._filter.startDate) : null;
-  var endDate = self._filter.endDate ? moment(self._filter.endDate) : null;
-  var lastLocationId = null;
 
   return new Promise(function(resolve, reject) {
     self.requestLocations({startDate: startDate, endDate: endDate, lastLocationId: lastLocationId, limit: limit}, function(err, requestedLocations) {
       resolve(requestedLocations);
     });
   });
-
 }
 
 var iconMap = {};
 
-// properties is an array of objects {name: 'columnname', type: columnType}
 GeoPackage.prototype.createObservationTable = function(geopackage, properties) {
-  console.log('Create Observation Table');
+  log.info('Create Observation Table');
   var columns = [];
 
   columns.push({
@@ -159,7 +146,7 @@ GeoPackage.prototype.createObservationTable = function(geopackage, properties) {
 }
 
 GeoPackage.prototype.createAttachmentTable = function(geopackage) {
-  console.log('Create Attachment Table');
+  log.info('Create Attachment Table');
   var columns = [{
     name: "name",
     dataType: "TEXT"
@@ -171,7 +158,7 @@ GeoPackage.prototype.createAttachmentTable = function(geopackage) {
 }
 
 GeoPackage.prototype.createIconTable = function(geopackage) {
-  console.log('Create Icon Table');
+  log.info('Create Icon Table');
   var columns = [{
     name: "eventId",
     dataType: "TEXT"
@@ -191,11 +178,47 @@ GeoPackage.prototype.createIconTable = function(geopackage) {
 var locationTablesCreated = {
 };
 
-GeoPackage.prototype.createLocationTableForUser = function(geopackage, userId, user, lastLocation) {
-  if (locationTablesCreated[userId]) return Promise.resolve();
+var usersLastLocation = {
+};
 
-  console.log('Add User to user table');
-  console.log('Create Location Table');
+GeoPackage.prototype.addUsersToUsersTable = function(geopackage) {
+  var self = this;
+  var userIds = Object.keys(self._users);
+  return userIds.reduce(function(sequence, userId) {
+    return sequence.then(function() {
+      if (!usersLastLocation[userId]) {
+        return Promise.resolve();
+      }
+
+      var user = self._users[userId];
+      var geoJson = {
+        type: 'Feature',
+        geometry: usersLastLocation[userId].geometry,
+        properties: {
+          timestamp: usersLastLocation[userId].properties.timestamp,
+          username: user.username,
+          displayName: user.displayName,
+          email: user.email,
+          phones: user.phones.join(', '),
+          userId: userId
+        }
+      };
+      var userRowId = GeoPackageAPI.addGeoJSONFeatureToGeoPackage(geopackage, geoJson, 'Users')
+      return new Promise(function (resolve, reject) {
+        fs.readFile(path.join(environment.userBaseDirectory, userId, 'icon'), function(err, iconBuffer) {
+          var iconId = GeoPackageAPI.addMedia(geopackage, 'UserIcons', iconBuffer, user.icon.contentType, user.icon);
+          resolve(GeoPackageAPI.linkMedia(geopackage, 'Users', userRowId, 'UserIcons', iconId));
+        });
+      });
+    });
+  }, Promise.resolve())
+  .then(function() {
+    return geopackage;
+  });
+}
+
+GeoPackage.prototype.createLocationTableForUser = function(geopackage, userId) {
+  if (locationTablesCreated[userId]) return Promise.resolve();
   var columns = [];
 
   columns.push({
@@ -221,70 +244,74 @@ GeoPackage.prototype.createLocationTableForUser = function(geopackage, userId, u
 
   locationTablesCreated[userId] = true;
   return GeoPackageAPI.createFeatureTableWithProperties(geopackage, 'Locations'+userId, columns)
-  .then(function() {
-    var geoJson = {
-      type: 'Feature',
-      geometry: lastLocation.geometry,
-      properties: {
-        timestamp: lastLocation.properties.timestamp,
-        username: user.username,
-        displayName: user.displayName,
-        email: user.email,
-        phones: user.phones.join(', '),
-        userId: userId
-      }
-    };
-    console.log('add the user to the table', geoJson);
-    return GeoPackageAPI.addGeoJSONFeatureToGeoPackage(geopackage, geoJson, 'Users');
-  })
-  .then(function(userRowId) {
-    return new Promise(function (resolve, reject) {
-      fs.readFile(path.join(environment.userBaseDirectory, userId, 'icon'), function(err, iconBuffer) {
-        var iconId = GeoPackageAPI.addMedia(geopackage, 'UserIcons', iconBuffer, user.icon.contentType, user.icon);
-        resolve(GeoPackageAPI.linkMedia(geopackage, 'Users', userRowId, 'UserIcons', iconId));
-      });
-    });
-  })
   .catch(function(err) {
   });
 }
 
-GeoPackage.prototype.addLocationsToGeoPackage = function(geopackage) {
-  console.log('Add Locations');
+GeoPackage.prototype.addLocationsToGeoPackage = function(geopackage, lastLocationId, startDate, endDate) {
+  log.info('Add Locations');
   var self = this;
-  return self.getLocations()
-  .then(function(locations) {
-    return locations.reduce(function(sequence, location) {
-      var user = self._users[location.userId];
-      return self.createLocationTableForUser(geopackage, location.userId.toString(), user, location)
-      .then(function() {
-        return sequence.then(function() {
-          var properties = {};
-          properties.userId = location.userId.toString();
 
-          var geojson = {
-            type:'Feature',
-            geometry: location.geometry,
-            properties: location.properties
-          };
-          geojson.properties.mageId = location._id.toString();
-          geojson.properties.userId = location.userId.toString();
-          geojson.properties.deviceId = location.properties.deviceId.toString();
+  startDate = startDate || self._filter.startDate ? moment(self._filter.startDate) : null;
+  endDate = endDate || self._filter.endDate ? moment(self._filter.endDate) : null;
 
-          if (geojson.properties.id) {
-            delete geojson.properties.id;
+  return new Promise(function(resolve, reject) {
+    setTimeout(function(){
+      return self.getLocations(lastLocationId, startDate, endDate)
+      .then(function(locations) {
+        if (!locations || locations.length === 0) {
+          return resolve();
+        }
+
+        var last = locations.slice(-1).pop();
+        if (last) {
+          var locationTime = moment(last.properties.timestamp);
+          lastLocationId = last._id;
+          if (!startDate || startDate.isBefore(locationTime)) {
+            startDate = locationTime;
           }
-          var featureId = GeoPackageAPI.addGeoJSONFeatureToGeoPackage(geopackage, geojson, 'Locations'+location.userId.toString());
+        }
+
+        return locations.reduce(function(sequence, location) {
+          var user = self._users[location.userId];
+          return self.createLocationTableForUser(geopackage, location.userId.toString(), user, location)
+          .then(function() {
+            return sequence.then(function() {
+              usersLastLocation[location.userId.toString()] = location;
+              var properties = {};
+              properties.userId = location.userId.toString();
+
+              var geojson = {
+                type:'Feature',
+                geometry: location.geometry,
+                properties: location.properties
+              };
+              geojson.properties.mageId = location._id.toString();
+              geojson.properties.userId = location.userId.toString();
+              geojson.properties.deviceId = location.properties.deviceId.toString();
+
+              if (geojson.properties.id) {
+                delete geojson.properties.id;
+              }
+              var featureId = GeoPackageAPI.addGeoJSONFeatureToGeoPackage(geopackage, geojson, 'Locations'+location.userId.toString());
+            });
+          });
+        }, Promise.resolve())
+        .then(function() {
+          return resolve(self.addLocationsToGeoPackage(geopackage, lastLocationId, startDate, endDate));
         });
       });
-    }, Promise.resolve());
+    });
+  })
+  .then(function() {
+    return geopackage;
   });
 }
 
 GeoPackage.prototype.createFormAttributeTables = function(geopackage) {
   var self = this;
 
-  console.log('Create Form Attribute Tables');
+  log.info('Create Form Attribute Tables');
   return Object.keys(self._event.formMap).reduce(function(sequence, formId) {
     var columns = [];
     var form = self._event.formMap[formId];
@@ -319,7 +346,10 @@ GeoPackage.prototype.createFormAttributeTables = function(geopackage) {
       });
     }
     return GeoPackageAPI.createAttributeTableWithProperties(geopackage, 'Form_'+formId, columns);
-  }, Promise.resolve());
+  }, Promise.resolve())
+  .then(function() {
+    return geopackage;
+  });
 }
 
 GeoPackage.prototype.createUserTable = function(geopackage) {
@@ -350,7 +380,7 @@ GeoPackage.prototype.createUserTable = function(geopackage) {
   });
   return GeoPackageAPI.createFeatureTableWithProperties(geopackage, 'Users', columns)
   .then(function() {
-    console.log('Create User Icon Table');
+    log.info('Create User Icon Table');
     var columns = [{
       name: "type",
       dataType: "TEXT"
@@ -364,8 +394,11 @@ GeoPackage.prototype.createUserTable = function(geopackage) {
     return GeoPackageAPI.createMediaTableWithProperties(geopackage, 'UserIcons', columns);
   })
   .then(function() {
-    console.log('Create User Avatar Table');
+    log.info('Create User Avatar Table');
     return GeoPackageAPI.createMediaTableWithProperties(geopackage, 'UserAvatars');
+  })
+  .then(function() {
+    return geopackage;
   });
 }
 
@@ -393,39 +426,7 @@ GeoPackage.prototype.addFormDataToGeoPackage = function(geopackage) {
     name: 'formId',
     dataType: 'TEXT'
   });
-  /**
-   * "3": {
-    "color": "#F58300",
-    "name": "Animals",
-    "primaryField": "field1",
-    "variantField": null,
-    "fields": [
-      {
-        "title": "Animal",
-        "type": "dropdown",
-        "required": false,
-        "id": 1,
-        "name": "field1",
-        "choices": [
-          {
-            "id": 0,
-            "value": 0,
-            "title": "Turkey"
-          },
-          {
-            "id": 1,
-            "value": 1,
-            "title": "Cow"
-          }
-        ]
-      }
-    ],
-    "userFields": [],
-    "archived": false,
-    "id": 3
-  }
 
-   */
   return GeoPackageAPI.createAttributeTableWithProperties(geopackage, 'Forms', columns)
   .then(function(dao) {
     for (var formId in self._event.formMap) {
@@ -440,11 +441,14 @@ GeoPackage.prototype.addFormDataToGeoPackage = function(geopackage) {
 
       GeoPackageAPI.addAttributeRow(geopackage, 'Forms', row);
     }
+  })
+  .then(function() {
+    return geopackage;
   });
 }
 
 GeoPackage.prototype.addObservationsToGeoPackage = function(geopackage) {
-  console.log('Add Observations');
+  log.info('Add Observations');
   var self = this;
   return this.getObservations()
   .then(function(observations) {
@@ -508,32 +512,23 @@ GeoPackage.prototype.addObservationsToGeoPackage = function(geopackage) {
                   name: 'simple_attributes',
                   dataType: 'ATTRIBUTES'
                 });
-                // form { field8: '', field7: 'None', type: 'VIP', formId: 1 }
-                // console.log('form', form);
-
               });
             }, Promise.resolve());
           });
         });
       }, Promise.resolve())
       .catch(function(error){
-        console.log('error', error);
+        log.error('error', error);
       });
     });
+  })
+  .then(function() {
+    return geopackage;
   });
 }
 
 GeoPackage.prototype.addAttachments = function(geopackage, attachments, observationId) {
-  console.log('Add Attachments');
-  // attachments:
-  //  [ { contentType: 'image/jpeg',
-  //      size: 220814,
-  //      name: '1c44fd1f0501f45477eab5841ff4e793.jpg',
-  //      relativePath: 'observations1/2018/9/24/1c44fd1f0501f45477eab5841ff4e793.jpg',
-  //      lastModified: 2018-09-24T18:03:52.030Z,
-  //      _id: 5ba92708315b25bfeed06308,
-  //      thumbnails: [],
-  //      oriented: false } ] }
+  log.info('Add Attachments');
 
   return attachments.reduce(function(sequence, attachment) {
     return sequence.then(function() {
@@ -551,44 +546,14 @@ GeoPackage.prototype.addAttachments = function(geopackage, attachments, observat
   }, Promise.resolve());
 }
 
-GeoPackage.prototype.addObservationIcons = function(geopackage, rootDir) {
-  console.log('Add Icons', rootDir);
-  this.createIconTable(geopackage);
-
+GeoPackage.prototype.addObservationIcons = function(geopackage) {
   var self = this;
 
-  // Icon.getAll({eventId: self._event._id}, function(err, icons) {
-  //   console.log('icons', icons);
-  //   stream.write(writer.generateObservationStyles(self._event, icons));
-  //   stream.write(writer.generateKMLFolderStart(self._event.name, false));
-  //
-  //   observations.forEach(function(o) {
-  //     var form = null;
-  //     var primary = null;
-  //     var variant = null;
-  //     if (o.properties.forms.length) {
-  //       form = self._event.formMap[o.properties.forms[0].formId];
-  //       primary = o.properties.forms[0][form.primaryField];
-  //       variant = o.properties.forms[0][form.variantField];
-  //     }
-  //
-  //     self.mapObservations(o);
-  //     var name = primary || form.name || self._event.name;
-  //     stream.write(writer.generateObservationPlacemark(name, o, form, primary, variant));
-  //
-  //     o.attachments.forEach(function(attachment) {
-  //       archive.file(path.join(attachmentBase, attachment.relativePath), {name: attachment.relativePath});
-  //     });
-  //   });
-  //
-  //   stream.write(writer.generateKMLFolderClose());
-  //
-  //   // throw in icons
-  //   archive.directory(new api.Icon(self._event._id).getBasePath(), 'icons/' + self._event._id, {date: new Date()});
-  //
-  //   done();
-  // });
-  //
+  var rootDir = path.join(new api.Icon(self._event._id).getBasePath());
+
+  log.info('Add Icons', rootDir);
+  this.createIconTable(geopackage);
+
   var formDirs = fs.readdirSync(path.join(rootDir));
   return formDirs.reduce(function(formSequence, formDir) {
     return formSequence.then(function() {
@@ -653,116 +618,8 @@ GeoPackage.prototype.addObservationIcons = function(geopackage, rootDir) {
         }, Promise.resolve());
       }
     });
-  }, Promise.resolve());
-}
-
-GeoPackage.prototype.createGeoPackageFile = function(callback) {
-  console.log('Create GeoPackage File');
-  var filePath = path.join(__dirname, 'mage.gpkg');
-  fs.unlink(filePath, function() {
-    fs.mkdir(path.dirname(filePath), function() {
-      fs.open(filePath, 'w', function(err){
-        callback(err, filePath);
-      });
-    });
+  }, Promise.resolve())
+  .then(function() {
+    return geopackage;
   });
 }
-
-// GeoJson.prototype.streamObservations = function(stream, archive, done) {
-//   var self = this;
-//
-//   self._filter.states = ['active'];
-//   new api.Observation(self._event).getAll({filter: self._filter}, function(err, observations) {
-//     if (err) return err;
-//
-//     self.mapObservations(observations);
-//     observations = observations.map(function(o) {
-//       return {
-//         geometry: o.geometry,
-//         properties: o.properties,
-//         attachments: o.attachments
-//       };
-//     });
-//
-//     observations.forEach(function(o) {
-//       o.attachments = o.attachments.map(function(attachment) {
-//         return {
-//           name: attachment.name,
-//           relativePath: attachment.relativePath,
-//           size: attachment.size,
-//           contentType: attachment.contentType,
-//           width: attachment.width,
-//           height: attachment.height,
-//         };
-//       });
-//
-//       o.attachments.forEach(function(attachment) {
-//         archive.file(path.join(attachmentBase, attachment.relativePath), {name: attachment.relativePath});
-//       });
-//     });
-//
-//     stream.write(JSON.stringify({
-//       type: 'FeatureCollection',
-//       features: observations
-//     }));
-//
-//     // throw in icons
-//     archive.directory(new api.Icon(self._event._id).getBasePath(), 'mage-export/icons', {date: new Date()});
-//
-//     done();
-//   });
-// };
-//
-// GeoJson.prototype.streamLocations = function(stream, done) {
-//   log.info('writing locations...');
-//
-//   var self = this;
-//   var limit = 2000;
-//
-//   var startDate = self._filter.startDate ? moment(self._filter.startDate) : null;
-//   var endDate = self._filter.endDate ? moment(self._filter.endDate) : null;
-//   var lastLocationId = null;
-//
-//   stream.write('{"type": "FeatureCollection", "features": [');
-//   var locations = [];
-//   async.doUntil(function(done) {
-//     self.requestLocations({startDate: startDate, endDate: endDate, lastLocationId: lastLocationId, limit: limit}, function(err, requestedLocations) {
-//       if (err) return done(err);
-//
-//       locations = requestedLocations;
-//
-//       locations.forEach(location => {
-//         var centroid = turfCentroid(location);
-//         location.properties.mgrs = mgrs.forward(centroid.geometry.coordinates);
-//       });
-//
-//       if (locations.length) {
-//         if (lastLocationId) stream.write(",");  // not first time through
-//
-//         var data = JSON.stringify(locations);
-//         stream.write(data.substr(1, data.length - 2));
-//       } else {
-//         stream.write(']}');
-//       }
-//
-//       log.info('Successfully wrote ' + locations.length + ' locations to GeoJSON');
-//       var last = locations.slice(-1).pop();
-//       if (last) {
-//         var locationTime = moment(last.properties.timestamp);
-//         lastLocationId = last._id;
-//         if (!startDate || startDate.isBefore(locationTime)) {
-//           startDate = locationTime;
-//         }
-//       }
-//
-//       done();
-//     });
-//   },
-//   function() {
-//     return locations.length === 0;
-//   },
-//   function(err) {
-//     log.info('done writing locations');
-//     done(err);
-//   });
-// };
