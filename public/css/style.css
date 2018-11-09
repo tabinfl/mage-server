@@ -101,6 +101,29 @@ a {
 	margin-bottom: 0;
 }
 
+.mask {
+  opacity: .3;
+  pointer-events: none;
+}
+
+.mask-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mask-info {
+  background-color: #fff;
+  padding: 10px 50px;
+  max-width: 33vw;
+  box-shadow: 0 3px 7px rgba(0,0,0,.35);
+}
+
 .content-flex {
   flex: 1 1 0;
   position: relative;

@@ -14,7 +14,7 @@ function AdminLayersController($scope, $filter, $uibModal, $location, Layer, Use
   $scope.hasLayerEditPermission =  _.contains(UserService.myself.role.permissions, 'UPDATE_LAYER');
   $scope.hasLayerDeletePermission =  _.contains(UserService.myself.role.permissions, 'DELETE_LAYER');
 
-  Layer.query(function(layers) {
+  Layer.query({processing: 'any'}, function(layers) {
     $scope.layers = layers;
   });
 
