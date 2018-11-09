@@ -44,7 +44,19 @@ let GeoPackageSchema = new Schema({
     type: {type: String, enum : ['tile', 'feature']},
     minZoom: {type: Number},
     maxZoom: {type: Number}
-  }]
+  }],
+  processing: {
+    type: [{
+      _id: false,
+      count: {type: Number, required: false},
+      total: {type: Number, required: false},
+      description: {type: String, required: false},
+      layer: {type: String, required: true},
+      type: {type: String, enum : ['tile', 'feature']},
+      complete: {type: Boolean}
+    }],
+    default: undefined
+  }
 });
 
 function transform(layer, ret, options) {
@@ -88,6 +100,16 @@ exports.getLayers = function(filter) {
   let conditions = {};
   if (filter.type) conditions.type = filter.type;
   if (filter.layerIds) conditions._id = {$in: filter.layerIds};
+  if (filter.processing) {
+    switch(filter.processing) {
+      case 'processed':
+        conditions.processing = {$exists: false};
+        break;
+      case 'processing':
+        conditions.processing = {$exists: true};
+        break;
+    }
+  }
 
   return Layer.find(conditions).exec();
 };

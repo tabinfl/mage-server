@@ -41,10 +41,32 @@ module.exports = function(app, security) {
 
     geopackage.open(req.files.geopackage)
       .then(result => {
-        result.geopackage.close();
+        const gp = result.geopackage;
 
         req.newLayer.geopackage = req.files.geopackage;
         req.newLayer.tables = result.metadata.tables;
+        req.newLayer.processing = [];
+        for (var i = 0; i < req.newLayer.tables.length; i++) {
+          var gpLayer = req.newLayer.tables[i];
+
+          if (gpLayer.type === 'tile') {
+            req.newLayer.processing.push({
+              layer: gpLayer.name,
+              description: '"' + gpLayer.name + '" layer optimization',
+              complete: false,
+              type: 'tile'
+            });
+          } else {
+            req.newLayer.processing.push({
+              layer: gpLayer.name,
+              description: '"' + gpLayer.name + '" layer index',
+              complete: false,
+              type: 'feature'
+            });
+          }
+        }
+
+        gp.close();
         return next();
       })
       .catch(err => {
@@ -74,6 +96,12 @@ module.exports = function(app, security) {
       type: req.param('type')
     };
 
+    if (!req.param('processing')) {
+      req.parameters.processing = 'processed';
+    } else {
+      req.parameters.processing = req.param('processing');
+    }
+
     next();
   }
 
@@ -83,7 +111,7 @@ module.exports = function(app, security) {
     access.authorize('READ_LAYER_ALL'),
     parseQueryParams,
     function (req, res, next) {
-      new api.Layer().getLayers()
+      new api.Layer().getLayers({processing: req.parameters.processing})
         .then(layers => {
           var response = layerXform.transform(layers, {path: req.getPath()});
           res.json(response);
@@ -128,7 +156,7 @@ module.exports = function(app, security) {
     validateEventAccess,
     parseQueryParams,
     function(req, res, next) {
-      new api.Layer().getLayers({layerIds: req.event.layerIds, type: req.parameters.type})
+      new api.Layer().getLayers({layerIds: req.event.layerIds, type: req.parameters.type, processing: req.parameters.processing})
         .then(layers => {
           var response = layerXform.transform(layers, {path: req.getPath()});
           res.json(response);
@@ -206,7 +234,7 @@ module.exports = function(app, security) {
       } else {
         geopackage.tile(req.layer, req.params.tableName, tileParams)
         .then(tile => {
-          if (!tile) return res.status(404);
+          if (!tile) return res.sendStatus(404);
           res.contentType('image/jpeg');
           res.send(tile);
         })
@@ -246,6 +274,32 @@ module.exports = function(app, security) {
         .then(layer => {
           var response = layerXform.transform(layer, {path: req.getPath()});
           res.location(layer._id.toString()).json(response);
+
+          var layerStatusMap = {};
+          for (var i = 0; i < layer.processing.length; i++) {
+            layerStatusMap[layer.processing[i].layer] = i;
+          }
+
+          // optimize after the layer is returned to the client
+          var currentLayer;
+          geopackage.optimize(path.join(environment.layerBaseDirectory, layer.file.relativePath), function(progress) {
+            if (currentLayer && currentLayer !== progress.layer) {
+              var oldLayerStatus = layer.processing[layerStatusMap[currentLayer]];
+              oldLayerStatus.complete = true;
+              currentLayer = progress.layer;
+            }
+
+            var layerStatus = layer.processing[layerStatusMap[progress.layer]];
+            layerStatus.count = progress.count;
+            layerStatus.total = progress.totalCount;
+            layerStatus.description = progress.description;
+            layer.save();
+          })
+          .then(() => {
+            layer.processing = undefined;
+            layer.save();
+            console.log('GeoPackage optimized')
+          });
         })
         .catch(err => next(err));
     }

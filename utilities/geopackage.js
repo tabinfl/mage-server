@@ -2,12 +2,14 @@ const async = require('async')
   , fs = require('fs-extra')
   , path = require('path')
   , geopackageManager = require('@ngageoint/geopackage')
+  , GeoPackageOptimizer = require('@ngageoint/geopackage-mobile-optimizer')
   , environment = require('../environment/env');
 
 const tileSize = 256;
 
 module.exports = {
   open: open,
+  optimize: optimize,
   tile: tile,
   features: features,
   vectorTile: vectorTile
@@ -17,34 +19,34 @@ function open(file) {
   console.log('Open GeoPackage');
   return geopackageManager.open(file.path)
     .then(geopackage => {
+      console.log('Opened the GeoPackage: ', file.path);
       const tables = geopackage.getTables();
-
-
       const tileTables = tables.tiles.map(tableName => ({name: tableName, type: 'tile'}));
       const featureTables = tables.features.map(tableName => ({name: tableName, type: 'feature'}));
-      for (var i = 0; i < tileTables.length; i++) {
-        var tileTable = tileTables[i];
 
-        var tileDao = geopackage.getTileDao(tileTable.name);
-        tileTable.minZoom = tileDao.minWebMapZoom;
-        tileTable.maxZoom = tileDao.maxWebMapZoom;
-      }
-      return featureTables.reduce((sequence, featureTable) => {
-        return sequence.then(() => {
-          var featureDao = geopackage.getFeatureDao(featureTable.name);
-          console.log('go index the table' + featureTable.name);
-          return featureDao.featureTableIndex.index();
-        });
-      }, Promise.resolve())
-      .then(() => {
-        console.log('indexed the tables')
-        return {
-          geopackage: geopackage,
-          metadata: {
-            tables: tileTables.concat(featureTables)
-          }
-        };
-      });
+      return {
+        geopackage: geopackage,
+        metadata: {
+          tables: tileTables.concat(featureTables)
+        }
+      };
+    })
+    .catch(err => console.log('err', err));
+}
+
+function optimize(path, progress) {
+  return geopackageManager.open(path)
+    .then(geopackage => {
+      return geopackageManager.open(path)
+        .then(outputGeopackage => {
+          return GeoPackageOptimizer.optimize({inputGeoPackage: geopackage, outputGeoPackage: outputGeopackage, same: true, progress: progress})
+            .then(() => {
+              outputGeopackage.close();
+            });
+          })
+          .then(() => {
+            console.log('Optimized the GeoPackage: ', path);
+        })
     })
     .catch(err => console.log('err', err));
 }
