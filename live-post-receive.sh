@@ -3,7 +3,7 @@
 name=mage
 base=/$name
 refspec=wfs3
-pm2_config=$base/live/$name-live.pm2.js
+pm2_config=$base/live/$name-live.config.js
 
 echo "receiving mage live update"
 cd $base/live
