@@ -431,7 +431,7 @@ module.exports = function(app, security) {
     }
   };
 
-  routes.use('/api',
+  routes.get('/api',
     determineReadAccess,
     async (req, res) => {
       const apiDoc = await fs.readJSON(path.resolve(__dirname, 'openapi-static.json'));
@@ -450,7 +450,7 @@ module.exports = function(app, security) {
       return res.status(200).json(apiDoc);
     });
 
-  routes.use('/conformance', (req, res) => {
+  routes.get('/conformance', (req, res) => {
     return res.status(200).json({
       conformsTo: [
         'http://www.opengis.net/spec/wfs-1/3.0/req/core',
@@ -461,7 +461,22 @@ module.exports = function(app, security) {
     });
   });
 
-  routes.use('/collections/:colId/items', async (req, res) => {
+  routes.get('/collections/:colId',
+    determineReadAccess,
+    async (req, res) => {
+      const colId = req.params['colId'];
+      if (!colId) {
+        return res.status(400).json({ code: 'bad_request', description: 'You must specify a collection.' });
+      }
+      const events = await Event.getEventsAsync({ access: req.access });
+      const collections = buildCollectionInfo(events, req.baseUrl);
+      const info = collections.find(col => {
+        return col.id === colId;
+      });
+      return res.json(info);
+    });
+
+  routes.get('/collections/:colId/items', async (req, res) => {
     // TODO: support items.json
     const colId = req.params['colId'];
     if (!colId) {
@@ -493,25 +508,30 @@ module.exports = function(app, security) {
     return res.status(400).json({ code: 'bad_request', description: `Invalid requested format: ${format}` });
   });
 
-  routes.use('/collections',
+  routes.get('/collections',
     determineReadAccess,
     async (req, res) => {
       const events = await Event.getEventsAsync({ access: req.access });
-      const collections = [];
-      for (const event of events) {
-        const obsInfo = observationCollectionInfoForEvent(event, req.baseUrl);
-        const locInfo = locationCollectionInfoForEvent(event, req.baseUrl);
-        collections.push(obsInfo, locInfo);
-      }
+      const collections = buildCollectionInfo(events, req.baseUrl);
       return res.status(200).json({
         links: [
           {
-            rel: 'self', href: `${req.baseUrl}`
+            rel: 'self', href: `${req.baseUrl}/collections`
           }
         ],
         collections: collections
       });
     });
+
+  function buildCollectionInfo(events, baseUrl) {
+    const collections = [];
+    for (const event of events) {
+      const obsInfo = observationCollectionInfoForEvent(event, baseUrl);
+      const locInfo = locationCollectionInfoForEvent(event, baseUrl);
+      collections.push(obsInfo, locInfo);
+    }
+    return collections;
+  }
 
   function observations(event, options) {
     return new Promise((resolve, reject) => {
