@@ -432,6 +432,9 @@
       "userLocationFeatureProperties": {
         "type": "object",
         "properties": {
+          "eventId": {
+            "type": "number"
+          },
           "userId": {
             "type": "string"
           },
