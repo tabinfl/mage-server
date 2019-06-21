@@ -487,13 +487,15 @@ module.exports = function(app, security) {
       });
     });
 
-  routes.use('/collections/:colId/items:format', async (req, res) => {
+  routes.use('/collections/:colId/items', async (req, res) => {
+    // TODO: support items.json
     const colId = req.params['colId'];
     if (!colId) {
       return res.status(400).json({ code: 'bad_request', description: 'You must specify a collection.' });
     }
-    let format = req.params['format'];
-    format = (format.match(/\.(\w+)$/)[1] || 'json').toLowerCase();
+    let format = req.params['format'] || req.query['f'] || '.json';
+    const match = format.match(/\.?(\w+)$/) || [];
+    format = (match[1] || 'json').toLowerCase();
     const parts = colId.match(/event:(\d+):(observations|locations)/);
     const eventId = parts[1];
     const itemType = parts[2];
