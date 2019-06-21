@@ -506,7 +506,7 @@ module.exports = function(app, security) {
       return res.status(200).json({
         links: [
           {
-            rel: 'self', href: `${req.baseUrl}/collections`
+            rel: 'self', href: `${req.baseUrl}`
           }
         ],
         collections: collections
