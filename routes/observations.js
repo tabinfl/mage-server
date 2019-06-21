@@ -200,6 +200,7 @@ module.exports = function(app, security) {
     });
   }
 
+  // eslint-disable-next-line complexity
   function parseQueryParams(req, res, next) {
     // setup defaults
     var parameters = {

@@ -41,7 +41,7 @@ const eventCollectionPathBase = {
 };
 
 const eventCollectionInfoStub = {
-  name: null,
+  id: null,
   title: null,
   description: null,
   links: [],
@@ -222,7 +222,7 @@ function locationItemsPathForEvent(event) {
  */
 function observationCollectionInfoForEvent(event, baseUrl) {
   const info = JSON.parse(JSON.stringify(eventCollectionInfoStub));
-  info.id = `${event._id}:observations`;
+  info.id = `event:${event._id}:observations`;
   info.title = event.name;
   info.description = event.description;
   info.links.push({
@@ -231,6 +231,7 @@ function observationCollectionInfoForEvent(event, baseUrl) {
     type: "application/geo+json",
     title: `${info.title} observation as features`
   });
+  return info;
 }
 
 /**
@@ -238,17 +239,18 @@ function observationCollectionInfoForEvent(event, baseUrl) {
  *
  * @param {Event} event
  */
-function locationCollectionInfoForEvent(event) {
+function locationCollectionInfoForEvent(event, baseUrl) {
   const info = JSON.parse(JSON.stringify(eventCollectionInfoStub));
-  info.id = `${event._id}:locations`;
+  info.id = `event:${event._id}:locations`;
   info.title = event.name;
   info.description = event.description;
   info.links.push({
     rel: 'items',
-    href: '',
+    href: `${baseUrl}/collections/${info.id}/items`,
     type: "application/geo+json",
     title: `${info.title} observation as features`
   });
+  return info;
 }
 
 const observationItemFeatureGeoJsonSchemaBase = {
@@ -385,18 +387,6 @@ function sanitizeName(name) {
   return `${name}`.replace(/(\s|\W)+/g, '_').replace(/(^_+)|(_+$)/g, '').toLowerCase();
 }
 
-/**
- *
- * @param {Form} form
- */
-function geojsonSchemaForForm(form) {
-
-}
-
-function jsonSchemaForFormField(field) {
-
-}
-
 module.exports = function(app, security) {
 
   const express = require('express');
@@ -461,7 +451,6 @@ module.exports = function(app, security) {
     });
 
   routes.use('/conformance', (req, res) => {
-
     return res.status(200).json({
       conformsTo: [
         'http://www.opengis.net/spec/wfs-1/3.0/req/core',
@@ -471,26 +460,6 @@ module.exports = function(app, security) {
       ]
     });
   });
-
-  routes.use('/collections.json',
-    determineReadAccess,
-    async (req, res) => {
-      const events = await Event.getEventsAsync({ access: req.access });
-      const collections = [];
-      for (const event of events) {
-        const obsInfo = observationCollectionInfoForEvent(event);
-        const locInfo = locationCollectionInfoForEvent(event);
-        collections.push(obsInfo, locInfo);
-      }
-      return res.status(200).json({
-        links: [
-          {
-            rel: 'self', href: ``
-          }
-        ],
-        collections: collections
-      });
-    });
 
   routes.use('/collections/:colId/items', async (req, res) => {
     // TODO: support items.json
@@ -515,10 +484,34 @@ module.exports = function(app, security) {
         const obsFeatureCollection = await observations(event, options);
         return res.contentType('application/geo+json').send(obsFeatureCollection);
       }
+      if (itemType === 'locations') {
+        const locFeatureCollection = await locations(event, options);
+        return res.contentType('application/geo+json').send(locFeatureCollection);
+      }
       return res.status(400).json({ code: 'bad_request', description: `Unknown item type: ${itemType}` });
     }
     return res.status(400).json({ code: 'bad_request', description: `Invalid requested format: ${format}` });
   });
+
+  routes.use('/collections',
+    determineReadAccess,
+    async (req, res) => {
+      const events = await Event.getEventsAsync({ access: req.access });
+      const collections = [];
+      for (const event of events) {
+        const obsInfo = observationCollectionInfoForEvent(event, req.baseUrl);
+        const locInfo = locationCollectionInfoForEvent(event, req.baseUrl);
+        collections.push(obsInfo, locInfo);
+      }
+      return res.status(200).json({
+        links: [
+          {
+            rel: 'self', href: `${req.baseUrl}/collections`
+          }
+        ],
+        collections: collections
+      });
+    });
 
   function observations(event, options) {
     return new Promise((resolve, reject) => {
@@ -527,12 +520,48 @@ module.exports = function(app, security) {
           log.error('error fetching observations: ', err);
           return reject(err);
         }
-        return resolve(transformObservations(observations, event));
+        return resolve(observationFeatureCollection(observations, event));
       });
     });
   }
 
-  function transformObservations(observations, event) {
+  function locations(event) {
+    const locApi = new api.Location();
+    const options = {
+      // filter: req.parameters.filter,
+      // limit: req.parameters.limit,
+      groupByUser: false,
+      filter: {
+        eventId: event._id
+      }
+    };
+    return new Promise((resolve, reject) => {
+      locApi.getLocations(options, function(err, locations) {
+        if (err) {
+          log.error('error fetching locations: ', err);
+          return reject(err);
+        }
+        let features = locations.map(loc => {
+          return {
+            type: 'Feature',
+            geometry: loc.geometry,
+            properties: {
+              eventId: loc.eventId,
+              userId: loc.userId,
+              deviceName: loc.deviceName,
+              timeStamp: loc.timestamp
+            }
+          };
+        });
+        return resolve({
+          type: 'FeatureCollection',
+          features
+        });
+      });
+    });
+  }
+
+  function observationFeatureCollection(observations, event) {
     const features = observations.map(function(observation) {
       const feature = {
         type: 'Feature',

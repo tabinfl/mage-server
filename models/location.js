@@ -34,6 +34,7 @@ exports.createLocations = function(locations, callback) {
   Location.create(locations, callback);
 };
 
+// eslint-disable-next-line complexity
 exports.getLocations = function(options, callback) {
   var conditions = {};
 
