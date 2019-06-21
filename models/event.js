@@ -491,6 +491,20 @@ exports.getEvents = function(options, callback) {
   });
 };
 
+/**
+ * @returns Promise<Event[]>
+ */
+exports.getEventsAsync = function(options) {
+  return new Promise((resolve, reject) => {
+    exports.getEvents(options, (err, events) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(events);
+    });
+  });
+};
+
 exports.getById = function(id, options, callback) {
 
   if (typeof options === 'function') {
