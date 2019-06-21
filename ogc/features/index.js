@@ -419,6 +419,23 @@ module.exports = function(app, security) {
     next();
   };
 
+  const validateObservationReadAccess = (req, res, next) => {
+    if (access.userHasPermission(req.user, 'READ_OBSERVATION_ALL')) {
+      next();
+    } else if (access.userHasPermission(req.user, 'READ_OBSERVATION_EVENT')) {
+      // Make sure I am part of this event
+      Event.userHasEventPermission(req.event, req.user._id, 'read', function(err, hasPermission) {
+        if (hasPermission) {
+          return next();
+        } else {
+          return res.sendStatus(403);
+        }
+      });
+    } else {
+      res.sendStatus(403);
+    }
+  };
+
   routes.use('/api',
     determineReadAccess,
     async (req, res) => {
@@ -469,6 +486,78 @@ module.exports = function(app, security) {
         collections: collections
       });
     });
+
+  routes.use('/collections/:colId/items:format', async (req, res) => {
+    const colId = req.params['colId'];
+    if (!colId) {
+      return res.status(400).json({ code: 'bad_request', description: 'You must specify a collection.' });
+    }
+    let format = req.params['format'];
+    format = (format.match(/\.(\w+)$/)[1] || 'json').toLowerCase();
+    const parts = colId.match(/event:(\d+):(observations|locations)/);
+    const eventId = parts[1];
+    const itemType = parts[2];
+    const event = await Event.getByIdAsync(eventId, {});
+    var options = {
+      // filter: req.parameters.filter,
+      // fields: req.parameters.fields,
+      // sort: req.parameters.sort
+    };
+    if (format === 'json') {
+      if (itemType === 'observations') {
+        const obsFeatureCollection = await observations(event, options);
+        return res.contentType('application/geo+json').send(obsFeatureCollection);
+      }
+      return res.status(400).json({ code: 'bad_request', description: `Unknown item type: ${itemType}` });
+    }
+    return res.status(400).json({ code: 'bad_request', description: `Invalid requested format: ${format}` });
+  });
+
+  function observations(event, options) {
+    return new Promise((resolve, reject) => {
+      new api.Observation(event).getAll(options, function(err, observations) {
+        if (err) {
+          log.error('error fetching observations: ', err);
+          return reject(err);
+        }
+        return resolve(transformObservations(observations, event));
+      });
+    });
+  }
+
+  function transformObservations(observations, event) {
+    const features = observations.map(function(observation) {
+      const feature = {
+        type: 'Feature',
+        geometry: observation.geometry,
+        properties: {}
+      };
+      let obsForms = observation.properties.forms || [];
+      obsForms = obsForms.reduce((prev, cur) => {
+        prev[`${cur.formId}`] = cur;
+        return prev;
+      } , {});
+      event.forms.forEach(form => {
+        const obsFields = obsForms[`${form._id}`];
+        if (!obsFields) {
+          return;
+        }
+        const formPrefix = keyPrefixForForm(form);
+        for (const field of form.fields) {
+          const fieldKey = keyForFormField(formPrefix, field);
+          const obsVal = obsFields[field.name];
+          if (obsVal) {
+            feature.properties[fieldKey] = obsVal;
+          }
+        }
+      });
+      return feature;
+    });
+    return {
+      type: 'FeatureCollection',
+      features
+    };
+  }
 
   app.use('/api/ogc/features', routes);
 };

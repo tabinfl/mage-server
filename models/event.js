@@ -544,6 +544,17 @@ exports.getById = function(id, options, callback) {
   });
 };
 
+exports.getByIdAsync = function(eventId, options) {
+  return new Promise((resolve, reject) => {
+    return exports.getById(eventId, options, (err, event) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(event);
+    });
+  });
+};
+
 // TODO probably should live in event api
 exports.filterEventsByUserId = filterEventsByUserId;
 exports.userHasEventPermission = userHasEventPermission;
