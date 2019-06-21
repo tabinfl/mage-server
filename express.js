@@ -25,6 +25,7 @@ app.set('config', config);
 app.enable('trust proxy');
 
 app.set('view engine', 'pug');
+app.set('json spaces', 2);
 
 app.use(function(req, res, next) {
   req.getRoot = function() {
