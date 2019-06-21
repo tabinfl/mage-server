@@ -548,7 +548,6 @@ module.exports = function(app, security) {
             properties: {
               eventId: loc.eventId,
               userId: loc.userId,
-              deviceName: loc.deviceName,
               timeStamp: loc.timestamp
             }
           };
