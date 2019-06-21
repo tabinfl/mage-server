@@ -286,17 +286,22 @@ function itemSchemaForFormsOfEvent(event) {
   const schemaRef = `event${event._id}-observationFeatureCollectionGeoJSON`;
   const pair = {};
   pair[schemaRef] = {
-    type: 'object',
-    properties: {
-      type: {
-        type: 'string',
-        enum: [ 'FeatureCollection' ]
-      },
-      features: {
-        type: 'array',
-        items: itemSchema
+    allOf: [
+      { "$ref": "#/components/schemas/featureCollectoinGeoJSON" },
+      {
+        type: 'object',
+        properties: {
+          type: {
+            type: 'string',
+            enum: [ 'FeatureCollection' ]
+          },
+          features: {
+            type: 'array',
+            items: itemSchema
+          }
+        }
       }
-    }
+    ]
   };
   return pair;
 }
