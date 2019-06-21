@@ -6,7 +6,7 @@
     "contact" : {
       "name": "MAGE team",
       "email": "mage@nga.mil",
-      "url": "https://github.com/ngageoint/mage-server"
+      "url": "https://github.com/ngageoint/mage-server/tree/wfs3"
     },
     "license" : {
       "name": "Apache License 2.0",
@@ -16,7 +16,7 @@
   },
   "servers" : [
     {
-      "url": "https://mageogc.geointservices.io/ogc/features",
+      "url": "https://mageogc.geointservices.io/api/ogc/features",
       "description": "OGC API Hackathon 2019 server"
     }
   ],
