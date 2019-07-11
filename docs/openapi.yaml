@@ -10,12 +10,12 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0
   version: 5.2.6
 servers:
-- url: /
+- url: http://localhost:4242
 paths:
   /auth/local/signin:
     post:
       tags:
-      - Local Authentication
+      - Auth
       description: Authenticate username and password against local MAGE database
       operationId: login
       requestBody:
@@ -32,11 +32,11 @@ paths:
   /auth/local/authorize:
     post:
       tags:
-      - Local Authentication
-      description: Authorize device id
+      - Auth
+      description: Authorize device ID
       operationId: authorize
       requestBody:
-        description: devive id to authorize
+        description: Device ID to authorize
         content:
           application/json:
             schema:
@@ -57,7 +57,7 @@ paths:
   /api/logout:
     post:
       tags:
-      - Authentication
+      - Auth
       description: logout
       operationId: logout
       responses:
