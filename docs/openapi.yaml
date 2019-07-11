@@ -1922,6 +1922,13 @@ paths:
           description: export response
           content: {}
 components:
+  securitySchemes:
+    authToken:
+      type: http
+      description: >
+        MAGE generates an authentication token when a client authenticates initially.
+        The client can use the token for subsequent requests until it expires.
+      scheme: bearer
   schemas:
     User:
       required:
