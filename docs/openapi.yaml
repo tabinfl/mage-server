@@ -1,0 +1,2343 @@
+openapi: 3.0.1
+info:
+  title: MAGE (Mobile Awareness GEOINT Environment)
+  description: MAGE API
+  contact:
+    name: MAGE Support
+    email: mage@nga.mil
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  version: 5.2.6
+servers:
+- url: /
+paths:
+  /auth/local/signin:
+    post:
+      tags:
+      - Local Authentication
+      description: Authenticate username and password against local MAGE database
+      operationId: login
+      requestBody:
+        description: login request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        200:
+          description: authentication response
+          content: {}
+  /auth/local/authorize:
+    post:
+      tags:
+      - Local Authentication
+      description: Authorize device id
+      operationId: authorize
+      requestBody:
+        description: devive id to authorize
+        content:
+          application/json:
+            schema:
+              required:
+              - uid
+              type: object
+              properties:
+                uid:
+                  type: string
+        required: true
+      responses:
+        200:
+          description: Authorize response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+  /api/logout:
+    post:
+      tags:
+      - Authentication
+      description: logout
+      operationId: logout
+      responses:
+        200:
+          description: logout response
+          content: {}
+  /api/users:
+    get:
+      tags:
+      - User
+      description: Returns all users
+      operationId: getUsers
+      responses:
+        200:
+          description: user response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Users'
+    post:
+      tags:
+      - User
+      description: Creates a new user.  Duplicates usernames are not allowed
+      operationId: addUser
+      requestBody:
+        description: user create body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+        required: true
+      responses:
+        200:
+          description: user response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+  /api/users/{id}:
+    get:
+      tags:
+      - User
+      description: Returns a single user based on id
+      operationId: getUserById
+      parameters:
+      - name: id
+        in: path
+        description: id of user to fetch
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: user response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      tags:
+      - User
+      description: update a single user based on id
+      operationId: updateUserById
+      parameters:
+      - name: id
+        in: path
+        description: id of user to update
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: user update body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+        required: true
+      responses:
+        200:
+          description: user update response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags:
+      - User
+      description: deletes a single user based on id
+      operationId: deleteUser
+      parameters:
+      - name: id
+        in: path
+        description: id of user to delete
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: user deleted
+          content: {}
+  /api/users/{id}/avatar:
+    get:
+      tags:
+      - User
+      description: Returns users avatar based on user id
+      operationId: getUserAvatar
+      parameters:
+      - name: id
+        in: path
+        description: id of user
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: user avatar response
+          content: {}
+  /api/users/{id}/icon:
+    get:
+      tags:
+      - User
+      description: Returns users map icon based on user id
+      operationId: getUserIcon
+      parameters:
+      - name: id
+        in: path
+        description: id of user
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: user icon response
+          content: {}
+  /api/users/{userId}/events/{eventId}/recent:
+    post:
+      tags:
+      - User
+      description: Adds event to top of recent list, capped at 5
+      operationId: addRecentEventForUser
+      parameters:
+      - name: userId
+        in: path
+        description: id of user to add recent event
+        required: true
+        schema:
+          type: string
+      - name: eventId
+        in: path
+        description: id of recent event
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: user response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /api/users/myself:
+    get:
+      tags:
+      - User
+      description: Returns user currently logged
+      operationId: getMyself
+      responses:
+        200:
+          description: user currently logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      tags:
+      - User
+      description: update myself
+      operationId: updateMyself
+      responses:
+        200:
+          description: user update response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /api/logins:
+    get:
+      tags:
+      - User
+      description: Returns user logins
+      operationId: getUserLogins
+      parameters:
+      - name: userId
+        in: query
+        description: id of user to filter on
+        schema:
+          type: string
+      - name: deviceId
+        in: query
+        description: id of device to filter on
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        description: iso8601 start date to filter (inclusive)
+        schema:
+          type: string
+          format: dateTime
+      - name: endDate
+        in: query
+        description: iso8601 end date filter (exclusive)
+        schema:
+          type: string
+          format: dateTime
+      responses:
+        200:
+          description: login response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+  /api/devices:
+    get:
+      tags:
+      - Device
+      description: Returns all devices
+      operationId: getDevices
+      responses:
+        200:
+          description: device response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+    post:
+      tags:
+      - Device
+      description: add new device
+      operationId: addDevice
+      requestBody:
+        description: new device body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceCreate'
+        required: true
+      responses:
+        200:
+          description: new device response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+  /api/roles:
+    get:
+      tags:
+      - Role
+      description: get all roles
+      operationId: getRoles
+      responses:
+        200:
+          description: role response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+  /api/roles/{id}:
+    get:
+      tags:
+      - Role
+      description: get role by id
+      operationId: getRoleById
+      parameters:
+      - name: id
+        in: path
+        description: id of role to fetch
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: role response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+  /api/devices/{id}:
+    get:
+      tags:
+      - Device
+      description: Returns a single device based on id
+      operationId: getDeviceById
+      parameters:
+      - name: id
+        in: path
+        description: id of device to fetch
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: device response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+    put:
+      tags:
+      - Device
+      description: update a single device based on id
+      operationId: updateDeviceById
+      parameters:
+      - name: id
+        in: path
+        description: id of device to update
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: device update body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceCreate'
+        required: true
+      responses:
+        200:
+          description: device update response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+    delete:
+      tags:
+      - Device
+      description: deletes a single device based on id
+      operationId: deleteDevice
+      parameters:
+      - name: id
+        in: path
+        description: id of device to delete
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: user deleted
+          content: {}
+  /api/teams:
+    get:
+      tags:
+      - Team
+      description: get all teams
+      operationId: getTeams
+      responses:
+        200:
+          description: team response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+    post:
+      tags:
+      - Team
+      description: add new team
+      operationId: addTeam
+      requestBody:
+        description: new team body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamCreate'
+        required: true
+      responses:
+        200:
+          description: new team response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+  /api/teams/{id}:
+    get:
+      tags:
+      - Team
+      description: Returns a single team based on id
+      operationId: getTeamById
+      parameters:
+      - name: id
+        in: path
+        description: id of team to fetch
+        required: true
+        schema:
+          type: number
+      responses:
+        200:
+          description: team response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+    put:
+      tags:
+      - Team
+      description: update a single team based on id
+      operationId: updateTeamById
+      parameters:
+      - name: id
+        in: path
+        description: id of team to update
+        required: true
+        schema:
+          type: number
+      requestBody:
+        description: team update body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamCreate'
+        required: true
+      responses:
+        200:
+          description: team update response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+    delete:
+      tags:
+      - Team
+      description: deletes a single team based on id
+      operationId: deleteTeam
+      parameters:
+      - name: id
+        in: path
+        description: id of team to delete
+        required: true
+        schema:
+          type: number
+      responses:
+        204:
+          description: team deleted
+          content: {}
+  /api/teams/{id}/user:
+    post:
+      tags:
+      - Team
+      description: Add new user to this team
+      operationId: addUserToTeam
+      parameters:
+      - name: id
+        in: path
+        description: id of team to fetch
+        required: true
+        schema:
+          type: number
+      requestBody:
+        description: team body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        200:
+          description: team response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+  /api/teams/{id}/user/{userId}:
+    delete:
+      tags:
+      - Team
+      description: removes a user from the team
+      operationId: removeUserFromTeam
+      parameters:
+      - name: id
+        in: path
+        description: id of team
+        required: true
+        schema:
+          type: number
+      - name: userId
+        in: path
+        description: id of user to delete from team
+        required: true
+        schema:
+          type: number
+      responses:
+        204:
+          description: team deleted
+          content: {}
+  /api/events:
+    get:
+      tags:
+      - Event
+      description: get all events
+      operationId: getEvents
+      parameters:
+      - name: userId
+        in: query
+        schema:
+          type: string
+      - name: state
+        in: query
+        schema:
+          type: string
+      responses:
+        200:
+          description: event response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+    post:
+      tags:
+      - Event
+      description: add new event
+      operationId: addEvent
+      requestBody:
+        description: new event body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventCreate'
+        required: true
+      responses:
+        200:
+          description: new event response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+  /api/events/{id}:
+    get:
+      tags:
+      - Event
+      description: Returns a single event based on id
+      operationId: getEventById
+      parameters:
+      - name: id
+        in: path
+        description: id of event to fetch
+        required: true
+        schema:
+          type: number
+      responses:
+        200:
+          description: event response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+    put:
+      tags:
+      - Event
+      description: update a single event based on id
+      operationId: updateEventById
+      parameters:
+      - name: id
+        in: path
+        description: id of event to update
+        required: true
+        schema:
+          type: number
+      requestBody:
+        description: event update body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventCreate'
+        required: true
+      responses:
+        200:
+          description: event update response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+    delete:
+      tags:
+      - Event
+      description: deletes a single event based on id
+      operationId: deleteEvent
+      parameters:
+      - name: id
+        in: path
+        description: id of event to delete
+        required: true
+        schema:
+          type: number
+      responses:
+        204:
+          description: event deleted
+          content: {}
+  /api/events/{id}/teams:
+    get:
+      tags:
+      - Event
+      description: get teams for an event
+      operationId: getTeamsForEvent
+      parameters:
+      - name: id
+        in: path
+        description: id of event to update
+        required: true
+        schema:
+          type: number
+      - name: populate
+        in: query
+        description: populate parameter
+        schema:
+          type: string
+      responses:
+        200:
+          description: teams response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+    post:
+      tags:
+      - Event
+      description: add a team to an event
+      operationId: addTeamToEvent
+      parameters:
+      - name: id
+        in: path
+        description: id of event to update
+        required: true
+        schema:
+          type: number
+      requestBody:
+        description: team body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+        required: true
+      responses:
+        200:
+          description: event update response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+  /api/events/{id}/users:
+    get:
+      tags:
+      - Event
+      description: get users for an event
+      operationId: getUsersForEvent
+      parameters:
+      - name: id
+        in: path
+        description: id of event to update
+        required: true
+        schema:
+          type: number
+      responses:
+        200:
+          description: users response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /api/events/{id}/teams/{teamId}:
+    delete:
+      tags:
+      - Event
+      description: removes a team from the event
+      operationId: removeTeamFromEvent
+      parameters:
+      - name: id
+        in: path
+        description: id of event
+        required: true
+        schema:
+          type: number
+      - name: teamId
+        in: path
+        description: id of the team to remove from event
+        required: true
+        schema:
+          type: number
+      responses:
+        204:
+          description: event deleted
+          content: {}
+  /api/events/{eventId}/layers:
+    get:
+      tags:
+      - Layer
+      description: get layers for the specified event
+      operationId: getLayersForEvent
+      parameters:
+      - name: eventId
+        in: path
+        description: id of the event to get layers for
+        required: true
+        schema:
+          type: number
+      - name: type
+        in: query
+        description: layer type filter, i.e. Imagery or Feature
+        schema:
+          type: string
+      responses:
+        200:
+          description: layer responses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Layer'
+    post:
+      tags:
+      - Event
+      description: add a layer to an event
+      operationId: addLayerToEvent
+      parameters:
+      - name: eventId
+        in: path
+        description: id of event to update
+        required: true
+        schema:
+          type: number
+      requestBody:
+        description: layer body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Layer'
+        required: true
+      responses:
+        200:
+          description: event update response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+  /api/events/{id}/layers/{layerId}:
+    delete:
+      tags:
+      - Event
+      description: removes a layer from the event
+      operationId: removeLayerFromEvent
+      parameters:
+      - name: id
+        in: path
+        description: id of event
+        required: true
+        schema:
+          type: number
+      - name: layerId
+        in: path
+        description: id of the layer to remove from event
+        required: true
+        schema:
+          type: number
+      responses:
+        204:
+          description: event deleted
+          content: {}
+  /api/events/{id}/form.zip:
+    get:
+      tags:
+      - Event
+      description: Export a zip archive of the form .  Includes metadata and icon
+        symbology
+      operationId: getFormArchive
+      parameters:
+      - name: id
+        in: path
+        description: id of event to fetch
+        required: true
+        schema:
+          type: number
+      responses:
+        200:
+          description: form archive response
+          content: {}
+  /api/events/{eventId}/form/icons.zip:
+    get:
+      tags:
+      - Event
+      description: get all icons
+      operationId: getIcons
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which icon resides
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: icon response
+          content: {}
+  /api/events/{eventId}/form/icons:
+    get:
+      tags:
+      - Event
+      description: Returns the default icon for this form
+      operationId: getDefaultIcon
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which icon resides
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: form response
+          content: {}
+    post:
+      tags:
+      - Event
+      description: add new default icon
+      operationId: addDefaultIcon
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which icon resides
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: new icon response
+          content: {}
+    delete:
+      tags:
+      - Event
+      description: deletes the default icon
+      operationId: deleteDefaultIcon
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which icon resides
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: icon deleted
+          content: {}
+  /api/events/{eventId}/form/icons/{type}:
+    get:
+      tags:
+      - Event
+      description: Returns a icon based on type
+      operationId: getTypeIcon
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which icon resides
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: path
+        description: icon type
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: form response
+          content: {}
+    post:
+      tags:
+      - Event
+      description: add new type icon
+      operationId: addTypeIcon
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which icon resides
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: path
+        description: icon type
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: new icon response
+          content: {}
+    delete:
+      tags:
+      - Event
+      description: deletes a type icon
+      operationId: deleteTypeIcon
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which icon resides
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: path
+        description: icon type
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: icon deleted
+          content: {}
+  /api/events/{eventId}/form/icons/{type}/{variant}:
+    get:
+      tags:
+      - Event
+      description: Returns a single form based on id
+      operationId: getIcon
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which icon resides
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: path
+        description: icon type
+        required: true
+        schema:
+          type: string
+      - name: variant
+        in: path
+        description: variant type
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: form response
+          content: {}
+    post:
+      tags:
+      - Event
+      description: add new icon
+      operationId: addIcon
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which icon resides
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: path
+        description: icon type
+        required: true
+        schema:
+          type: string
+      - name: variant
+        in: path
+        description: variant type
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: new icon response
+          content: {}
+    delete:
+      tags:
+      - Event
+      description: deletes a single icon
+      operationId: deleteIcon
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which icon resides
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: path
+        description: icon type
+        required: true
+        schema:
+          type: string
+      - name: variant
+        in: path
+        description: variant type
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: icon deleted
+          content: {}
+  /api/events/{eventId}/observations:
+    get:
+      tags:
+      - Observation
+      description: get all observations for event
+      operationId: getObservations
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to retrieve observations
+        required: true
+        schema:
+          type: number
+      - name: fields
+        in: query
+        description: feature fields to project in response (JSON)
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        schema:
+          type: string
+          format: dateTime
+      - name: endDate
+        in: query
+        schema:
+          type: string
+          format: dateTime
+      - name: bbox
+        in: query
+        description: bounding box array [minx,miny,maxx,maxy]
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: number
+      - name: states
+        in: query
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: observation response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Feature'
+    post:
+      tags:
+      - Observation
+      description: add new observation
+      operationId: addObservationDeprecated
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId for which to create observation
+        required: true
+        schema:
+          type: number
+      requestBody:
+        description: observation request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feature'
+        required: true
+      responses:
+        200:
+          description: observation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feature'
+      deprecated: true
+  /api/events/{eventId}/observations/id:
+    post:
+      tags:
+      - Observation
+      description: Generate a new observation resource location
+      operationId: createObservationId
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId for which to create observation
+        required: true
+        schema:
+          type: number
+      responses:
+        200:
+          description: new observation location
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+  /api/events/{eventId}/observations/{observationId}:
+    get:
+      tags:
+      - Observation
+      description: get observation for eventId
+      operationId: getObservation
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to retrieve observation
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId for observation
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: feature fields to project in response (JSON)
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        schema:
+          type: string
+          format: dateTime
+      - name: endDate
+        in: query
+        schema:
+          type: string
+          format: dateTime
+      - name: bbox
+        in: query
+        description: bounding box array [minx,miny,maxx,maxy]
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: number
+      - name: states
+        in: query
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: observation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feature'
+    put:
+      tags:
+      - Observation
+      description: update observation for eventId
+      operationId: updateObservationDeprecated
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to update observation
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId for observation
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: observation request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feature'
+        required: true
+      responses:
+        200:
+          description: observation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feature'
+      deprecated: true
+  /api/events/{eventId}/observations/id/{observationId}/:
+    put:
+      tags:
+      - Observation
+      description: update observation for eventId
+      operationId: updateObservation
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to update observation
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId for observation
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: observation request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feature'
+        required: true
+      responses:
+        200:
+          description: observation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feature'
+  /api/events/{eventId}/observations/{observationId}/favorite:
+    put:
+      tags:
+      - Observation
+      description: favorite observation for provided event
+      operationId: addFavoriteObservation
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to observation lives
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId for observation to favorite
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: observation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureState'
+    delete:
+      tags:
+      - Observation
+      description: remove favorite for observation for provided event
+      operationId: removeFavoriteObservation
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to observation lives
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId for observation to remove favorite
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: observation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureState'
+  /api/events/{eventId}/observations/{observationId}/important:
+    put:
+      tags:
+      - Observation
+      description: add/update important on provided observation for provided event
+      operationId: addObservationImportant
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to add/update observation important
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId for observation
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: important request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObservationImportantCreate'
+        required: true
+      responses:
+        200:
+          description: observation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureState'
+    delete:
+      tags:
+      - Observation
+      description: remove important on provided observation for provided event
+      operationId: removeObservationImportant
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to remove observation important
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId for observation
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: observation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureState'
+  /api/events/{eventId}/observations/{observationId}/states:
+    post:
+      tags:
+      - Observation
+      description: update state on provided observation for provided event
+      operationId: addObservationState
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to update observation state
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId for observation
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: state request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeatureStateCreate'
+        required: true
+      responses:
+        200:
+          description: observation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureState'
+  /api/events/{eventId}/observations/{observationId}/attachments:
+    get:
+      tags:
+      - Observation
+      description: get attachments for observation in event
+      operationId: getAttachments
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to retrieve observation attachments
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId for observation
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: attachment response
+          content:
+            application/octet-stream:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attachment'
+    post:
+      tags:
+      - Observation
+      description: add new attachment
+      operationId: addAttachment
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to create attachment
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId in which to create attachment
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          mulitpart/form-data:
+            schema:
+              required:
+              - attachment
+              properties:
+                attachment:
+                  type: string
+                  description: attachment
+                  format: binary
+        required: true
+      responses:
+        200:
+          description: attachment response
+          content: {}
+  /api/events/{eventId}/observations/{observationId}/attachments/{attachmentId}:
+    get:
+      tags:
+      - Observation
+      description: get attachment for observation in event
+      operationId: getAttachment
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to retrieve observation
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId for observation
+        required: true
+        schema:
+          type: string
+      - name: attachmentId
+        in: path
+        description: id of attachment to fetch
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: attachment response
+          content: {}
+    put:
+      tags:
+      - Observation
+      description: update attachment for observation in event
+      operationId: updateAttachment
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to update observation attachment
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId for observation
+        required: true
+        schema:
+          type: string
+      - name: attachmentId
+        in: path
+        description: id of attachment to update
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - attachment
+              properties:
+                attachment:
+                  type: string
+                  description: attachment
+                  format: binary
+        required: true
+      responses:
+        200:
+          description: attachment response
+          content: {}
+    delete:
+      tags:
+      - Observation
+      description: delete attachment for observation in event
+      parameters:
+      - name: eventId
+        in: path
+        description: eventId in which to retrieve features
+        required: true
+        schema:
+          type: number
+      - name: observationId
+        in: path
+        description: observationId for feature
+        required: true
+        schema:
+          type: string
+      - name: attachmentId
+        in: path
+        description: id of attachment to update
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: attachment delete
+          content: {}
+  /api/layers:
+    get:
+      tags:
+      - Layer
+      description: get all layers
+      operationId: getLayers
+      parameters:
+      - name: type
+        in: query
+        description: layer type filter, i.e. Imagery or Feature
+        schema:
+          type: string
+      responses:
+        200:
+          description: layer response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Layer'
+    post:
+      tags:
+      - Layer
+      description: add new layer
+      operationId: addLayer
+      requestBody:
+        description: new layer body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LayerCreate'
+        required: true
+      responses:
+        200:
+          description: new layer response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Layer'
+  /api/layers/{id}:
+    get:
+      tags:
+      - Layer
+      description: Returns a single layer based on id
+      operationId: getLayerById
+      parameters:
+      - name: id
+        in: path
+        description: id of layer to fetch
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: layer response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Layer'
+    put:
+      tags:
+      - Layer
+      description: update a single layer based on id
+      operationId: updateLayerById
+      parameters:
+      - name: id
+        in: path
+        description: id of layer to update
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: layer update body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LayerCreate'
+        required: true
+      responses:
+        200:
+          description: layer update response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Layer'
+    delete:
+      tags:
+      - Layer
+      description: deletes a single layer based on id
+      operationId: deleteLayer
+      parameters:
+      - name: id
+        in: path
+        description: id of layer to delete
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: layer deleted
+          content: {}
+  /api/events/{eventId}/layers/{layerId}/features:
+    get:
+      tags:
+      - Layer
+      description: get features for specified layer in event
+      operationId: getFeaturesForLayer
+      parameters:
+      - name: eventId
+        in: path
+        description: id of the event to get features for
+        required: true
+        schema:
+          type: number
+      - name: layerId
+        in: path
+        description: id of the layer to get features for
+        required: true
+        schema:
+          type: number
+      responses:
+        200:
+          description: feature responses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Feature'
+  /api/events/{eventId}/locations:
+    get:
+      tags:
+      - Location
+      description: get all locations
+      operationId: getLocations
+      parameters:
+      - name: eventId
+        in: path
+        description: id of event to get locations for
+        required: true
+        schema:
+          type: number
+      - name: startDate
+        in: query
+        schema:
+          type: string
+          format: dateTime
+      - name: endDate
+        in: query
+        schema:
+          type: string
+          format: dateTime
+      - name: lastLocationId
+        in: query
+        description: locationId of last item in previous page (paging)
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: limit locations (paging)
+        schema:
+          type: number
+      responses:
+        200:
+          description: location response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Feature'
+    post:
+      tags:
+      - Location
+      description: add new location for current user in the specified event
+      operationId: addLocation
+      parameters:
+      - name: eventId
+        in: path
+        description: id of event to post location to
+        required: true
+        schema:
+          type: number
+      requestBody:
+        description: new location body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feature'
+        required: true
+      responses:
+        200:
+          description: location response
+          content: {}
+  /api/events/{eventId}/locations/users:
+    get:
+      tags:
+      - Location
+      description: get all locations grouped by user
+      operationId: getLocationsByUser
+      parameters:
+      - name: eventId
+        in: path
+        description: id of event to update location to
+        required: true
+        schema:
+          type: number
+      - name: startDate
+        in: query
+        schema:
+          type: string
+          format: dateTime
+      - name: endDate
+        in: query
+        schema:
+          type: string
+          format: dateTime
+      - name: lastLocationId
+        in: query
+        description: locationId of last item in previous page (paging)
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: limit locations (paging)
+        schema:
+          type: number
+      responses:
+        200:
+          description: location response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Feature'
+  /api/settings:
+    get:
+      tags:
+      - Settings
+      description: get settings
+      operationId: getSettings
+      responses:
+        200:
+          description: export response
+          content: {}
+  /api/settings/{type}:
+    get:
+      tags:
+      - Settings
+      description: get settings by type
+      operationId: getSettingByType
+      parameters:
+      - name: type
+        in: path
+        description: type name to update
+        required: true
+        schema:
+          type: string
+          enum:
+          - banner
+          - disclaimer
+      responses:
+        200:
+          description: settings response
+          content: {}
+    put:
+      tags:
+      - Settings
+      description: update settings by type
+      operationId: updateSettingByType
+      parameters:
+      - name: type
+        in: path
+        description: type name to update
+        required: true
+        schema:
+          type: string
+          enum:
+          - banner
+          - disclaimer
+      responses:
+        200:
+          description: settings response
+          content: {}
+  /api/{exportType}:
+    get:
+      tags:
+      - Export
+      description: export mage data (GeoJSON, KML or Shapefiles)
+      operationId: export
+      parameters:
+      - name: exportType
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - geojson
+          - kml
+          - shapefile
+      - name: startDate
+        in: query
+        schema:
+          type: string
+          format: dateTime
+      - name: endDate
+        in: query
+        schema:
+          type: string
+          format: dateTime
+      - name: layerIds
+        in: query
+        description: ids of feature layers to export
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: fft
+        in: query
+        description: export locations
+        schema:
+          type: boolean
+      responses:
+        200:
+          description: export response
+          content: {}
+components:
+  schemas:
+    User:
+      required:
+      - active
+      - displayName
+      - enabled
+      - id
+      - role
+      - username
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        displayName:
+          type: string
+        email:
+          type: string
+        phones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+        active:
+          type: boolean
+        enabled:
+          type: boolean
+        role:
+          $ref: '#/components/schemas/Role'
+        avatarUrl:
+          type: string
+        iconUrl:
+          type: string
+        icon:
+          $ref: '#/components/schemas/UserIcon'
+        recentEventIds:
+          type: array
+          items:
+            type: number
+        authentication:
+          type: object
+          properties:
+            type:
+              type: string
+        createdAt:
+          type: string
+          format: dateTime
+        lastUpdated:
+          type: string
+          format: dateTime
+    Choice:
+      type: object
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        value:
+          type: string
+    Form:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        variantField:
+          type: string
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/Field'
+    ObservationImportantCreate:
+      type: object
+      properties:
+        description:
+          type: string
+    EventCreate:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        form:
+          $ref: '#/components/schemas/FormCreate'
+    Attachment:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        contentType:
+          type: string
+        url:
+          type: string
+        height:
+          type: number
+        width:
+          type: number
+        oriented:
+          type: boolean
+        thumbnails:
+          type: array
+          items:
+            $ref: '#/components/schemas/Thumbnail'
+    LoginRequest:
+      required:
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    Users:
+      required:
+      - active
+      - displayName
+      - id
+      - role
+      - username
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        displayName:
+          type: string
+        email:
+          type: string
+        active:
+          type: boolean
+        role:
+          type: string
+        avatarUrl:
+          type: string
+    Thumbnail:
+      type: object
+      properties:
+        name:
+          type: string
+        contentType:
+          type: string
+        height:
+          type: number
+        width:
+          type: number
+        size:
+          type: number
+        minDimension:
+          type: number
+    Feature:
+      type: object
+      properties:
+        id:
+          type: number
+        type:
+          type: string
+        geometry:
+          type: object
+          properties: {}
+        properties:
+          type: object
+          properties: {}
+    UserCreate:
+      required:
+      - displayName
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+        displayName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        active:
+          type: boolean
+        enabled:
+          type: boolean
+        roleId:
+          type: string
+        password:
+          type: string
+        passwordConfirm:
+          type: string
+    Field:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        value:
+          type: string
+        required:
+          type: boolean
+        choices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Choice'
+    Phone:
+      type: object
+      properties:
+        type:
+          type: string
+        number:
+          type: string
+    DeviceCreate:
+      type: object
+      properties:
+        uid:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        poc:
+          type: string
+        registered:
+          type: boolean
+          description: boolean indicating if device is registered, ADMIN only
+    FormCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        variantField:
+          type: string
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/Field'
+    Team:
+      required:
+      - id
+      - name
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        description:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    FeatureStateCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        userId:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        expirationDate:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        role:
+          $ref: '#/components/schemas/Role'
+    TeamCreate:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    Device:
+      required:
+      - description
+      - id
+      - name
+      - uid
+      type: object
+      properties:
+        id:
+          type: string
+        uid:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        registered:
+          type: boolean
+    Login:
+      required:
+      - device
+      - timestamp
+      type: object
+      properties:
+        timestamp:
+          type: string
+        device:
+          $ref: '#/components/schemas/Device'
+    Layer:
+      required:
+      - id
+      - name
+      - type
+      - url
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        type:
+          type: string
+        url:
+          type: string
+        base:
+          type: boolean
+        format:
+          type: string
+    FeatureState:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+        userId:
+          type: string
+    Role:
+      required:
+      - description
+      - id
+      - name
+      - permissions
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+    LayerCreate:
+      required:
+      - name
+      - type
+      - url
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        url:
+          type: string
+        base:
+          type: boolean
+        format:
+          type: string
+    UserIcon:
+      type: object
+      properties:
+        color:
+          type: string
+        contentType:
+          type: string
+        size:
+          type: number
+        text:
+          type: string
+        type:
+          type: string
+    Event:
+      required:
+      - id
+      - name
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        description:
+          type: string
+        form:
+          $ref: '#/components/schemas/Form'
+        teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/Team'
