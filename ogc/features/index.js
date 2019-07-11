@@ -45,7 +45,12 @@ const eventCollectionInfoStub = {
   title: null,
   description: null,
   links: [],
-  extent: [],
+  extent: {
+    spatial: {
+      crs: 'http://www.opengis.net/def/crs/OGC/1.3/CRS84',
+      bbox: [ -180, -90, 180, 90 ]
+    }
+  },
   crs: [ "http://www.opengis.net/def/crs/OGC/1.3/CRS84" ]
 };
 
