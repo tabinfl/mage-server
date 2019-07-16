@@ -12,48 +12,6 @@ info:
 servers:
 - url: http://localhost:4242
 paths:
-  /auth/local/signin:
-    post:
-      tags:
-      - Auth
-      description: Authenticate username and password against local MAGE database
-      operationId: login
-      requestBody:
-        description: login request body
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginRequest'
-        required: true
-      responses:
-        200:
-          description: authentication response
-          content: {}
-  /auth/local/authorize:
-    post:
-      tags:
-      - Auth
-      description: Authorize device ID
-      operationId: authorize
-      requestBody:
-        description: Device ID to authorize
-        content:
-          application/json:
-            schema:
-              required:
-              - uid
-              type: object
-              properties:
-                uid:
-                  type: string
-        required: true
-      responses:
-        200:
-          description: Authorize response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LoginResponse'
   /api/logout:
     post:
       tags:
@@ -1926,18 +1884,18 @@ components:
     authToken:
       type: http
       description: >
-        MAGE generates an authentication token when a client authenticates initially.
-        The client can use the token for subsequent requests until it expires.
+        MAGE generates an authentication token when a client authenticates
+        initially.  The client can use the token for subsequent requests until
+        it expires.
       scheme: bearer
   schemas:
     User:
       required:
-      - active
-      - displayName
-      - enabled
       - id
-      - role
       - username
+      - displayName
+      - active
+      - enabled
       type: object
       properties:
         id:
@@ -1948,37 +1906,58 @@ components:
           type: string
         email:
           type: string
-        phones:
-          type: array
-          items:
-            $ref: '#/components/schemas/Phone'
+          format: email
+        createdAt:
+          type: string
+          format: date-time
+        lastUpdated:
+          type: string
+          format: date-time
         active:
           type: boolean
         enabled:
           type: boolean
-        role:
-          $ref: '#/components/schemas/Role'
         avatarUrl:
           type: string
         iconUrl:
           type: string
+        authentication:
+          $ref: '#/components/schemas/AuthStatus'
+        role:
+          $ref: '#/components/schemas/Role'
+        roleId:
+          $ref: '#/components/schemas/Role/properties/id'
         icon:
           $ref: '#/components/schemas/UserIcon'
+        phones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
         recentEventIds:
           type: array
           items:
-            type: number
-        authentication:
+            $ref: '#/components/schemas/Event/properties/id'
+      oneOf:
+        - { required: [ role ], not: { required: [ roleId ] } }
+        - { required: [ roleId ], not: { required: [ role ] } }
+    AuthStatus:
+      required:
+       - type
+      properties:
+        type:
+          type: string
+        security:
           type: object
           properties:
-            type:
+            locked:
+              type: boolean
+            lockedUntil:
               type: string
-        createdAt:
-          type: string
-          format: dateTime
-        lastUpdated:
-          type: string
-          format: dateTime
+              format: date-time
+            invalidLoginAttempts:
+              type: number
+            numberOfTimesLocked:
+              type: number
     Choice:
       type: object
       properties:
@@ -2038,7 +2017,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Thumbnail'
-    LoginRequest:
+    LocalCredentials:
       required:
       - password
       - username
