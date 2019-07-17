@@ -54,10 +54,15 @@ paths:
     post:
       tags:
       - User
-      description: Creates a new user.  Duplicates usernames are not allowed
-      operationId: addUser
+      description: >
+        Create a new user.  Duplicate usernames are not allowed.
+        If the requesting client is an admin, i.e., has the CREATE_USER
+        permission, the user record will be active.  Otherwise, the user will
+        be inactive and an admin must activate the user later.  Additionally,
+        the roleId key is required when the requesting client is an admin,
+        otherwise, the user receives a default role.
+      operationId: createUser
       requestBody:
-        description: user create body
         content:
           application/json:
             schema:
@@ -65,7 +70,7 @@ paths:
         required: true
       responses:
         200:
-          description: user response
+          description: The created user document
           content:
             application/json:
               schema:
