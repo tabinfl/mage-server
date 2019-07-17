@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: MAGE (Mobile Awareness GEOINT Environment)
+  title: MAGE (Mobile Awareness GEOINT Environment) API
   description: MAGE API
   contact:
     name: MAGE Support
@@ -28,15 +28,29 @@ paths:
       - User
       description: Returns all users
       operationId: getUsers
+      parameters:
+        - in: query
+          name: active
+          description: Return only active or inactive users.
+          schema:
+            type: boolean
+        - in: query
+          name: populate
+          description: >
+            Pre-populate the given relation keys in the result user documents.
+            Currently, this only supports 'roleId'.
+          schema:
+            type: string
+            pattern: \w+(,\w+)*
       responses:
         200:
-          description: user response
+          description: An array of user documents
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Users'
+                  $ref: '#/components/schemas/User'
     post:
       tags:
       - User
@@ -55,12 +69,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Users'
+                $ref: '#/components/schemas/User'
   /api/users/{id}:
     get:
       tags:
       - User
-      description: Returns a single user based on id
+      description: Returns a single user based on the ID path parameter
       operationId: getUserById
       parameters:
       - name: id
@@ -71,7 +85,7 @@ paths:
           type: string
       responses:
         200:
-          description: user response
+          description: The user document
           content:
             application/json:
               schema:
@@ -2026,29 +2040,6 @@ components:
         username:
           type: string
         password:
-          type: string
-    Users:
-      required:
-      - active
-      - displayName
-      - id
-      - role
-      - username
-      type: object
-      properties:
-        id:
-          type: string
-        username:
-          type: string
-        displayName:
-          type: string
-        email:
-          type: string
-        active:
-          type: boolean
-        role:
-          type: string
-        avatarUrl:
           type: string
     Thumbnail:
       type: object
