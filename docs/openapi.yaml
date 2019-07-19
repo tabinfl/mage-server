@@ -16,17 +16,19 @@ paths:
     post:
       tags:
       - Auth
-      description: logout
+      description: Invaldate the auth token for the requesting user.
       operationId: logout
       responses:
         200:
           description: logout response
           content: {}
+
   /api/users:
     get:
       tags:
       - User
-      description: Returns all users
+      description: >
+        Return an array of all users.  The client must have `READ_USER` permission.
       operationId: getUsers
       parameters:
         - in: query
@@ -56,18 +58,14 @@ paths:
       - User
       description: >
         Create a new user.  Duplicate usernames are not allowed.
-        If the requesting client is an admin, i.e., has the CREATE_USER
+        If the requesting client is an admin, i.e., has the `CREATE_USER`
         permission, the user record will be active.  Otherwise, the user will
         be inactive and an admin must activate the user later.  Additionally,
-        the roleId key is required when the requesting client is an admin,
-        otherwise, the user receives a default role.
+        the `roleId` key is required when the requesting client is an admin,
+        otherwise, the created user receives a default role.
       operationId: createUser
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserCreate'
-        required: true
+        $ref: '#/components/requestBodies/UserIn'
       responses:
         200:
           description: The created user document
@@ -75,22 +73,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+
+  /api/users/count:
+    get:
+      tags: [ User ]
+      description: >
+        Return the number of users in the database.  The client must
+        have `READ_USER` permission.
+      operationId: getUserCount
+      responses:
+        200:
+          description: A successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ count ]
+                properties:
+                  count:
+                    type: integer
+
   /api/users/{id}:
     get:
       tags:
       - User
-      description: Returns a single user based on the ID path parameter
+      description: >
+        Return the user document whose `id` equals the `id` path parameter.
+        The client must have `READ_USER` permission.
       operationId: getUserById
       parameters:
       - name: id
         in: path
-        description: id of user to fetch
+        description: The ID of the desired user document
         required: true
+        example: 5d0b2bfeeec24262f1a5fdf3
         schema:
           type: string
       responses:
         200:
-          description: The user document
+          description: The updated user document
           content:
             application/json:
               schema:
@@ -98,22 +119,19 @@ paths:
     put:
       tags:
       - User
-      description: update a single user based on id
+      description: >
+        Update the user document whose `id` equals the `id` path parameter.
+        The client must have `UPDATE_USER` permission.
       operationId: updateUserById
       parameters:
       - name: id
         in: path
-        description: id of user to update
+        description: ID of the user document to update
         required: true
         schema:
           type: string
       requestBody:
-        description: user update body
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserCreate'
-        required: true
+        $ref: '#/components/requestBodies/UserIn'
       responses:
         200:
           description: user update response
@@ -124,7 +142,9 @@ paths:
     delete:
       tags:
       - User
-      description: deletes a single user based on id
+      description: >
+        Delete the user document whose `id` equals the `id` path parameter.
+        The client must have `DELETE_USER` permission.
       operationId: deleteUser
       parameters:
       - name: id
@@ -1959,6 +1979,33 @@ components:
       oneOf:
         - { required: [ role ], not: { required: [ roleId ] } }
         - { required: [ roleId ], not: { required: [ role ] } }
+    UserIn:
+      type: object
+      properties:
+        username:
+          type: string
+        displayName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        active:
+          type: boolean
+        enabled:
+          type: boolean
+        roleId:
+          type: string
+        password:
+          type: string
+        passwordconfirm:
+          type: string
+        avatar:
+          type: string
+          format: binary
+        icon:
+          type: string
+          format: binary
     AuthStatus:
       required:
        - type
@@ -2074,30 +2121,6 @@ components:
         properties:
           type: object
           properties: {}
-    UserCreate:
-      required:
-      - displayName
-      - username
-      type: object
-      properties:
-        username:
-          type: string
-        displayName:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
-        active:
-          type: boolean
-        enabled:
-          type: boolean
-        roleId:
-          type: string
-        password:
-          type: string
-        passwordConfirm:
-          type: string
     Field:
       type: object
       properties:
@@ -2323,3 +2346,19 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Team'
+
+  requestBodies:
+    UserIn:
+      description: >
+        A `UserIn` request body is the client input document for operations that
+        modify a user in the database, e.g., `POST /api/users`.  The server
+        does not currently support the `avatar` and `icon` when the client
+        sends the `UserIn` body as `application/json`.
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/UserIn' }
+        mulitpart/form-data:
+          schema: { $ref: '#/components/schemas/UserIn' }
+
+
