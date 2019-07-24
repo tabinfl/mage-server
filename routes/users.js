@@ -162,7 +162,13 @@ module.exports = function(app, security) {
     }
   );
 
-  // get all uses
+  /**
+   * TODO:
+   * * openapi supports array query parameters using the pipe `|` delimiter;
+   *   use that instead of comma for the `populate` query param. on the other hand,
+   *   this only actually supports a singular `populate` key, so why bother with
+   *   the split anyway?
+   */
   app.get(
     '/api/users',
     passport.authenticate('bearer'),

@@ -76,6 +76,15 @@ DeviceResource.prototype.count = function (req, res, next) {
     .catch(err => next(err));
 };
 
+/**
+ * TODO:
+ * * the /users route uses the `populate` query param while this uses
+ *   `expand`; should be consistent
+ * * openapi supports array query parameters using the pipe `|` delimiter;
+ *   use that instead of comma for the `expand` query param. on the other hand,
+ *   this only actually supports a singular `expand` key, so why bother with
+ *   the split anyway?
+ */
 DeviceResource.prototype.getDevices = function (req, res, next) {
   var filter = {};
   if (req.query.registered === 'true' || req.query.registered === 'false') {
