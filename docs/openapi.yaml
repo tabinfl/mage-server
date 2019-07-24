@@ -41,9 +41,7 @@ paths:
           description: >
             Pre-populate the given relation keys in the result user documents.
             Currently, this only supports 'roleId'.
-          schema:
-            type: string
-            pattern: \w+(,\w+)*
+          schema: { $ref: '#/components/schemas/CommaSeparatedTokens' }
       responses:
         200:
           description: An array of user documents
@@ -303,12 +301,25 @@ paths:
   /api/devices:
     get:
       tags:
-      - Device
-      description: Returns all devices
+        - Device
+      description: >
+        Return an array of all the device documents in the database.  This
+        operation requires `READ_DEVICE` permission.
       operationId: getDevices
+      parameters:
+        - in: query
+          name: registered
+          description: Return only registered or unregistered devices.
+          schema: { $ref: '#/components/schemas/Device/properties/registered' }
+        - in: query
+          name: expand
+          description: >
+            Comma-separated list of relation keys to populate with related
+            documents.  Currently the API only supports the `user` key.
+          schema: { $ref: '#/components/schemas/CommaSeparatedTokens' }
       responses:
         200:
-          description: device response
+          description: Success - an array of `Device` documents
           content:
             application/json:
               schema:
@@ -317,15 +328,15 @@ paths:
                   $ref: '#/components/schemas/Device'
     post:
       tags:
-      - Device
-      description: add new device
-      operationId: addDevice
+        - Device
+      description: Save a new device document in the database
+      operationId: createDevice
       requestBody:
-        description: new device body
+        description: New device body
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeviceCreate'
+              $ref: '#/components/schemas/DeviceIn'
         required: true
       responses:
         200:
@@ -406,7 +417,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeviceCreate'
+              $ref: '#/components/schemas/DeviceIn'
         required: true
       responses:
         200:
@@ -1950,6 +1961,9 @@ components:
         it expires.
       scheme: bearer
   schemas:
+    CommaSeparatedTokens:
+      type: string
+      pattern: '\w+(,\w+)*'
     User:
       required:
       - id
@@ -2028,6 +2042,49 @@ components:
         icon:
           type: string
           format: binary
+    Device:
+      required:
+        - id
+        - uid
+        - name
+        - description
+      type: object
+      properties:
+        id:
+          type: string
+        uid:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        registered:
+          type: boolean
+        userAgent:
+          type: string
+        appVersion:
+          type: string
+        userId:
+          $ref: '#/components/schemas/User/properties/id'
+        user:
+          $ref: '#/components/schemas/User'
+      oneOf:
+        - { required: [ userId ], not: { required: [ user ] } }
+        - { required: [ user ], not: { required: [ userId ] } }
+    DeviceIn:
+      type: object
+      properties:
+        uid:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        poc:
+          type: string
+        registered:
+          type: boolean
+          description: boolean indicating if device is registered, ADMIN only
     AuthStatus:
       required:
        - type
@@ -2169,20 +2226,6 @@ components:
           type: string
         number:
           type: string
-    DeviceCreate:
-      type: object
-      properties:
-        uid:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        poc:
-          type: string
-        registered:
-          type: boolean
-          description: boolean indicating if device is registered, ADMIN only
     FormCreate:
       type: object
       properties:
@@ -2243,24 +2286,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/User'
-    Device:
-      required:
-      - description
-      - id
-      - name
-      - uid
-      type: object
-      properties:
-        id:
-          type: string
-        uid:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        registered:
-          type: boolean
     Login:
       required:
         - id
