@@ -303,8 +303,8 @@ paths:
       tags:
         - Device
       description: >
-        Return an array of all the device documents in the database.  This
-        operation requires `READ_DEVICE` permission.
+        Return an array of all the device documents in the database.  The
+        requesting client must have `READ_DEVICE` permission.
       operationId: getDevices
       parameters:
         - in: query
@@ -319,7 +319,7 @@ paths:
           schema: { $ref: '#/components/schemas/CommaSeparatedTokens' }
       responses:
         200:
-          description: Success - an array of `Device` documents
+          description: Success - an array of device documents
           content:
             application/json:
               schema:
@@ -329,12 +329,17 @@ paths:
     post:
       tags:
         - Device
-      description: Save a new device document in the database
+      description: >
+        Save a new device document in the database.  The request client must
+        have `CREATE_DEVICE` permission.
       operationId: createDevice
       requestBody:
-        description: New device body
+        description: The keys of the new device document
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceIn'
+          x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/DeviceIn'
         required: true
@@ -2054,6 +2059,10 @@ components:
           type: string
         uid:
           type: string
+          description: >
+            The device UID is an identifier string assigned at the application
+            level.  This is usually a UUID, but can be any string the creator
+            of the device chooses.
         name:
           type: string
         description:
@@ -2073,6 +2082,7 @@ components:
         - { required: [ user ], not: { required: [ userId ] } }
     DeviceIn:
       type: object
+      required: [ uid ]
       properties:
         uid:
           type: string
@@ -2080,11 +2090,8 @@ components:
           type: string
         description:
           type: string
-        poc:
-          type: string
-        registered:
-          type: boolean
-          description: boolean indicating if device is registered, ADMIN only
+        userId:
+          $ref: '#/components/schemas/User/properties/id'
     AuthStatus:
       required:
        - type

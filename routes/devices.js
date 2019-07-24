@@ -59,6 +59,9 @@ DeviceResource.prototype.ensurePermission = function(permission) {
   };
 };
 
+/**
+ * TODO: this should return a 201 and a location header
+ */
 DeviceResource.prototype.create = function(req, res, next) {
   // Automatically register any device created by an ADMIN
   req.newDevice.registered = true;
