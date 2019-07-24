@@ -243,38 +243,63 @@ paths:
         `READ_USER` permission.
       operationId: getUserLogins
       parameters:
-      - name: userId
-        in: query
-        description: Return only logins for the given `userId`
-        schema: { $ref: '#/components/schemas/User/properties/id' }
-      - name: deviceId
-        in: query
-        description: Return only logins from the given `deviceId`
-        schema: { $ref: '#/components/schemas/Device/properties/id' }
-      - name: startDate
-        in: query
-        description: ISO 8601 start date to filter (inclusive)
-        schema:
-          type: string
-          format: date-time
-      - name: endDate
-        in: query
-        description: ISO 8601 end date filter (exclusive)
-        schema:
-          type: string
-          format: date-time
-      - name: limit
-        in: query
-        description: Limit the number of results to the given value.
-        schema:
-          type: integer
+        - name: userId
+          in: query
+          description: Return only logins for the given `userId`
+          schema: { $ref: '#/components/schemas/User/properties/id' }
+        - name: deviceId
+          in: query
+          description: Return only logins from the given `deviceId`
+          schema: { $ref: '#/components/schemas/Device/properties/id' }
+        - name: startDate
+          in: query
+          description: ISO 8601 start date to filter (inclusive)
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: ISO 8601 end date filter (exclusive)
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          description: >
+            Limit the number of results to the given value.  The default value
+            is `10`.
+          schema:
+            type: integer
+        - name: firstLoginId
+          in: query
+          description: The ID of the first login in the range of results
+          schema: { $ref: '#/components/schemas/Login/properties/id' }
+        - name: lastLoginId
+          in: query
+          description: The ID of the last login in the range of results
+          schema: { $ref: '#/components/schemas/Login/properties/id' }
       responses:
         200:
-          description: login response
+          description: >
+            Success - return the array of login events according to the given
+            query parameters.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Login'
+                type: object
+                required: [ logins ]
+                properties:
+                  next:
+                    type: string
+                    format: uri
+                    description: Link to the next chunk of results
+                  prev:
+                    type: string
+                    format: uri
+                    description: Link to the previous chunk of results
+                  logins:
+                    type: array
+                    items: { $ref: '#/components/schemas/Login' }
   /api/devices:
     get:
       tags:
@@ -2238,14 +2263,29 @@ components:
           type: boolean
     Login:
       required:
-      - device
-      - timestamp
+        - id
+        - timestamp
       type: object
       properties:
+        id:
+          type: string
         timestamp:
           type: string
         device:
           $ref: '#/components/schemas/Device'
+        deviceId:
+          $ref: '#/components/schemas/Device/properties/id'
+        user:
+          $ref: '#/components/schemas/User'
+        userId:
+          $ref: '#/components/schemas/User/properties/id'
+      allOf:
+        - oneOf:
+          - { required: [ deviceId ], not: { required: [ device ] } }
+          - { required: [ device ], not: { required: [ deviceId ] } }
+        - oneOf:
+          - { required: [ userId ], not: { required: [ user ] } }
+          - { required: [ user ], not: { required: [ userId ] } }
     Layer:
       required:
       - id
