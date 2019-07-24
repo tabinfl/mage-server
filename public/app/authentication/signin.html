@@ -15,6 +15,7 @@
 
       <div class="top-gap-xl bottom-gap-l">
         <div ng-repeat="strategy in thirdPartyStrategies" class="top-gap">
+          <saml-signin ng-if="strategy.type === 'saml'" strategy="strategy" strategy-type="signin"></saml-signin>
           <oauth-signin ng-if="strategy.type === 'oauth'" strategy="strategy" strategy-type="signin"></oauth-signin>
           <ldap-signin ng-if="strategy.type === 'ldap'" strategy="strategy" strategy-type="signin"></ldap-signin>
         </div>

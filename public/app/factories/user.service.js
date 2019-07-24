@@ -16,6 +16,7 @@ function UserService($rootScope, $q, $uibModal, $http, $location, $timeout, $win
     googleSignup: googleSignup,
     ldapSignin: ldapSignin,
     oauthSignin: oauthSignin,
+    samlSignin: samlSignin,
     authorize: authorize,
     logout: logout,
     getMyself: getMyself,
@@ -87,6 +88,38 @@ function UserService($rootScope, $q, $uibModal, $http, $location, $timeout, $win
   }
 
   function oauthSignin(strategy) {
+    var deferred = $q.defer();
+
+    var oldUsername = service.myself && service.myself.username || null;
+
+    var windowLeft = window.screenLeft ? window.screenLeft : window.screenX;
+    var windowTop = window.screenTop ? window.screenTop : window.screenY;
+
+    var left = windowLeft + (window.innerWidth / 2) - (300);
+    var top = windowTop + (window.innerHeight / 2) - (300);
+    var strWindowFeatures = 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=600, height=600, top=' + top + ',left=' + left;
+
+    var url = "/auth/" + strategy + "/signin";
+    var authWindow = $window.open(url, "", strWindowFeatures);
+
+    function onMessage(event) {
+      $window.removeEventListener('message', onMessage, false);
+
+      if (event.origin !== $location.protocol() + "://" + $location.host()) {
+        return;
+      }
+
+      deferred.resolve({success: event.data.success, user: event.data.user, oauth: event.data.oauth});
+
+      authWindow.close();
+    }
+
+    $window.addEventListener('message', onMessage, false);
+
+    return deferred.promise;
+  }
+
+  function samlSignin(strategy) {
     var deferred = $q.defer();
 
     var oldUsername = service.myself && service.myself.username || null;
