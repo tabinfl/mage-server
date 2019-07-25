@@ -84,13 +84,7 @@ paths:
           description: A successful request
           content:
             application/json:
-              schema:
-                type: object
-                required: [ count ]
-                properties:
-                  count:
-                    type: integer
-
+              schema: { $ref: '#/components/schemas/Count' }
   /api/users/{userId}:
     parameters:
       - { $ref: '#/components/parameters/userIdInPath' }
@@ -110,7 +104,7 @@ paths:
                 $ref: '#/components/schemas/User'
     put:
       tags:
-      - User
+        - User
       description: >
         Update the user document whose `id` equals the `userId` path parameter.
         The client must have `UPDATE_USER` permission.
@@ -126,7 +120,7 @@ paths:
                 $ref: '#/components/schemas/User'
     delete:
       tags:
-      - User
+        - User
       description: >
         Delete the user document whose `id` equals the `userId` path parameter.
         The client must have `DELETE_USER` permission.
@@ -235,7 +229,7 @@ paths:
   /api/logins:
     get:
       tags:
-      - User
+      - Auth
       description: >
         Return an array of user login events.  This operation requires
         `READ_USER` permission.
@@ -334,15 +328,7 @@ paths:
         have `CREATE_DEVICE` permission.
       operationId: createDevice
       requestBody:
-        description: The keys of the new device document
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DeviceIn'
-          x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/DeviceIn'
-        required: true
+        $ref: '#/components/requestBodies/DeviceIn'
       responses:
         200:
           description: new device response
@@ -350,54 +336,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Device'
-  /api/roles:
+  /api/devices/count:
     get:
       tags:
-      - Role
-      description: get all roles
-      operationId: getRoles
+        - Device
+      operationId: getDeviceCount
+      description: Return the number of devices in the database.
       responses:
         200:
-          description: role response
+          description: Success - return the device count
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Role'
-  /api/roles/{id}:
+                $ref: '#/components/schemas/Count'
+  /api/devices/{deviceId}:
+    parameters:
+      - $ref: '#/components/parameters/deviceIdInPath'
     get:
       tags:
-      - Role
-      description: get role by id
-      operationId: getRoleById
-      parameters:
-      - name: id
-        in: path
-        description: id of role to fetch
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: role response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Role'
-  /api/devices/{id}:
-    get:
-      tags:
-      - Device
-      description: Returns a single device based on id
+        - Device
+      description: >
+        Return the device document whose ID matches the path parameter for the
+        device ID.  The requesting client must have READ_DEVICE permission.
       operationId: getDeviceById
-      parameters:
-      - name: id
-        in: path
-        description: id of device to fetch
-        required: true
-        schema:
-          type: string
       responses:
         200:
           description: device response
@@ -407,23 +368,13 @@ paths:
                 $ref: '#/components/schemas/Device'
     put:
       tags:
-      - Device
-      description: update a single device based on id
+        - Device
+      description: >
+        Update a device document whose ID matches the path parameter for the
+        device ID.  The requesting client must have `UPDATE_DEVICE` permission.
       operationId: updateDeviceById
-      parameters:
-      - name: id
-        in: path
-        description: id of device to update
-        required: true
-        schema:
-          type: string
       requestBody:
-        description: device update body
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DeviceIn'
-        required: true
+        $ref: '#/components/requestBodies/DeviceIn'
       responses:
         200:
           description: device update response
@@ -433,16 +384,11 @@ paths:
                 $ref: '#/components/schemas/Device'
     delete:
       tags:
-      - Device
-      description: deletes a single device based on id
-      operationId: deleteDevice
-      parameters:
-      - name: id
-        in: path
-        description: id of device to delete
-        required: true
-        schema:
-          type: string
+        - Device
+      description: >
+        Delete a device document whose ID matches the path parameter for the
+        device ID.  The requesting client must have `DELETE_DEVICE` permission.
+      operationId: deleteDeviceByIds
       responses:
         204:
           description: user deleted
@@ -1863,6 +1809,40 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Feature'
+  /api/roles:
+    get:
+      tags:
+      - Role
+      description: get all roles
+      operationId: getRoles
+      responses:
+        200:
+          description: role response
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Role' }
+  /api/roles/{id}:
+    get:
+      tags:
+      - Role
+      description: get role by id
+      operationId: getRoleById
+      parameters:
+      - name: id
+        in: path
+        description: id of role to fetch
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: role response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
   /api/settings:
     get:
       tags:
@@ -1969,6 +1949,12 @@ components:
     CommaSeparatedTokens:
       type: string
       pattern: '\w+(,\w+)*'
+    Count:
+      type: object
+      required: [ count ]
+      properties:
+        count:
+          type: integer
     User:
       required:
       - id
@@ -2047,6 +2033,24 @@ components:
         icon:
           type: string
           format: binary
+    AuthStatus:
+      required:
+       - type
+      properties:
+        type:
+          type: string
+        security:
+          type: object
+          properties:
+            locked:
+              type: boolean
+            lockedUntil:
+              type: string
+              format: date-time
+            invalidLoginAttempts:
+              type: number
+            numberOfTimesLocked:
+              type: number
     Device:
       required:
         - id
@@ -2092,24 +2096,6 @@ components:
           type: string
         userId:
           $ref: '#/components/schemas/User/properties/id'
-    AuthStatus:
-      required:
-       - type
-      properties:
-        type:
-          type: string
-        security:
-          type: object
-          properties:
-            locked:
-              type: boolean
-            lockedUntil:
-              type: string
-              format: date-time
-            invalidLoginAttempts:
-              type: number
-            numberOfTimesLocked:
-              type: number
     Choice:
       type: object
       properties:
@@ -2419,19 +2405,25 @@ components:
 
   parameters:
     userIdInPath:
-      name: userId
       in: path
+      name: userId
       description: The ID of the target user document
       required: true
       example: 5d0b2bfeeec24262f1a5fdf3
       schema: { $ref: '#/components/schemas/User/properties/id' }
     eventIdInPath:
-      name: eventId
       in: path
+      name: eventId
       description: The ID of the target event document
       required: true
       example: 5d0b2bfeeec24262f1a5fdf3
       schema: { $ref: '#/components/schemas/Event/properties/id' }
+    deviceIdInPath:
+      in: path
+      name: deviceId
+      description: The ID of the target device documet
+      required: true
+      schema: { $ref: '#/components/schemas/Device/properties/id' }
 
   requestBodies:
     UserIn:
@@ -2446,5 +2438,15 @@ components:
           schema: { $ref: '#/components/schemas/UserIn' }
         mulitpart/form-data:
           schema: { $ref: '#/components/schemas/UserIn' }
+    DeviceIn:
+      description: >
+        A `DeviceIn` request body specifies the keys and values to save to a
+        `Device` document in the database.
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/DeviceIn' }
+        application/x-www.form-urlencoded:
+          schema: { $ref: '#/components/schemas/DeviceIn' }
 
 

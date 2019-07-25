@@ -31,6 +31,7 @@ module.exports = function(app, security) {
   );
 
   // get device
+  // TODO: check for READ_USER also
   app.get('/api/devices/:id',
     passport.authenticate('bearer'),
     access.authorize('READ_DEVICE'),
