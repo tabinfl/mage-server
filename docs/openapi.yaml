@@ -396,74 +396,72 @@ paths:
   /api/teams:
     get:
       tags:
-      - Team
-      description: get all teams
+        - Team
+      description: >
+        Return all the teams.  The requesting client must have `READ_TEAM`
+        permission.
       operationId: getTeams
       responses:
         200:
-          description: team response
+          description: Success - an array of team documents
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Team'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
     post:
       tags:
-      - Team
-      description: add new team
-      operationId: addTeam
+        - Team
+      description: >
+        Save a new team document to the database.  The requesting client must
+        have `CREATE_TEAM` permission.
+      operationId: createTeam
       requestBody:
-        description: new team body
+        required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/TeamCreate'
-        required: true
+            schema: { $ref: '#/components/schemas/TeamCreate' }
+          application/x-www-form-urlencoded:
+            schema: { $ref: '#/components/schemas/TeamCreate' }
       responses:
         200:
-          description: new team response
+          description: Success - the created team document
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Team'
-  /api/teams/{id}:
+  /api/teams/{teamId}:
+    parameters:
+      - $ref: '#/components/parameters/teamIdInPath'
     get:
       tags:
-      - Team
-      description: Returns a single team based on id
+        - Team
+      description: >
+        Return the team document whose ID matches the team ID path parameter.
+        The requesting client must have `READ_TEAM` permission.
       operationId: getTeamById
-      parameters:
-      - name: id
-        in: path
-        description: id of team to fetch
-        required: true
-        schema:
-          type: number
       responses:
         200:
-          description: team response
+          description: Success - a team document
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Team'
     put:
       tags:
-      - Team
-      description: update a single team based on id
+        - Team
+      description: >
+        Update the team document whose ID matches the team ID in the path.
+        The requesting user must have `UPDATE_TEAM` permission.
       operationId: updateTeamById
-      parameters:
-      - name: id
-        in: path
-        description: id of team to update
-        required: true
-        schema:
-          type: number
       requestBody:
-        description: team update body
+        required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/TeamCreate'
-        required: true
+            schema: { $ref: '#/components/schemas/TeamUpdate' }
+          application/x-www-form-urlencoded:
+            schema: { $ref: '#/components/schemas/TeamUpdate' }
       responses:
         200:
           description: team update response
@@ -474,7 +472,9 @@ paths:
     delete:
       tags:
       - Team
-      description: deletes a single team based on id
+      description: >
+        Delete the team document whose ID matches the team ID in the path.  The
+        request user must have `DELETE_TEAM` permission.
       operationId: deleteTeam
       parameters:
       - name: id
@@ -1956,12 +1956,16 @@ components:
         count:
           type: integer
     User:
+      description: >
+        The `User` schema defines the structure of persisted user documents as
+        they exist in the database and as the server returns them in various
+        responses.
       required:
-      - id
-      - username
-      - displayName
-      - active
-      - enabled
+        - id
+        - username
+        - displayName
+        - active
+        - enabled
       type: object
       properties:
         id:
@@ -2033,6 +2037,11 @@ components:
         icon:
           type: string
           format: binary
+    UserRef:
+      type: object
+      properties:
+        id: { $ref: '#/components/schemas/User/properties/id' }
+      additionalProperties: true
     AuthStatus:
       required:
        - type
@@ -2231,9 +2240,6 @@ components:
           items:
             $ref: '#/components/schemas/Field'
     Team:
-      required:
-      - id
-      - name
       type: object
       properties:
         id:
@@ -2242,10 +2248,28 @@ components:
           type: string
         description:
           type: string
-        members:
+        users:
           type: array
           items:
             $ref: '#/components/schemas/User'
+    TeamCreate:
+      type: object
+      allOf:
+        - { $ref: '#/components/schemas/Team' }
+        - required:
+          - name
+          - description
+    TeamUpdate:
+      type: object
+      allOf:
+        - { $ref: '#/components/schemas/Team' }
+        - required:
+          - id
+        - type: object
+          properties:
+            userIds:
+              type: array
+              items: { $ref: '#/components/schemas/User/properties/id' }
     FeatureStateCreate:
       type: object
       properties:
@@ -2266,19 +2290,6 @@ components:
           $ref: '#/components/schemas/User'
         role:
           $ref: '#/components/schemas/Role'
-    TeamCreate:
-      required:
-      - name
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        members:
-          type: array
-          items:
-            $ref: '#/components/schemas/User'
     Login:
       required:
         - id
@@ -2421,9 +2432,15 @@ components:
     deviceIdInPath:
       in: path
       name: deviceId
-      description: The ID of the target device documet
+      description: The ID of the target device document
       required: true
       schema: { $ref: '#/components/schemas/Device/properties/id' }
+    teamIdInPath:
+      in: path
+      name: teamId
+      description: The ID of the target team document
+      required: true
+      schema: { $ref: '#/components/schemas/Team/properties/id' }
 
   requestBodies:
     UserIn:
@@ -2446,7 +2463,7 @@ components:
       content:
         application/json:
           schema: { $ref: '#/components/schemas/DeviceIn' }
-        application/x-www.form-urlencoded:
+        application/x-www-form-urlencoded:
           schema: { $ref: '#/components/schemas/DeviceIn' }
 
 
