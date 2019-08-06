@@ -45,7 +45,7 @@ module.exports = function(app, passport, provisioning, strategyConfig) {
     issuer: 'mage'
   },
   function(profile, done) {
-    const username = profile[strategyConfig.ldapUsernameField];
+    const username = profile[strategyConfig.uidAttribute];
     User.getUserByAuthenticationId('saml', username, function(err, user) {
       if (err) return done(err);
 
@@ -56,8 +56,8 @@ module.exports = function(app, passport, provisioning, strategyConfig) {
 
           var user = {
             username: username,
-            displayName: profile[strategyConfig.ldapDisplayNameField],
-            email: profile[strategyConfig.ldapEmailField],
+            displayName: profile[strategyConfig.displayNameAttribute],
+            email: profile[strategyConfig.emailAttribute],
             active: false,
             roleId: role._id,
             authentication: {

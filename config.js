@@ -18,7 +18,10 @@ module.exports = {
         type: 'saml',
         title: '',
         entryPoint: '',
-        callbackPath: '/auth/saml/callback'
+        callbackPath: '/auth/saml/callback',
+        uidAttribute: 'uid',
+        displayNameAttribute: 'displayName',
+        emailAttribute: 'email'
       },
       // ldap: {
       //   title: 'LDAP',
