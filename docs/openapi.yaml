@@ -25,8 +25,7 @@ paths:
 
   /api/users:
     get:
-      tags:
-      - User
+      tags: [ User ]
       description: >
         Return an array of all users.  The client must have `READ_USER` permission.
       operationId: getUsers
@@ -52,15 +51,16 @@ paths:
                 items:
                   $ref: '#/components/schemas/User'
     post:
-      tags:
-      - User
+      tags: [ User ]
       description: >
         Create a new user.  Duplicate usernames are not allowed.
         If the requesting client is an admin, i.e., has the `CREATE_USER`
         permission, the user record will be active.  Otherwise, the user will
         be inactive and an admin must activate the user later.  Additionally,
         the `roleId` key is required when the requesting client is an admin,
-        otherwise, the created user receives a default role.
+        otherwise, the created user receives a default role.  When the request
+        body contains `multipart/form-data`, MAGE will handle the `icon` and/or
+        `avatar` file form parameters.
       operationId: createUser
       requestBody:
         $ref: '#/components/requestBodies/UserIn'
@@ -103,8 +103,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
     put:
-      tags:
-        - User
+      tags: [ User ]
       description: >
         Update the user document whose `id` equals the `userId` path parameter.
         The client must have `UPDATE_USER` permission.
@@ -119,8 +118,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
     delete:
-      tags:
-        - User
+      tags: [ User ]
       description: >
         Delete the user document whose `id` equals the `userId` path parameter.
         The client must have `DELETE_USER` permission.
@@ -133,8 +131,7 @@ paths:
     parameters:
       - { $ref: '#/components/parameters/userIdInPath' }
     get:
-      tags:
-      - User
+      tags: [ User ]
       description: Returns users avatar based on user id
       operationId: getUserAvatar
       responses:
@@ -145,8 +142,7 @@ paths:
     parameters:
       - { $ref: '#/components/parameters/userIdInPath' }
     get:
-      tags:
-      - User
+      tags: [ User ]
       description: Returns users map icon based on user id
       operationId: getUserIcon
       responses:
@@ -158,8 +154,7 @@ paths:
       - { $ref: '#/components/parameters/userIdInPath' }
       - { $ref: '#/components/parameters/eventIdInPath' }
     post:
-      tags:
-      - User
+      tags: [ User ]
       description: >
         Add the given event to top of recent list for the given user.  The list
         is capped at 5.
@@ -173,8 +168,7 @@ paths:
                 $ref: '#/components/schemas/User'
   /api/users/myself:
     get:
-      tags:
-      - User
+      tags: [ User ]
       description: >
         Return the user document for the requesting user based on the
         provided authentication token.
@@ -187,8 +181,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
     put:
-      tags:
-      - User
+      tags: [ User ]
       description: >
         Update the user document for the requesting user based on the
         provided authentication token.  This operation does not support
@@ -228,8 +221,7 @@ paths:
 
   /api/logins:
     get:
-      tags:
-      - Auth
+      tags: [ Auth ]
       description: >
         Return an array of user login events.  This operation requires
         `READ_USER` permission.
