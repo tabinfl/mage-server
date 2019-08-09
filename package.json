@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@mapbox/togeojson": "0.16.0",
-    "@ngageoint/geopackage": "2.0.3",
+    "@ngageoint/geopackage": "2.0.10",
     "@ngageoint/geopackage-mobile-optimizer": "2.0.3",
     "@turf/centroid": "4.3.0",
     "@turf/kinks": "4.3.0",
