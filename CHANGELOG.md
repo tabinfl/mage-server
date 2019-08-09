@@ -6,8 +6,78 @@ MAGE adheres to [Semantic Versioning](http://semver.org/).
 ## Pending on [`develop`](https://github.com/ngageoint/mage-server/tree/develop)
 
 ##### Features
+* GeoServer plugin which creates OGC WMS/WFS endpoints from MAGE.
+* Sort observation fields in CSV export in form order.
 
 ##### Bug Fixes
+* Fix kml to geojson icon style.
+* Export observations based on timestamp, not last updated.
+* CSV export properly handles commas in values.
+* Fix permission error when event user posts recent event.
+
+## [5.2.6](https://github.com/ngageoint/mage-server/releases/tag/5.2.6) (TBD)
+
+##### Features
+* Increase JSON upload limit.
+* Form import now supports historical forms.
+
+##### Bug Fixes
+* Select field option delete now removes correct option.
+* Select field reorder now correctly highlights reordered field.
+* Don't hide required asterisk on form field title if field has a value.
+* Remove user token when user is disabled.
+* Separated geoaxis authentication url from api url
+
+## [5.2.5](https://github.com/ngageoint/mage-server/releases/tag/5.2.5) (03-13-2019)
+
+##### Features
+* Added Ubuntu upstart scripts
+
+##### Bug Fixes
+* Fix form preview in admin event page.
+* Sort observation form fields in KML export.
+* Catch 'disconnect' event on mage-image child process and shutdown.  This should prevent the mage-image process from being orphaned.
+
+## [5.2.4](https://github.com/ngageoint/mage-server/releases/tag/5.2.4) (01-14-2019)
+
+##### Features
+* Added user create permission to EVENT_ADMIN_ROLE.
+
+##### Bug Fixes
+* Fix geometry view/edit field.
+* Update file size metadata for uploaded GeoPackage after it is indexed.
+* Add baseUrl to avatar and icon for team route when populating users.
+* Upgrade GeoPackageJS libs to fix a problem creating vector tiles.
+
+## [5.2.3](https://github.com/ngageoint/mage-server/releases/tag/5.2.3) (12-07-2018)
+
+##### Features
+* Added new environment variable and configuration to support secure login session cookie.  NOTE:
+ the MAGE login session is a very short lived session that exists between valid authentication and
+ device id authorization.
+
+##### Bug Fixes
+* Work around for leaflet GridLayer space between tiles.
+* Fixed bug preventing navbar options from displaying all elements on mobile.
+
+## [5.2.2](https://github.com/ngageoint/mage-server/releases/tag/5.2.2) (10-30-2018)
+
+##### Features
+
+##### Bug Fixes
+* Fixed bug with date/time fields not saving.
+
+## [5.2.1](https://github.com/ngageoint/mage-server/releases/tag/5.2.1) (10-23-2018)
+
+##### Features
+* New more featureful geocoder control
+
+##### Bug Fixes
+* Fix KML export for events with no forms.
+* Fix bug in MGRS display for lines and polygons.
+* Fix username/password error message on invalid login when account lock is disabled.
+* Fix bug in observation edit where initial timezone format was not being picked up.
+* Fix bug in shapefile column name that esri could not read.
 
 ## [5.2.0](https://github.com/ngageoint/mage-server/releases/tag/5.2.0) (09-17-2018)
 

@@ -389,12 +389,15 @@ module.exports = function(app, security) {
       if (req.param('username')) user.username = req.param('username');
       if (req.param('displayName')) user.displayName = req.param('displayName');
       if (req.param('email')) user.email = req.param('email');
-      if (req.param('active') === 'true') {
+
+      if (req.param('active') === true || req.param('active') === 'true') {
         user.active = true;
       }
 
-      if (req.param('enabled') === 'true' || req.param('enabled') === 'false') {
-        user.enabled = req.param('enabled') === 'true';
+      if (req.param('enabled') === true || req.param('enabled') === 'true') {
+        user.enabled = true;
+      } else if (req.param('enabled') === false || req.param('enabled') === 'false') {
+        user.enabled = false;
       }
 
       // Need UPDATE_USER_ROLE to change a users role
@@ -419,7 +422,11 @@ module.exports = function(app, security) {
           return res.status(400).send('password does not meet minimum length requirment of ' + passwordLength + ' characters');
         }
 
-        user.authentication.password = password;
+        // Need UPDATE_USER_PASSWORD to change a users password
+        // TODO this needs to be update to use the UPDATE_USER_PASSWORD permission when Android is updated to handle that permission
+        if (access.userHasPermission(req.user, 'UPDATE_USER_ROLE')) {
+          user.authentication.password = password;
+        }
       }
 
       new api.User().update(user, {avatar: req.files.avatar, icon: req.files.icon}, function(err, updatedUser) {
@@ -452,7 +459,7 @@ module.exports = function(app, security) {
       if (access.userHasPermission(req.user, 'UPDATE_EVENT')) {
         next();
       } else {
-        Event.userHasEventPermission(req.event, req.user._id, 'update', function(err, hasPermission) {
+        Event.userHasEventPermission(req.event, req.user._id, 'read', function(err, hasPermission) {
           hasPermission ? next() : res.sendStatus(403);
         });
       }

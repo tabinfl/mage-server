@@ -386,9 +386,32 @@ function AdminEventEditFormController($rootScope, $scope, $location, $filter, $r
         $scope.saving = false;
         formSaved = true;
         completeSave();
+      }, function(response) {
+        var data = response.data || {};
+        showError({
+          title:  'Error Saving Form',
+          message: data.errors ?
+            "If the problem persists please contact your MAGE administrator for help." :
+            "Please try again later, if the problem persists please contact your MAGE administrator for help.",
+          errors: data.errors
+        });
+        $scope.saving = false;
       });
     });
   }, 1000);
+
+  function showError(error) {
+    $uibModal.open({
+      template: require('./event.edit.form.error.html'),
+      controller: ['$scope', '$uibModalInstance', function ($scope, $uibModalInstance) {
+        $scope. model = error;
+
+        $scope.ok = function() {
+          $uibModalInstance.dismiss();
+        };
+      }]
+    });
+  }
 
   function upload(fileUpload) {
     var url = '/api/events/' + $scope.event.id + '/icons/' + $scope.form.id +
@@ -581,10 +604,12 @@ function AdminEventEditFormController($rootScope, $scope, $location, $filter, $r
   // add new option to the field
   $scope.addOption = function (field, optionTitle) {
     field.choices = field.choices || new Array();
+
+    var choiceId = _.isEmpty(field.choices) ? 1 : _.max(field.choices, function(choice) { return choice.id; }).id + 1;
     field.choices.push({
-      "id" : field.choices.length,
-      "title" : optionTitle,
-      "value" : field.choices.length
+      id: choiceId,
+      title: optionTitle,
+      value: field.choices.length
     });
 
     $scope.populateVariants();
@@ -627,10 +652,10 @@ function AdminEventEditFormController($rootScope, $scope, $location, $filter, $r
     });
   };
 
-  // delete particular option
+  // delete select option
   $scope.deleteOption = function (field, option) {
     for (var i = 0; i < field.choices.length; i++) {
-      if(field.choices[i].id === option.id) {
+      if (field.choices[i].title === option.title) {
         field.choices.splice(i, 1);
         break;
       }

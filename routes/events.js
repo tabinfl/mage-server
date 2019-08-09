@@ -215,16 +215,10 @@ module.exports = function(app, security) {
     access.authorize('CREATE_EVENT'),
     parseEventQueryParams,
     function(req, res, next) {
-      Event.create(req.body, req.user, function(err, event) {
-        if (err) {
-          return next(err);
-        }
-        new api.Icon(event._id).saveDefaultIconToEventForm(function(err) {
-          if (err) {
-            return next(err);
-          }
-          res.status(201).json(event);
-        });
+      new api.Event().createEvent(req.body, req.user, function(err, event) {
+        if (err) return next(err);
+
+        res.status(201).json(event);
       });
     }
   );
@@ -235,7 +229,7 @@ module.exports = function(app, security) {
     authorizeAccess('UPDATE_EVENT', 'update'),
     parseEventQueryParams,
     function(req, res, next) {
-      Event.update(req.event._id, req.body, {populate: req.parameters.populate}, function(err, event) {
+      new api.Event(req.event).updateEvent(req.body, {populate: req.parameters.populate}, function(err, event) {
         if (err) return next(err);
 
         new api.Form(event).populateUserFields(function(err) {
@@ -252,7 +246,7 @@ module.exports = function(app, security) {
     passport.authenticate('bearer'),
     authorizeAccess('DELETE_EVENT', 'delete'),
     function(req, res, next) {
-      Event.remove(req.event, function(err) {
+      new api.Event(req.event).deleteEvent(function(err) {
         if (err) return next(err);
         res.status(204).send();
       });
@@ -292,22 +286,15 @@ module.exports = function(app, security) {
       if (!req.is('multipart/form-data')) return next();
 
       function validateForm(callback) {
-        new api.Form().validate(req.files.form, function(err, form) {
-          if (err) return callback(err);
-
-          // Handle historic form that may contain timestamp and geometry fields
-          form.fields = form.fields.filter(function(field) {
-            return field.name !== 'timestamp' && field.name !== 'geometry';
-          });
-
-          callback(null, form);
-        });
+        new api.Form().validate(req.files.form, callback);
       }
 
       function updateEvent(form, callback) {
         form.name = req.param('name');
         form.color = req.param('color');
-        Event.addForm(req.event._id, form, callback);
+        new api.Event(req.event).addForm(form, function(err, form) {
+          callback(err, form);
+        });
       }
 
       function importIcons(form, callback) {
@@ -337,7 +324,7 @@ module.exports = function(app, security) {
     parseForm,
     function(req, res, next) {
       var form = req.form;
-      Event.addForm(req.event._id, form, function(err, form) {
+      new api.Event(req.event).addForm(form, function(err, form) {
         if (err) return next(err);
 
         async.parallel([
@@ -367,7 +354,7 @@ module.exports = function(app, security) {
     function(req, res, next) {
       var form = req.form;
       form._id = parseInt(req.params.formId);
-      Event.updateForm(req.event._id, form, function(err, form) {
+      new api.Event(req.event).updateForm(form, function(err, form) {
         if (err) return next(err);
 
         new api.Form(req.event, form).populateUserFields(function(err) {
@@ -474,12 +461,18 @@ module.exports = function(app, security) {
           fs.readFile(icon.path, function(err, data) {
             if (err) return done(err);
 
+            var base64;
+            var metadata = fileType(data);
+            if (metadata) {
+              base64 = util.format('data:%s;base64,%s', metadata.mime, Buffer(data).toString('base64'));
+            }
+
             done(null, {
               eventId: icon.eventId,
               formId: icon.formId,
               primary: icon.primary,
               variant: icon.variant,
-              icon: util.format('data:%s;base64,%s', fileType(data).mime, Buffer(data).toString('base64'))
+              icon: base64
             });
           });
         }, function(err, icons) {
@@ -526,7 +519,7 @@ module.exports = function(app, security) {
     '/api/events/:eventId/form/icons*',
     passport.authenticate('bearer'),
     authorizeAccess('READ_EVENT_ALL', 'read'),
-    function(req, res, next) {
+    function(req, res) {
       res.sendFile(api.Icon.defaultIconPath);
     }
   );

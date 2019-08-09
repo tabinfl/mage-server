@@ -38,6 +38,15 @@ function hasAtLeastOneField(fields) {
   return fields.length > 0;
 }
 
+function fieldNamesAreUnique(fields) {
+  let names = new Set();
+  var hasDuplicates = fields.some(function(field) {
+    return names.size === names.add(field.name).size;
+  });
+
+  return !hasDuplicates;
+}
+
 function validateColor(color) {
   return /^#[0-9A-F]{6}$/i.test(color);
 }
@@ -77,7 +86,7 @@ var FormSchema = new Schema({
 const EventSchema = new Schema(
   {
     _id: { type: Number, required: true },
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true, unique: 'Event with name "{VALUE}" already exists.' },
     description: { type: String, required: false },
     complete: { type: Boolean },
     collectionName: { type: String, required: true },
@@ -103,7 +112,10 @@ const EventSchema = new Schema(
     versionKey: false
   });
 
-FormSchema.path('fields').validate(hasAtLeastOneField, 'Form must have at least one field.');
+EventSchema.plugin(require('mongoose-beautiful-unique-validation'));
+
+FormSchema.path('fields').validate(hasAtLeastOneField, 'Form must contain at least one field.');
+FormSchema.path('fields').validate(fieldNamesAreUnique, 'Form contains non unique field names');
 FormSchema.path('color').validate(validateColor, 'Form color must be valid hex string.');
 
 function validateTeamIds(eventId, teamIds, next) {
@@ -604,7 +616,7 @@ exports.update = function(id, event, options, callback) {
   }
 
   var update = ['name', 'description', 'complete', 'forms'].reduce(function(o, k) {
-    if (event[k] !== undefined) o[k] = event[k];
+    if (event.hasOwnProperty(k)) o[k] = event[k];
     return o;
   }, {});
 
@@ -644,7 +656,7 @@ exports.addForm = function(eventId, form, callback) {
           return f._id === form._id;
         });
 
-        callback(err, forms.length ? forms[0] : null);
+        callback(err, event, forms.length ? forms[0] : null);
       });
     })
     .catch(err => callback(err));
@@ -664,7 +676,7 @@ exports.updateForm = function(event, form, callback) {
       return f._id === form._id;
     });
 
-    callback(err, forms.length ? forms[0] : null);
+    callback(err, event, forms.length ? forms[0] : null);
   });
 };
 

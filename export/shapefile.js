@@ -1,5 +1,4 @@
 const util = require('util')
-  , api = require('../api')
   , async = require('async')
   , archiver = require('archiver')
   , mgrs = require('mgrs')
@@ -47,8 +46,7 @@ Shapefile.prototype.observationsToShapefile = function(archive, done) {
 
   if (!self._filter.exportObservations) return done(null, []);
 
-  self._filter.states = ['active'];
-  new api.Observation(self._event).getAll(self._filter, function(err, observations) {
+  self.requestObservations(self._filter, function(err, observations) {
     if (err) return done(err);
 
     mapObservations.call(self, observations);
@@ -63,7 +61,6 @@ Shapefile.prototype.observationsToShapefile = function(archive, done) {
     }, done);
   });
 };
-
 
 Shapefile.prototype.locationsToShapefiles = function(archive, done) {
   var self = this;
@@ -135,7 +132,11 @@ function write(geojson, callback, doneCallback) {
   };
   [shpgeojson.polygon(gj), shpgeojson.point(gj), shpgeojson.line(gj)]
     .forEach(function(l) {
+      console.log('type', l.type);
+      console.log('geometries', l.geometries);
+      console.log('properties', l.properties);
       if (l.geometries.length && l.geometries[0].length) {
+        console.log('write type', l.type);
         shpwrite.write(l.properties, l.type, l.geometries,
           function(err, files) {
             callback(err, {
@@ -170,7 +171,7 @@ function mapObservationProperties(observation) {
       if (field && !field.archived) {
         // Shapfiles attribute column names don't allow more than 10 characters
         // Lets try to shorten the properties field names by using form id instead of form name
-        observation.properties[form.id + "." + field.title] = observationForm[name];
+        observation.properties[form.id + "_" + field.title] = observationForm[name];
         delete observation.properties[name];
       }
     }

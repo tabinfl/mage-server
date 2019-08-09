@@ -30,6 +30,11 @@ mongoose.set('debug', function(collection, method, query, doc, options) {
   mongooseLogger.log('mongoose', "%s.%s(%j, %j, %j)", collection, method, query, doc, options);
 });
 
+process.on('disconnect', function() {
+  log.info('Image plugin orphaned, parent process disconnected. Shutting down...');
+  process.exit();
+});
+
 function processEvent(options, callback) {
   async.eachSeries(options.observations, function(observation, done) {
     async.nextTick(function() {

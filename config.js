@@ -14,6 +14,20 @@ module.exports = {
       "local": {
         "passwordMinLength": 14
       }
+      // ldap: {
+      //   title: "LDAP",
+      //   type: "ldap",
+      //   url: '',
+      //   baseDN: '',
+      //   username: '',
+      //   password: '',
+      //   ldapUsernameField: '',
+      //   ldapDisplayNameField: '',
+      //   ldapEmailField: '',
+      //   textColor: "#000000",
+      //   buttonColor: "#FFFFFF",
+      //   icon: ""
+      // }
       // "google": {
       //   "url": " ",
       //   "callbackURL": " ",
@@ -21,7 +35,8 @@ module.exports = {
       //   "clientSecret": " "
       // },
       // "geoaxis": {
-      //   "url": 'https://geoaxis.gxaccess.com',
+      //   "authorizationUrl": 'https://geoaxis.gxaccess.com',
+      //   "apiUrl": 'https://gxisapi.gxaccess.com',
       //   "clientID": '',
       //   "clientSecret": '',
       //   "callbackUrl": '',

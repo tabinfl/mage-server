@@ -72,29 +72,28 @@ Kml.prototype.export = function(streamable) {
 Kml.prototype.streamObservations = function(stream, archive, done) {
   var self = this;
 
-  if (!self._filter.exportObservations) return done(null);
+  if (!self._filter.exportObservations) return done();
 
-  self._filter.states = ['active'];
-  new api.Observation(self._event).getAll({filter: self._filter}, function(err, observations) {
+  self.requestObservations(self._filter, function(err, observations) {
     Icon.getAll({eventId: self._event._id}, function(err, icons) {
       stream.write(writer.generateObservationStyles(self._event, icons));
       stream.write(writer.generateKMLFolderStart(self._event.name, false));
 
-      observations.forEach(function(o) {
+      observations.forEach(observation => {
         var form = null;
         var primary = null;
         var secondary = null;
-        if (o.properties.forms.length) {
-          form = self._event.formMap[o.properties.forms[0].formId];
-          primary = o.properties.forms[0][form.primaryField];
-          secondary = o.properties.forms[0][form.variantField];
+        if (observation.properties.forms.length) {
+          form = self._event.formMap[observation.properties.forms[0].formId];
+          primary = observation.properties.forms[0][form.primaryField];
+          secondary = observation.properties.forms[0][form.variantField];
         }
 
-        self.mapObservations(o);
-        var name = primary || form.name || self._event.name;
-        stream.write(writer.generateObservationPlacemark(name, o, form, primary, secondary));
+        var name = primary || self._event.name;
 
-        o.attachments.forEach(function(attachment) {
+        stream.write(writer.generateObservationPlacemark(name, observation, self._event, primary, secondary));
+
+        observation.attachments.forEach(attachment => {
           archive.file(path.join(attachmentBase, attachment.relativePath), {name: attachment.relativePath});
         });
       });
@@ -126,7 +125,7 @@ Kml.prototype.streamUserLocations = function(stream, archive, user, done) {
       locations = requestedLocations;
 
       if (!lastLocationId && locations.length) { // first time through
-        stream.write(writer.generateKMLFolderStart('user: ' + user.username, false));
+        stream.write(writer.generateKMLFolderStart(user.displayName, false));
       }
 
       var locationString = "";

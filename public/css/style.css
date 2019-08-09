@@ -97,33 +97,6 @@ a {
  display: block;
 }
 
-.navbar {
-	margin-bottom: 0;
-}
-
-.mask {
-  opacity: .3;
-  pointer-events: none;
-}
-
-.mask-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mask-info {
-  background-color: #fff;
-  padding: 10px 50px;
-  max-width: 33vw;
-  box-shadow: 0 3px 7px rgba(0,0,0,.35);
-}
-
 .content-flex {
   flex: 1 1 0;
   position: relative;
@@ -389,9 +362,15 @@ a {
   }
 }
 
-@media(max-width:768px){
+@media(max-width:768px) {
   .filter-interval {
     padding-left: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .navbar-nav .open .dropdown-menu .dropdown-header {
+      color: rgb(221, 221, 221, .87);
   }
 }
 
@@ -628,6 +607,8 @@ textarea {
 
 .navbar {
   flex: auto;
+  min-height: auto;
+  margin-bottom: 0;
 }
 
 .navbar-default .admin-navbar-toggle {
@@ -644,6 +625,13 @@ textarea {
 
 .navbar-default .navbar-text-inverse {
     color: #777;
+}
+
+.navbar-divider {
+  height: 1px;
+  width: 100%;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.54);
 }
 
 .admin-dashboard-navbar .btn-link {
@@ -1127,8 +1115,9 @@ h4.image-delete {
 
 .btn .logo img {
   position: relative;
-  top: 9px;
-  width: 60%
+  top: 50%;
+  transform: translateY(-50%);
+  width: 70%
 }
 
 .btn .logo i {

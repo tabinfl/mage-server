@@ -1,20 +1,12 @@
-var webpack = require('webpack')
-  , ExtractTextPlugin = require("extract-text-webpack-plugin")
-  , CleanWebpackPlugin = require('clean-webpack-plugin');
+const webpack = require('webpack'),
+  CleanWebpackPlugin = require('clean-webpack-plugin'),
+  MiniCssExtractPlugin = require("mini-css-extract-plugin"),
+  HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   context: __dirname,
   entry: {
-    app: './main.js',
-    vendor: [
-      'angular',
-      'angular-animate',
-      'angular-messages',
-      'angular-resource',
-      'angular-route',
-      'angular-sanitize',
-      'leaflet'
-    ]
+    app: './main.js'
   },
   output: {
     path: __dirname + '/dist',
@@ -23,38 +15,47 @@ module.exports = {
   module: {
     rules: [{
       test: /\.css$/,
-      use: ExtractTextPlugin.extract({
-        fallback: 'style-loader',
-        use: [{
-          loader: 'css-loader',
-          options: {
-            minify: true,
-            sourceMap: true
-          }
-        }]
-      })
+      use: [
+        MiniCssExtractPlugin.loader,
+        'css-loader'
+      ]
     },{
       test: /\.(eot|svg|ttf|woff|woff2)$/,
       loader: 'file-loader?name=fonts/[name].[ext]'
     },{
-      test: /\.(png|jpg|ico)$/,
+      test: /\.(png|jpg|ico|gif)$/,
       loader: 'file-loader?name=images/[name].[ext]'
     },{
       test: /\.html$/, loader: 'raw-loader'
     }]
   },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /node_modules/,
+          chunks: 'initial',
+          name: 'vendor',
+          enforce: true
+        }
+      }
+    }
+  },
   plugins: [
-    new CleanWebpackPlugin(['dist'], {
-      exclude: ['index.html']
+    new CleanWebpackPlugin(
+      ['dist']
+    ),
+    new MiniCssExtractPlugin({
+      filename: '[name].css'
     }),
-    new ExtractTextPlugin("styles.css"),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: './index.html'
+    }),
     new webpack.ProvidePlugin({
       'window.jQuery': 'jquery',
-      "jQuery": "jquery"
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      file: 'vendor.bundle.js'
+      'jQuery': 'jquery'
     })
   ]
 };

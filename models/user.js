@@ -137,7 +137,7 @@ UserSchema.pre('save', function(next) {
 
 UserSchema.pre('save', function(next) {
   var user = this;
-  if (user.active === false) {
+  if (user.active === false || user.enabled === false) {
     Token.removeTokensForUser(user, function(err) {
       next(err);
     });
@@ -346,7 +346,7 @@ exports.deleteUser = function(user, callback) {
 
 exports.invalidLogin = function(user) {
   return Setting.getSetting('security')
-    .then(securitySettings => {
+    .then((securitySettings = {settings: {accountLock: {}}}) => {
       let {enabled, max, interval, threshold} = securitySettings.settings.accountLock;
       if (!enabled) return Promise.resolve(user);
 
