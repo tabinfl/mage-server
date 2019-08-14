@@ -27,6 +27,7 @@ require('./mage');
 require('./authentication');
 require('./observation');
 require('./user');
+require('./account');
 require('./admin');
 
 config.$inject = ['$provide', '$httpProvider', '$routeProvider', '$animateProvider'];
@@ -87,6 +88,11 @@ function config($provide, $httpProvider, $routeProvider, $animateProvider) {
         });
       }]
     }
+  });
+
+  $routeProvider.when('/account/inactive', {
+    template: require('./account/inactive.html'),
+    controller: 'AccountInactiveController'
   });
 
   $routeProvider.when('/setup', {
@@ -322,7 +328,7 @@ function run($rootScope, $route, $uibModal, $templateCache, UserService, $locati
   $templateCache.put("observation/observation-important.html", require("./observation/observation-important.html"));
 
   $rootScope.$on('event:auth-loginRequired', function(e, response) {
-    var pathExceptions = ['/', '/signin', '/signup', '/setup', '/authorize'];
+    var pathExceptions = ['/', '/signin', '/signup', '/setup', '/authorize', '/account/inactive'];
     var requestExceptions = ['/api/users/myself/password'];
     if (!$rootScope.loginDialogPresented && !_(pathExceptions).contains($location.path()) && !_(requestExceptions).contains(response.config.url)) {
       $rootScope.loginDialogPresented = true;

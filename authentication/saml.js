@@ -39,12 +39,7 @@ module.exports = function(app, passport, provisioning, strategyConfig) {
     })(req, res, next);
   }
 
-  passport.use(new SamlStrategy({
-    path: strategyConfig.callbackPath,
-    entryPoint: strategyConfig.entryPoint,
-    issuer: 'mage'
-  },
-  function(profile, done) {
+  passport.use(new SamlStrategy(strategyConfig.options, function(profile, done) {
     const username = profile[strategyConfig.uidAttribute];
     User.getUserByAuthenticationId('saml', username, function(err, user) {
       if (err) return done(err);
@@ -155,10 +150,14 @@ module.exports = function(app, passport, provisioning, strategyConfig) {
   );
 
   app.post(
-    strategyConfig.callbackPath,
+    strategyConfig.options.path,
     authenticate,
     function(req, res) {
-      res.render('authentication', { host: req.getRoot(), success: true, login: { user: req.user }});
+      // TODO check if iDP or SP initiated authentication
+      // res.render('authentication', { host: req.getRoot(), success: true, login: { user: req.user }});
+
+      const url = req.user.active ? '/#/authorize' : '/#/account/inactive';
+      res.redirect(url);
     }
   );
 

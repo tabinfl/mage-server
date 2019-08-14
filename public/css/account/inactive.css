@@ -1,0 +1,30 @@
+.account-inactive-icon {
+  margin-top: 96px;
+  font-size: 96px;
+  color: #365F8C;
+  text-align: center;
+  width: 100%;
+}
+
+.account-inactive-header {
+  font-size: 54px;
+  color: #365F8C;
+  text-align: center;
+  width: 100%;
+}
+
+.account-inactive-title {
+  margin: 96px auto 0;
+  width: 100%;
+  text-align: center;
+  color: #737373;
+  font-size: 32px
+}
+
+.account-inactive-message {
+  margin: 32px auto 0;
+  width: 75%;
+  max-width: 600px;
+  text-align: center;
+  color: #737373;
+}
