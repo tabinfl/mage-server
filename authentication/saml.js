@@ -156,7 +156,7 @@ module.exports = function(app, passport, provisioning, strategyConfig) {
       // TODO check if iDP or SP initiated authentication
       // res.render('authentication', { host: req.getRoot(), success: true, login: { user: req.user }});
 
-      const url = req.user.active ? '/#/authorize' : '/#/account/inactive';
+      const url = req.user.active ? '/#/authorize?type=saml' : '/#/account/inactive';
       res.redirect(url);
     }
   );
