@@ -235,7 +235,35 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/User' }
-
+  /api/users/myself/status:
+    put:
+      tags: [ User ]
+      description: Update the status of the requesting user.
+      operationId: updateMyStatus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required: [ status ]
+              properties:
+                status:
+                  type: string
+      responses:
+        200:
+          description: Successful status update
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+    delete:
+      tags: [ User ]
+      description: Delete the status of the requesting user.
+      operationId: deleteMyStatus
+      responses:
+        200:
+          description: Successfully deleted status
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
   /api/logins:
     get:
       tags: [ Auth ]
