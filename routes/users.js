@@ -238,6 +238,7 @@ module.exports = function(app, security) {
     }
   );
 
+  // TODO: should be patch
   // update myself
   app.put(
     '/api/users/myself',

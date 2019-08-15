@@ -54,16 +54,22 @@ paths:
       tags: [ User ]
       description: >
         Create a new user.  Duplicate usernames are not allowed.
-        If the requesting client is an admin, i.e., has the `CREATE_USER`
+        If the requesting user is an admin, i.e., has the `CREATE_USER`
         permission, the user record will be active.  Otherwise, the user will
         be inactive and an admin must activate the user later.  Additionally,
-        the `roleId` key is required when the requesting client is an admin,
-        otherwise, the created user receives a default role.  When the request
+        the `roleId` key is required when the requesting user is an admin.
+        Otherwise, the created user receives a default role.  When the request
         body contains `multipart/form-data`, MAGE will handle the `icon` and/or
-        `avatar` file form parameters.
+        `avatar` file form parameters.  The server only sets the user's map
+        icon if the requesting user has the `CREATE_USER` permission.
       operationId: createUser
       requestBody:
-        $ref: '#/components/requestBodies/UserIn'
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserCreate' }
+          multipart/form-data:
+            schema: { $ref: '#/components/schemas/UserCreate' }
       responses:
         200:
           description: The created user document
@@ -109,7 +115,12 @@ paths:
         The client must have `UPDATE_USER` permission.
       operationId: updateUserById
       requestBody:
-        $ref: '#/components/requestBodies/UserIn'
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserIn' }
+          multipart/form-data:
+            schema: { $ref: '#/components/schemas/UserIn' }
       responses:
         200:
           description: user update response
@@ -188,7 +199,13 @@ paths:
         changing the requesting user's password; use
         `PUT /api/users/myself/password` for that.
       operationId: updateMyself
-      requestBody: { $ref: '#/components/requestBodies/UserIn' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserUpdateSelf' }
+          multipart/form-data:
+            schema: { $ref: '#/components/schemas/UserUpdateSelf' }
       responses:
         200:
           description: The updated user document
@@ -1456,7 +1473,7 @@ paths:
           type: string
       requestBody:
         content:
-          mulitpart/form-data:
+          multipart/form-data:
             schema:
               required:
               - attachment
@@ -1952,12 +1969,6 @@ components:
         The `User` schema defines the structure of persisted user documents as
         they exist in the database and as the server returns them in various
         responses.
-      required:
-        - id
-        - username
-        - displayName
-        - active
-        - enabled
       type: object
       properties:
         id:
@@ -1965,6 +1976,8 @@ components:
         username:
           type: string
         displayName:
+          type: string
+        status:
           type: string
         email:
           type: string
@@ -2002,38 +2015,97 @@ components:
       oneOf:
         - { required: [ role ], not: { required: [ roleId ] } }
         - { required: [ roleId ], not: { required: [ role ] } }
+    UserRef:
+      description: >
+        `UserRef` is an object that references an existing user document with
+        the required `id` property.  MAGE ignores any properties other than
+        `id`.
+      type: object
+      required:
+        - id
+      properties:
+        id: { $ref: '#/components/schemas/User/properties/id' }
+      additionalProperties: true
     UserIn:
       type: object
       properties:
-        username:
-          type: string
-        displayName:
-          type: string
-        email:
-          type: string
+        username: { $ref: '#/components/schemas/User/properties/username' }
+        displayName: { $ref: '#/components/schemas/User/properties/displayName' }
+        email: { $ref: '#/components/schemas/User/properties/email' }
         phone:
           type: string
-        active:
-          type: boolean
-        enabled:
-          type: boolean
-        roleId:
+          format: phone
+        roleId: { $ref: '#/components/schemas/User/properties/roleId' }
+        iconMetadata:
+          type: object
+          properties:
+            type: { $ref: '#/components/schemas/UserIcon/properties/type' }
+            color: { $ref: '#/components/schemas/UserIcon/properties/color' }
+            text: { $ref: '#/components/schemas/UserIcon/properties/text' }
+        icon:
+          description: >
+            This key is valid only when encoded as `multipart/form-data`.
+            This is a binary image file attachment.
           type: string
+          format: binary
+        avatar:
+          description: >
+            This key is valid only when encoded as `multipart/form-data`.
+            This is a binary image file attachment.
+          type: string
+          format: binary
+      allOf:
+        - { $ref: '#/components/schemas/UserPasswordPair' }
+    UserCreate:
+      allOf:
+        - { $ref: '#/components/schemas/UserIn' }
+        - required: [ username, displayName, password, passwordconfirm ]
+    UserUpdateSelf:
+      allOf:
+        - { $ref: '#/components/schemas/UserIn' }
+        - not:
+            required: [ password, passwordconfirm, icon, iconMetadata ]
+    UserIcon:
+      description: >
+        A user icon is the small image that appears on a map to show the user's
+        location.
+      type: object
+      properties:
+        type:
+          description: The origin of the icon
+          type: string
+          enum:
+            - create
+            - upload
+            - none
+        color:
+          description: >
+            3-byte hex string prefixed with '#', e.g. '#ff4545';  only applies
+            to `create` type icons
+          type: string
+          pattern: '#[a-f0-9]{6}'
+        text:
+          description: >
+            Two-letter text label that appears on the map icon; only applies to
+            `create` type icons
+          type: string
+        contentType:
+          description: The MIME type of the icon image
+          type: string
+        size:
+          description: The image size in bytes
+          type: integer
+    UserPasswordPair:
+      type: object
+      properties:
         password:
           type: string
         passwordconfirm:
           type: string
-        avatar:
-          type: string
-          format: binary
-        icon:
-          type: string
-          format: binary
-    UserRef:
-      type: object
-      properties:
-        id: { $ref: '#/components/schemas/User/properties/id' }
-      additionalProperties: true
+      oneOf:
+        - required: [ password, passwordconfirm ]
+        - not: { required: [ password, passwordconfirm ] }
+
     AuthStatus:
       required:
        - type
@@ -2373,19 +2445,6 @@ components:
           type: boolean
         format:
           type: string
-    UserIcon:
-      type: object
-      properties:
-        color:
-          type: string
-        contentType:
-          type: string
-        size:
-          type: number
-        text:
-          type: string
-        type:
-          type: string
     Event:
       required:
       - id
@@ -2435,18 +2494,6 @@ components:
       schema: { $ref: '#/components/schemas/Team/properties/id' }
 
   requestBodies:
-    UserIn:
-      description: >
-        A `UserIn` request body is the client input document for operations that
-        modify a user in the database, e.g., `POST /api/users`.  The server
-        does not currently support the `avatar` and `icon` when the client
-        sends the `UserIn` body as `application/json`.
-      required: true
-      content:
-        application/json:
-          schema: { $ref: '#/components/schemas/UserIn' }
-        mulitpart/form-data:
-          schema: { $ref: '#/components/schemas/UserIn' }
     DeviceIn:
       description: >
         A `DeviceIn` request body specifies the keys and values to save to a
