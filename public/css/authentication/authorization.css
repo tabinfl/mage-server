@@ -25,10 +25,20 @@
   margin: 48px auto 0;
   width: 75%;
   max-width: 600px;
+  text-align: end;
 }
 
 .authorization-message {
   max-width: 600px;
   text-align: center;
   color: #737373;
+}
+
+.authorization-button {
+  margin-top: 16px;
+}
+
+.authorization-error {
+  margin-top: 16px;
+  text-align: left;
 }

@@ -51,7 +51,7 @@ module.exports = {
       //   title: 'GeoAxis',
       //   authorizationUrl: 'https://geoaxis.gxaccess.com',
       //   apiUrl: 'https://gxisapi.gxaccess.com',
-      //   clientI": '',
+      //   clientID: '',
       //   clientSecret: '',
       //   callbackUrl: '',
       //   textColor: 'FFFFFF',

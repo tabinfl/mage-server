@@ -1,22 +1,18 @@
 <div>
   <i class="fa fa-magic authorization-icon"></i>
 
-  <!-- <h1 class="authorization-header">MAGE</h1> -->
-
   <h4 class="authorization-title">Enter your device ID to continue to MAGE.</h4>
 
   <div class="authorization-content">
     <p class="authorization-message">To access MAGE you will need to enter a device ID.  If you do not have a device ID please ask you MAGE administrator to provide you with one.</p>
 
-    <div class="form-group" ng-class="{'has-error': status > 399}">
+    <div class="" ng-class="{'has-error': status > 399}">
       <input ng-model="uid" name="uid" type="text" placeholder="Device ID" autocapitalize="off" class="form-control"/>
     </div>
 
-    <button class="btn btn-primary pull-right top-gap" type="submit" ng-click="authorize({uid: uid})">Continue to MAGE</button>
-  </div>
+    <button class="btn btn-primary authorization-button" type="submit" ng-click="authorize(uid)">Continue to MAGE</button>
 
-  <div class="col-md-10 col-md-offset-1">
-    <div class="top-gap-s alert alert-danger" ng-show="status > 399">
+    <div class="authorization-error alert alert-danger clearfix" ng-show="status > 399">
       <strong>Invalid Device ID</strong>
       <p>Device ID is invalid, please check your device ID, and try again.</p>
     </div>
