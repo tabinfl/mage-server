@@ -468,6 +468,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Team'
+  /api/teams/count:
+    get:
+      tags: [ Team ]
+      description: >
+        Get the number of teams in the database.  The requesting user must have
+        have `READ_TEAM` permission.
+      operationId: getTeamCount
+      responses:
+        200:
+          description: Success - return the number of teams
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Count' }
   /api/teams/{teamId}:
     parameters:
       - $ref: '#/components/parameters/teamIdInPath'
