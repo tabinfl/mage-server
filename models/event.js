@@ -82,7 +82,6 @@ var FormSchema = new Schema({
   style: { type: Schema.Types.Mixed, required: false }
 });
 
-// Creates the Schema for the Attachments object
 const EventSchema = new Schema(
   {
     _id: { type: Number, required: true },
@@ -362,7 +361,7 @@ function filterEventsByUserId(events, userId, callback) {
       }
 
       // Check if user has read access to the event based on
-      // being in the events access control listen
+      // being in the events access control list
       if (event.acl[userId] && rolesWithPermission('read').some(function(role) { return role === event.acl[userId]; })) {
         return true;
       }
