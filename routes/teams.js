@@ -90,6 +90,7 @@ module.exports = function(app, security) {
   );
 
   // Update a team
+  // TODO: ignoring acl here
   app.put(
     '/api/teams/:teamId',
     authorizeAccess('UPDATE_TEAM', 'update'),
