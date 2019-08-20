@@ -131,33 +131,53 @@ module.exports = function(app, security) {
     next();
   }
 
-  // logout
+
+  // Create a new user (ADMIN)
+  // If authentication for admin fails go to next route and
+  // create user as non-admin, roles will be empty
   app.post(
-    '/api/logout',
+    '/api/users',
     isAuthenticated('bearer'),
+    validateUser,
+    parseIconUpload,
     function(req, res, next) {
-      if (req.user) {
-        log.info('logout w/ user', req.user._id.toString());
-        new api.User().logout(req.token, function(err) {
-          if (err) return next(err);
-          res.status(200).send('successfully logged out');
-        });
-      } else {
-        // call to logout with an invalid token, nothing to do
-        res.sendStatus(200);
+      // If I did not authenticate a user go to the next route
+      // '/api/users' route which does not require authentication
+      if (!access.userHasPermission(req.user, 'CREATE_USER')) {
+        return next();
       }
+
+      var roleId = req.param('roleId');
+      if (!roleId) return res.status(400).send('roleId is a required field');
+      req.newUser.roleId = roleId;
+
+      // Authorized to update users, activate account by default
+      req.newUser.active = true;
+
+      new api.User().create(req.newUser, {avatar: req.files.avatar, icon: req.files.icon}, function(err, newUser) {
+        if (err) return next(err);
+
+        newUser = userTransformer.transform(newUser, {path: req.getRoot()});
+        res.json(newUser);
+      });
     }
   );
 
-  app.get(
-    '/api/users/count',
-    passport.authenticate('bearer'),
-    access.authorize('READ_USER'),
+  // Create a new user
+  // Anyone can create a new user, but the new user will not be active
+  app.post(
+    '/api/users',
+    getDefaultRole,
+    validateUser,
     function(req, res, next) {
-      new api.User().count(function(err, count) {
+      req.newUser.active = false;
+      req.newUser.roleId = req.role._id;
+
+      new api.User().create(req.newUser, {avatar: req.files.avatar}, function(err, newUser) {
         if (err) return next(err);
 
-        res.json({count: count});
+        newUser = userTransformer.transform(newUser, {path: req.getRoot()});
+        res.json(newUser);
       });
     }
   );
@@ -193,6 +213,19 @@ module.exports = function(app, security) {
     }
   );
 
+  app.get(
+    '/api/users/count',
+    passport.authenticate('bearer'),
+    access.authorize('READ_USER'),
+    function(req, res, next) {
+      new api.User().count(function(err, count) {
+        if (err) return next(err);
+
+        res.json({count: count});
+      });
+    }
+  );
+
   // get info for the user bearing a token, i.e get info for myself
   app.get(
     '/api/users/myself',
@@ -200,41 +233,6 @@ module.exports = function(app, security) {
     function(req, res) {
       var user = userTransformer.transform(req.user, {path: req.getRoot()});
       res.json(user);
-    }
-  );
-
-  // get user by id
-  app.get(
-    '/api/users/:userId',
-    passport.authenticate('bearer'),
-    access.authorize('READ_USER'),
-    function(req, res) {
-      var user = userTransformer.transform(req.userParam, {path: req.getRoot()});
-      res.json(user);
-    }
-  );
-
-  // get user avatar/icon by id
-  app.get(
-    '/api/users/:userId/:content(avatar|icon)',
-    passport.authenticate('bearer'),
-    access.authorize('READ_USER'),
-    function(req, res, next) {
-      new api.User()[req.params.content](req.userParam, function(err, content) {
-        if (err) return next(err);
-
-        if (!content) return res.sendStatus(404);
-
-        var stream = fs.createReadStream(content.path);
-        stream.on('open', function() {
-          res.type(content.contentType);
-          res.header('Content-Length', content.size);
-          stream.pipe(res);
-        });
-        stream.on('error', function() {
-          res.sendStatus(404);
-        });
-      });
     }
   );
 
@@ -301,56 +299,6 @@ module.exports = function(app, security) {
     }
   );
 
-  // Create a new user (ADMIN)
-  // If authentication for admin fails go to next route and
-  // create user as non-admin, roles will be empty
-  app.post(
-    '/api/users',
-    isAuthenticated('bearer'),
-    validateUser,
-    parseIconUpload,
-    function(req, res, next) {
-      // If I did not authenticate a user go to the next route
-      // '/api/users' route which does not require authentication
-      if (!access.userHasPermission(req.user, 'CREATE_USER')) {
-        return next();
-      }
-
-      var roleId = req.param('roleId');
-      if (!roleId) return res.status(400).send('roleId is a required field');
-      req.newUser.roleId = roleId;
-
-      // Authorized to update users, activate account by default
-      req.newUser.active = true;
-
-      new api.User().create(req.newUser, {avatar: req.files.avatar, icon: req.files.icon}, function(err, newUser) {
-        if (err) return next(err);
-
-        newUser = userTransformer.transform(newUser, {path: req.getRoot()});
-        res.json(newUser);
-      });
-    }
-  );
-
-  // Create a new user
-  // Anyone can create a new user, but the new user will not be active
-  app.post(
-    '/api/users',
-    getDefaultRole,
-    validateUser,
-    function(req, res, next) {
-      req.newUser.active = false;
-      req.newUser.roleId = req.role._id;
-
-      new api.User().create(req.newUser, {avatar: req.files.avatar}, function(err, newUser) {
-        if (err) return next(err);
-
-        newUser = userTransformer.transform(newUser, {path: req.getRoot()});
-        res.json(newUser);
-      });
-    }
-  );
-
   // update status for myself
   app.put(
     '/api/users/myself/status',
@@ -377,6 +325,17 @@ module.exports = function(app, security) {
         updatedUser = userTransformer.transform(updatedUser, {path: req.getRoot()});
         res.json(updatedUser);
       });
+    }
+  );
+
+  // get user by id
+  app.get(
+    '/api/users/:userId',
+    passport.authenticate('bearer'),
+    access.authorize('READ_USER'),
+    function(req, res) {
+      var user = userTransformer.transform(req.userParam, {path: req.getRoot()});
+      res.json(user);
     }
   );
 
@@ -458,6 +417,30 @@ module.exports = function(app, security) {
     }
   );
 
+  // get user avatar/icon by id
+  app.get(
+    '/api/users/:userId/:content(avatar|icon)',
+    passport.authenticate('bearer'),
+    access.authorize('READ_USER'),
+    function(req, res, next) {
+      new api.User()[req.params.content](req.userParam, function(err, content) {
+        if (err) return next(err);
+
+        if (!content) return res.sendStatus(404);
+
+        var stream = fs.createReadStream(content.path);
+        stream.on('open', function() {
+          res.type(content.contentType);
+          res.header('Content-Length', content.size);
+          stream.pipe(res);
+        });
+        stream.on('error', function() {
+          res.sendStatus(404);
+        });
+      });
+    }
+  );
+
   app.post(
     '/api/users/:userId/events/:eventId/recent',
     passport.authenticate('bearer'),
@@ -479,4 +462,21 @@ module.exports = function(app, security) {
     }
   );
 
+  // logout
+  app.post(
+    '/api/logout',
+    isAuthenticated('bearer'),
+    function(req, res, next) {
+      if (req.user) {
+        log.info('logout w/ user', req.user._id.toString());
+        new api.User().logout(req.token, function(err) {
+          if (err) return next(err);
+          res.status(200).send('successfully logged out');
+        });
+      } else {
+        // call to logout with an invalid token, nothing to do
+        res.sendStatus(200);
+      }
+    }
+  );
 };
