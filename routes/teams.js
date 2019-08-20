@@ -39,6 +39,20 @@ module.exports = function(app, security) {
     next();
   }
 
+  // Create a new team
+  app.post(
+    '/api/teams',
+    access.authorize('CREATE_TEAM'),
+    validateTeamParams,
+    function(req, res, next) {
+      Team.createTeam(req.teamParam, req.user, function(err, team) {
+        if (err) return next(err);
+
+        res.json(team);
+      });
+    }
+  );
+
   // get all teams
   app.get(
     '/api/teams',
@@ -50,20 +64,6 @@ module.exports = function(app, security) {
         res.json(teams.map(function(team) {
           return team.toObject({access: req.access, path: req.getRoot()});
         }));
-      });
-    }
-  );
-
-  // Create a new team
-  app.post(
-    '/api/teams',
-    access.authorize('CREATE_TEAM'),
-    validateTeamParams,
-    function(req, res, next) {
-      Team.createTeam(req.teamParam, req.user, function(err, team) {
-        if (err) return next(err);
-
-        res.json(team);
       });
     }
   );

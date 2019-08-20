@@ -439,21 +439,6 @@ paths:
           description: user deleted
           content: {}
   /api/teams:
-    get:
-      tags: [ Team ]
-      description: >
-        Return all the teams.  The requesting client must have `READ_TEAM`
-        permission.
-      operationId: getTeams
-      responses:
-        200:
-          description: Success - an array of team documents
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Team'
     post:
       tags: [ Team ]
       description: >
@@ -474,6 +459,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Team'
+    get:
+      tags: [ Team ]
+      description: >
+        Return all the teams.  The requesting client must have `READ_TEAM`
+        permission.
+      operationId: getTeams
+      responses:
+        200:
+          description: Success - an array of team documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
   /api/teams/count:
     get:
       tags: [ Team ]
