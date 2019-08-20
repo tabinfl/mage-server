@@ -39,18 +39,6 @@ module.exports = function(app, security) {
     next();
   }
 
-  app.get(
-    '/api/teams/count',
-    determineReadAccess,
-    function(req, res, next) {
-      Team.count({access: req.access}, function(err, count) {
-        if (err) return next(err);
-
-        res.json({count: count});
-      });
-    }
-  );
-
   // get all teams
   app.get(
     '/api/teams',
@@ -66,15 +54,6 @@ module.exports = function(app, security) {
     }
   );
 
-  // get team
-  app.get(
-    '/api/teams/:teamId',
-    authorizeAccess('READ_TEAM', 'read'),
-    function (req, res) {
-      res.json(req.team.toObject({access: req.access, path: req.getRoot()}));
-    }
-  );
-
   // Create a new team
   app.post(
     '/api/teams',
@@ -86,6 +65,27 @@ module.exports = function(app, security) {
 
         res.json(team);
       });
+    }
+  );
+
+  app.get(
+    '/api/teams/count',
+    determineReadAccess,
+    function(req, res, next) {
+      Team.count({access: req.access}, function(err, count) {
+        if (err) return next(err);
+
+        res.json({count: count});
+      });
+    }
+  );
+
+  // get team
+  app.get(
+    '/api/teams/:teamId',
+    authorizeAccess('READ_TEAM', 'read'),
+    function (req, res) {
+      res.json(req.team.toObject({access: req.access, path: req.getRoot()}));
     }
   );
 
@@ -122,28 +122,6 @@ module.exports = function(app, security) {
     }
   );
 
-  app.put(
-    '/api/teams/:teamId/acl/:id',
-    authorizeAccess('UPDATE_TEAM', 'update'),
-    function(req, res, next) {
-      Team.updateUserInAcl(req.team._id, req.params.id, req.body.role, function(err, event) {
-        if (err) return next(err);
-        res.json(event);
-      });
-    }
-  );
-
-  app.delete(
-    '/api/teams/:teamId/acl/:id',
-    authorizeAccess('UPDATE_TEAM', 'update'),
-    function(req, res, next) {
-      Team.removeUserFromAcl(req.team._id, req.params.id, function(err, event) {
-        if (err) return next(err);
-        res.json(event);
-      });
-    }
-  );
-
   app.post(
     '/api/teams/:teamId/users',
     authorizeAccess('UPDATE_TEAM', 'update'),
@@ -164,6 +142,28 @@ module.exports = function(app, security) {
         if (err) return next(err);
 
         res.json(team);
+      });
+    }
+  );
+
+  app.put(
+    '/api/teams/:teamId/acl/:id',
+    authorizeAccess('UPDATE_TEAM', 'update'),
+    function(req, res, next) {
+      Team.updateUserInAcl(req.team._id, req.params.id, req.body.role, function(err, event) {
+        if (err) return next(err);
+        res.json(event);
+      });
+    }
+  );
+
+  app.delete(
+    '/api/teams/:teamId/acl/:id',
+    authorizeAccess('UPDATE_TEAM', 'update'),
+    function(req, res, next) {
+      Team.removeUserFromAcl(req.team._id, req.params.id, function(err, event) {
+        if (err) return next(err);
+        res.json(event);
       });
     }
   );
