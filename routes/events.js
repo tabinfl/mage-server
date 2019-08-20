@@ -121,15 +121,16 @@ module.exports = function(app, security) {
     }, {});
   }
 
-  app.get(
-    '/api/events/count',
+  app.post(
+    '/api/events',
     passport.authenticate('bearer'),
-    determineReadAccess,
+    access.authorize('CREATE_EVENT'),
+    parseEventQueryParams,
     function(req, res, next) {
-      Event.count({access: req.access}, function(err, count) {
+      new api.Event().createEvent(req.body, req.user, function(err, event) {
         if (err) return next(err);
 
-        return res.json({count: count});
+        res.status(201).json(event);
       });
     }
   );
@@ -156,6 +157,19 @@ module.exports = function(app, security) {
   );
 
   app.get(
+    '/api/events/count',
+    passport.authenticate('bearer'),
+    determineReadAccess,
+    function(req, res, next) {
+      Event.count({access: req.access}, function(err, count) {
+        if (err) return next(err);
+
+        return res.json({count: count});
+      });
+    }
+  );
+
+  app.get(
     '/api/events/:eventId',
     passport.authenticate('bearer'),
     authorizeAccess('READ_EVENT_ALL', 'read'),
@@ -169,56 +183,6 @@ module.exports = function(app, security) {
         if (!event) return res.sendStatus(404);
 
         res.json(event.toObject({access: req.access, projection: req.parameters.projection}));
-      });
-    }
-  );
-
-  app.get(
-    '/api/events/:eventId/teams',
-    passport.authenticate('bearer'),
-    authorizeAccess('READ_EVENT_ALL', 'read'),
-    determineReadAccess,
-    function (req, res, next) {
-      var populate = null;
-      if (req.query.populate) {
-        populate = req.query.populate.split(",");
-      }
-
-      Event.getTeams(req.event._id, {populate: populate}, function(err, teams) {
-        if (err) return next(err);
-
-        res.json(teams.map(function(team) {
-          return team.toObject({access: req.access});
-        }));
-      });
-    }
-  );
-
-  app.get(
-    '/api/events/:eventId/users',
-    passport.authenticate('bearer'),
-    authorizeAccess('READ_EVENT_ALL', 'read'),
-    determineReadAccess,
-    function (req, res, next) {
-      Event.getUsers(req.event._id, function(err, users) {
-        if (err) return next(err);
-
-        users = userTransformer.transform(users, {path: req.getRoot()});
-        res.json(users);
-      });
-    }
-  );
-
-  app.post(
-    '/api/events',
-    passport.authenticate('bearer'),
-    access.authorize('CREATE_EVENT'),
-    parseEventQueryParams,
-    function(req, res, next) {
-      new api.Event().createEvent(req.body, req.user, function(err, event) {
-        if (err) return next(err);
-
-        res.status(201).json(event);
       });
     }
   );
@@ -253,37 +217,15 @@ module.exports = function(app, security) {
     }
   );
 
-  app.put(
-    '/api/events/:eventId/acl/:id',
-    passport.authenticate('bearer'),
-    authorizeAccess('UPDATE_EVENT', 'update'),
-    function(req, res, next) {
-      Event.updateUserInAcl(req.event._id, req.params.id, req.body.role, function(err, event) {
-        if (err) return next(err);
-        res.json(event);
-      });
-    }
-  );
-
-  app.delete(
-    '/api/events/:eventId/acl/:id',
-    passport.authenticate('bearer'),
-    authorizeAccess('UPDATE_EVENT', 'update'),
-    function(req, res, next) {
-      Event.removeUserFromAcl(req.event._id, req.params.id, function(err, event) {
-        if (err) return next(err);
-        res.json(event);
-      });
-    }
-  );
-
   app.post(
     '/api/events/:eventId/forms',
     passport.authenticate('bearer'),
     authorizeAccess('UPDATE_EVENT', 'update'),
     function(req, res, next) {
 
-      if (!req.is('multipart/form-data')) return next();
+      if (!req.is('multipart/form-data')) {
+        return next();
+      }
 
       function validateForm(callback) {
         new api.Form().validate(req.files.form, callback);
@@ -366,55 +308,28 @@ module.exports = function(app, security) {
     }
   );
 
-  app.post(
-    '/api/events/:eventId/teams',
+  app.get(
+    '/api/events/:eventId/form/icons.zip',
     passport.authenticate('bearer'),
-    authorizeAccess('UPDATE_EVENT', 'update'),
-    function(req, res, next) {
-      Event.addTeam(req.event, req.body, function(err, event) {
-        if (err) return next(err);
-
-        res.json(event);
+    authorizeAccess('READ_EVENT_ALL', 'read'),
+    function(req, res) {
+      new api.Icon(req.event._id).getZipPath(function(err, zipPath) {
+        res.on('finish', function() {
+          fs.remove(zipPath, function() {
+            console.log('Deleted the temp icon zip %s', zipPath);
+          });
+        });
+        res.sendFile(zipPath);
       });
     }
   );
 
-  app.delete(
-    '/api/events/:eventId/teams/:teamId',
+  app.get(
+    '/api/events/:eventId/form/icons*',
     passport.authenticate('bearer'),
-    authorizeAccess('UPDATE_EVENT', 'update'),
-    function(req, res, next) {
-      Event.removeTeam(req.event, req.team, function(err, event) {
-        if (err) return next(err);
-
-        res.json(event);
-      });
-    }
-  );
-
-  app.post(
-    '/api/events/:eventId/layers',
-    passport.authenticate('bearer'),
-    authorizeAccess('UPDATE_EVENT', 'update'),
-    function(req, res, next) {
-      Event.addLayer(req.event, req.body, function(err, event) {
-        if (err) return next(err);
-
-        res.json(event);
-      });
-    }
-  );
-
-  app.delete(
-    '/api/events/:eventId/layers/:id',
-    passport.authenticate('bearer'),
-    authorizeAccess('UPDATE_EVENT', 'update'),
-    function(req, res, next) {
-      Event.removeLayer(req.event, {id: req.params.id}, function(err, event) {
-        if (err) return next(err);
-
-        res.json(event);
-      });
+    authorizeAccess('READ_EVENT_ALL', 'read'),
+    function(req, res) {
+      res.sendFile(api.Icon.defaultIconPath);
     }
   );
 
@@ -429,22 +344,6 @@ module.exports = function(app, security) {
 
         res.attachment(req.event.name + "-" + form.name + "-form.zip");
         form.file.pipe(res);
-      });
-    }
-  );
-
-  app.get(
-    '/api/events/:eventId/form/icons.zip',
-    passport.authenticate('bearer'),
-    authorizeAccess('READ_EVENT_ALL', 'read'),
-    function(req, res) {
-      new api.Icon(req.event._id).getZipPath(function(err, zipPath) {
-        res.on('finish', function() {
-          fs.remove(zipPath, function() {
-            console.log('Deleted the temp icon zip %s', zipPath);
-          });
-        });
-        res.sendFile(zipPath);
       });
     }
   );
@@ -484,6 +383,20 @@ module.exports = function(app, security) {
     }
   );
 
+  // Create a new icon
+  app.post(
+    '/api/events/:eventId/icons/:formId?/:primary?/:variant?',
+    passport.authenticate('bearer'),
+    authorizeAccess('UPDATE_EVENT', 'update'),
+    function(req, res, next) {
+      new api.Icon(req.event._id, req.params.formId, req.params.primary, req.params.variant).create(req.files.icon, function(err, icon) {
+        if (err) return next(err);
+
+        return res.json(icon);
+      });
+    }
+  );
+
   // get icon
   app.get(
     '/api/events/:eventId/icons/:formId?/:primary?/:variant?',
@@ -515,29 +428,6 @@ module.exports = function(app, security) {
     }
   );
 
-  app.get(
-    '/api/events/:eventId/form/icons*',
-    passport.authenticate('bearer'),
-    authorizeAccess('READ_EVENT_ALL', 'read'),
-    function(req, res) {
-      res.sendFile(api.Icon.defaultIconPath);
-    }
-  );
-
-  // Create a new icon
-  app.post(
-    '/api/events/:eventId/icons/:formId?/:primary?/:variant?',
-    passport.authenticate('bearer'),
-    authorizeAccess('UPDATE_EVENT', 'update'),
-    function(req, res, next) {
-      new api.Icon(req.event._id, req.params.formId, req.params.primary, req.params.variant).create(req.files.icon, function(err, icon) {
-        if (err) return next(err);
-
-        return res.json(icon);
-      });
-    }
-  );
-
   // Delete an icon
   app.delete(
     '/api/events/:eventId/icons/:formId?/:primary?/:variant?',
@@ -548,6 +438,118 @@ module.exports = function(app, security) {
         if (err) return next(err);
 
         return res.status(204).send();
+      });
+    }
+  );
+
+  app.post(
+    '/api/events/:eventId/layers',
+    passport.authenticate('bearer'),
+    authorizeAccess('UPDATE_EVENT', 'update'),
+    function(req, res, next) {
+      Event.addLayer(req.event, req.body, function(err, event) {
+        if (err) return next(err);
+
+        res.json(event);
+      });
+    }
+  );
+
+  app.delete(
+    '/api/events/:eventId/layers/:id',
+    passport.authenticate('bearer'),
+    authorizeAccess('UPDATE_EVENT', 'update'),
+    function(req, res, next) {
+      Event.removeLayer(req.event, {id: req.params.id}, function(err, event) {
+        if (err) return next(err);
+
+        res.json(event);
+      });
+    }
+  );
+
+  app.get(
+    '/api/events/:eventId/users',
+    passport.authenticate('bearer'),
+    authorizeAccess('READ_EVENT_ALL', 'read'),
+    determineReadAccess,
+    function (req, res, next) {
+      Event.getUsers(req.event._id, function(err, users) {
+        if (err) return next(err);
+
+        users = userTransformer.transform(users, {path: req.getRoot()});
+        res.json(users);
+      });
+    }
+  );
+
+  app.post(
+    '/api/events/:eventId/teams',
+    passport.authenticate('bearer'),
+    authorizeAccess('UPDATE_EVENT', 'update'),
+    function(req, res, next) {
+      Event.addTeam(req.event, req.body, function(err, event) {
+        if (err) return next(err);
+
+        res.json(event);
+      });
+    }
+  );
+
+  app.get(
+    '/api/events/:eventId/teams',
+    passport.authenticate('bearer'),
+    authorizeAccess('READ_EVENT_ALL', 'read'),
+    determineReadAccess,
+    function (req, res, next) {
+      var populate = null;
+      if (req.query.populate) {
+        populate = req.query.populate.split(",");
+      }
+
+      Event.getTeams(req.event._id, {populate: populate}, function(err, teams) {
+        if (err) return next(err);
+
+        res.json(teams.map(function(team) {
+          return team.toObject({access: req.access});
+        }));
+      });
+    }
+  );
+
+  app.delete(
+    '/api/events/:eventId/teams/:teamId',
+    passport.authenticate('bearer'),
+    authorizeAccess('UPDATE_EVENT', 'update'),
+    function(req, res, next) {
+      Event.removeTeam(req.event, req.team, function(err, event) {
+        if (err) return next(err);
+
+        res.json(event);
+      });
+    }
+  );
+
+  app.put(
+    '/api/events/:eventId/acl/:id',
+    passport.authenticate('bearer'),
+    authorizeAccess('UPDATE_EVENT', 'update'),
+    function(req, res, next) {
+      Event.updateUserInAcl(req.event._id, req.params.id, req.body.role, function(err, event) {
+        if (err) return next(err);
+        res.json(event);
+      });
+    }
+  );
+
+  app.delete(
+    '/api/events/:eventId/acl/:id',
+    passport.authenticate('bearer'),
+    authorizeAccess('UPDATE_EVENT', 'update'),
+    function(req, res, next) {
+      Event.removeUserFromAcl(req.event._id, req.params.id, function(err, event) {
+        if (err) return next(err);
+        res.json(event);
       });
     }
   );
