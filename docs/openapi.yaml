@@ -136,7 +136,7 @@ paths:
       operationId: deleteUser
       responses:
         204:
-          description: user deleted
+          description: Success - user deleted
           content: {}
   /api/users/{userId}/avatar:
     parameters:
@@ -148,7 +148,11 @@ paths:
       responses:
         200:
           description: user avatar response
-          content: {}
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
   /api/users/{userId}/icon:
     parameters:
       - { $ref: '#/components/parameters/userIdInPath' }
@@ -159,7 +163,11 @@ paths:
       responses:
         200:
           description: user icon response
-          content: {}
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
   /api/users/{userId}/events/{eventId}/recent:
     parameters:
       - { $ref: '#/components/parameters/userIdInPath' }
@@ -432,8 +440,7 @@ paths:
           content: {}
   /api/teams:
     get:
-      tags:
-        - Team
+      tags: [ Team ]
       description: >
         Return all the teams.  The requesting client must have `READ_TEAM`
         permission.
@@ -448,10 +455,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/Team'
     post:
-      tags:
-        - Team
+      tags: [ Team ]
       description: >
-        Save a new team document to the database.  The requesting client must
+        Save a new team document to the database.  The requesting user must
         have `CREATE_TEAM` permission.
       operationId: createTeam
       requestBody:
@@ -485,8 +491,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/teamIdInPath'
     get:
-      tags:
-        - Team
+      tags: [ Team ]
       description: >
         Return the team document whose ID matches the team ID path parameter.
         The requesting client must have `READ_TEAM` permission.
@@ -499,8 +504,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Team'
     put:
-      tags:
-        - Team
+      tags: [ Team ]
       description: >
         Update the team document whose ID matches the team ID in the path.
         The requesting user must have `UPDATE_TEAM` permission.
@@ -509,84 +513,104 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/TeamUpdate' }
+            schema: { $ref: '#/components/schemas/TeamIn' }
           application/x-www-form-urlencoded:
-            schema: { $ref: '#/components/schemas/TeamUpdate' }
+            schema: { $ref: '#/components/schemas/TeamIn' }
       responses:
         200:
-          description: team update response
+          description: Success - return the updated team document.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Team'
     delete:
-      tags:
-      - Team
+      tags: [ Team ]
       description: >
         Delete the team document whose ID matches the team ID in the path.  The
         request user must have `DELETE_TEAM` permission.
       operationId: deleteTeam
-      parameters:
-      - name: id
-        in: path
-        description: id of team to delete
-        required: true
-        schema:
-          type: number
       responses:
         204:
-          description: team deleted
+          description: Success - team deleted
           content: {}
-  /api/teams/{id}/user:
+  /api/teams/{teamId}/users:
+    parameters:
+      - { $ref: '#/components/parameters/teamIdInPath' }
     post:
-      tags:
-      - Team
-      description: Add new user to this team
+      tags: [ Team ]
+      description: >
+        Add a user to a team.  The request user must have `UPDATE_TEAM`
+        permission as well as an ACL entry in the team document with `update`
+        permission.
       operationId: addUserToTeam
-      parameters:
-      - name: id
-        in: path
-        description: id of team to fetch
-        required: true
-        schema:
-          type: number
       requestBody:
-        description: team body
+        description: The user ID reference to add to the target team
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRef'
         required: true
       responses:
         200:
-          description: team response
+          description: Success - return the updated team document.
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Team'
-  /api/teams/{id}/user/{userId}:
+              schema: { $ref: '#/components/schemas/Team' }
+  /api/teams/{teamId}/users/{userId}:
+    parameters:
+      - { $ref: '#/components/parameters/teamIdInPath' }
+      - { $ref: '#/components/parameters/userIdInPath' }
     delete:
-      tags:
-      - Team
-      description: removes a user from the team
+      tags: [ Team ]
+      description: >
+        Remove a user from a team.  The requesting user must have `UPDATE_TEAM`
+        permission as well as an ACL entry in the team document with `update`
+        permission.
       operationId: removeUserFromTeam
-      parameters:
-      - name: id
-        in: path
-        description: id of team
-        required: true
-        schema:
-          type: number
-      - name: userId
-        in: path
-        description: id of user to delete from team
-        required: true
-        schema:
-          type: number
       responses:
-        204:
-          description: team deleted
-          content: {}
+        200:
+          description: Success - return the updated team document.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Team' }
+  /api/teams/{teamId}/acl/{userId}:
+    parameters:
+      - { $ref: '#/components/parameters/teamIdInPath' }
+      - { $ref: '#/components/parameters/userIdInPath' }
+    put:
+      tags: [ Team ]
+      description: >
+        Update a team ACL entry.  The requesting user must have `UPDATE_TEAM`
+        permission, as well as an ACL entry in the team document with `update`
+        permission.
+      operationId: updateTeamAclEntry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role: { $ref: '#/components/schemas/ACLRole' }
+              required: [ role ]
+      responses:
+        200:
+          description: Success - return the updated team document.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Team' }
+    delete:
+      tags: [ Team ]
+      description: >
+        Delete a team ACL entry.  The requesting user must have `UPDATE_TEAM`
+        permission, as well as an ACL entry in the team document with `update`
+        permission.
+      operationId: deleteTeamAclEntry
+      responses:
+        200:
+          description: Success - return the updated team document.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Team' }
   /api/events:
     get:
       tags:
@@ -2056,17 +2080,16 @@ components:
       oneOf:
         - { required: [ role ], not: { required: [ roleId ] } }
         - { required: [ roleId ], not: { required: [ role ] } }
+        - not: { required: [ role, roleId ] }
     UserRef:
       description: >
         `UserRef` is an object that references an existing user document with
         the required `id` property.  MAGE ignores any properties other than
         `id`.
       type: object
-      required:
-        - id
-      properties:
-        id: { $ref: '#/components/schemas/User/properties/id' }
-      additionalProperties: true
+      allOf:
+        - { $ref: '#/components/schemas/User' }
+        - required: [ id ]
     UserIn:
       type: object
       properties:
@@ -2146,7 +2169,6 @@ components:
       oneOf:
         - required: [ password, passwordconfirm ]
         - not: { required: [ password, passwordconfirm ] }
-
     AuthStatus:
       required:
        - type
@@ -2165,6 +2187,39 @@ components:
               type: number
             numberOfTimesLocked:
               type: number
+    ACL:
+      description: >
+        The ACL (Access Control List) is a mapping of user IDs to the roles and
+        permissions users have to access the parent resource of the ACL.
+      type: object
+      additionalProperties:
+        description: >
+          The keys of the ACL object are user ID strings.  The values specify
+          the role and permissions that the user matching the associated key
+          has to access a resource.
+        type: object
+        properties:
+          role: { $ref: '#/components/schemas/ACLRole' }
+          permissions:
+            description: >
+              The permissions of an ACL entry are currently a static mapping
+              from the role.  The ACL entry includes the permissions associated
+              with the role to be more explicit about what the role means and
+              how the user of the ACL entry can access the resource.
+            type: array
+            items: { $ref: '#/components/schemas/ACLPermission' }
+    ACLRole:
+      type: string
+      enum:
+        - OWNER
+        - MANAGER
+        - GUEST
+    ACLPermission:
+      type: string
+      enum:
+        - read
+        - update
+        - delete
     Device:
       required:
         - id
@@ -2330,6 +2385,9 @@ components:
       type: object
       properties:
         type:
+          description: >
+            The type of phone number currently defaults to `Main` and is
+            static.
           type: string
         number:
           type: string
@@ -2345,6 +2403,9 @@ components:
           items:
             $ref: '#/components/schemas/Field'
     Team:
+      description: >
+        A team is simply a grouping of users that commonly operate together.
+        Teams facilitate adding groups of users to events.
       type: object
       properties:
         id:
@@ -2356,25 +2417,20 @@ components:
         users:
           type: array
           items:
-            $ref: '#/components/schemas/User'
+            $ref: '#/components/schemas/UserRef'
+        acl: { $ref: '#/components/schemas/ACL' }
+    TeamIn:
+      type: object
+      properties:
+        name: { $ref: '#/components/schemas/Team/properties/name' }
+        description: { $ref: '#/components/schemas/Team/properties/description' }
+        users:
+          type: array
+          items: { $ref: '#/components/schemas/UserRef' }
     TeamCreate:
-      type: object
       allOf:
-        - { $ref: '#/components/schemas/Team' }
-        - required:
-          - name
-          - description
-    TeamUpdate:
-      type: object
-      allOf:
-        - { $ref: '#/components/schemas/Team' }
-        - required:
-          - id
-        - type: object
-          properties:
-            userIds:
-              type: array
-              items: { $ref: '#/components/schemas/User/properties/id' }
+        - { $ref: '#/components/schemas/TeamIn' }
+        - required: [ name ]
     FeatureStateCreate:
       type: object
       properties:
