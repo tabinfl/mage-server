@@ -125,7 +125,6 @@ module.exports = function(app, security) {
     '/api/events',
     passport.authenticate('bearer'),
     access.authorize('CREATE_EVENT'),
-    parseEventQueryParams,
     function(req, res, next) {
       new api.Event().createEvent(req.body, req.user, function(err, event) {
         if (err) return next(err);
