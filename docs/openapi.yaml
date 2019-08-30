@@ -616,104 +616,110 @@ paths:
               schema: { $ref: '#/components/schemas/Team' }
 
   /api/events:
-    get:
-      tags:
-      - Event
-      description: get all events
-      operationId: getEvents
-      parameters:
-      - name: userId
-        in: query
-        schema:
-          type: string
-      - name: state
-        in: query
-        schema:
-          type: string
-      responses:
-        200:
-          description: event response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Event'
     post:
-      tags:
-      - Event
-      description: add new event
-      operationId: addEvent
+      tags: [ Event ]
+      description: >
+        Create a new event.  The requesting user must have `CREATE_EVENT`
+        permission.  MAGE assigns the requesting user to the event's ACL with
+        the `OWNER` role.
+      operationId: createEvent
       requestBody:
-        description: new event body
+        description: The new event document
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/EventCreate'
         required: true
       responses:
-        200:
-          description: new event response
+        201:
+          description: Success - return the created event.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
-  /api/events/{id}:
     get:
-      tags:
-      - Event
-      description: Returns a single event based on id
-      operationId: getEventById
+      tags: [ Event ]
+      description: >
+        Get all events.  The requesting user must have `READ_EVENT` permission.
+      operationId: getEvents
       parameters:
-      - name: id
-        in: path
-        description: id of event to fetch
-        required: true
-        schema:
-          type: number
+        - name: userId
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+        - name: projection
+          in: query
+          schema:
+            type: object
       responses:
         200:
           description: event response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+  /api/events/count:
+    get:
+      tags: [ Event ]
+      description: >
+        Get the number of events in the database.  The requesting user must
+        have `READ_EVENT_ALL` permission.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Count'
+  /api/events/{eventId}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+    get:
+      tags: [ Event ]
+      description: >
+        Return the event with the ID specified in the path.  The requesting
+        user must have `READ_EVENT_ALL` permission and an ACL entry with `read`
+        permission on the even.
+      operationId: getEventById
+      responses:
+        200:
+          description: Sucess - return the event document.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
     put:
-      tags:
-      - Event
-      description: update a single event based on id
+      tags: [ Event ]
+      description: >
+        Update the event with the ID specified in the path.  The requesting
+        user must have `UPDATE_EVENT` permission and an ACL entry on the event
+        with `update` permission.
       operationId: updateEventById
-      parameters:
-      - name: id
-        in: path
-        description: id of event to update
-        required: true
-        schema:
-          type: number
       requestBody:
         description: event update body
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EventCreate'
+              $ref: '#/components/schemas/EventUpdate'
         required: true
       responses:
         200:
-          description: event update response
+          description: Success - return the update event document.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
     delete:
-      tags:
-      - Event
-      description: deletes a single event based on id
+      tags: [ Event ]
+      description: >
+        Delete the event with the ID specified in the path.  The requesting
+        user must have `DELETE_EVENT` permission and an ACL entry with `delete`
+        permission on the event.
       operationId: deleteEvent
-      parameters:
-      - name: id
-        in: path
-        description: id of event to delete
-        required: true
-        schema:
-          type: number
       responses:
         204:
           description: event deleted
@@ -2027,12 +2033,23 @@ components:
     CommaSeparatedTokens:
       type: string
       pattern: '\w+(,\w+)*'
+    ColorHex:
+      description: >
+        This is a 3 or 4 byte hexadecimal string prefixed with '#' representing
+        an RGB or RGBA color value, e.g. '#ff4545',
+      type: string
+      pattern: '#([a-fA-F0-9]{2}){3,4}'
     Count:
       type: object
       required: [ count ]
       properties:
         count:
           type: integer
+    NormalizedRange:
+      type: number
+      format: float
+      minimum: 0.0
+      maximum: 1.0
     User:
       description: >
         The `User` schema defines the structure of persisted user documents as
@@ -2147,11 +2164,8 @@ components:
             - upload
             - none
         color:
-          description: >
-            3-byte hex string prefixed with '#', e.g. '#ff4545';  only applies
-            to `create` type icons
-          type: string
-          pattern: '#[a-f0-9]{6}'
+          description: Color is only applicable for `create` type icons.
+          $ref: '#/components/schemas/ColorHex'
         text:
           description: >
             Two-letter text label that appears on the map icon; only applies to
@@ -2269,15 +2283,85 @@ components:
           type: string
         userId:
           $ref: '#/components/schemas/User/properties/id'
-    Choice:
+    Team:
+      description: >
+        A team is simply a grouping of users that commonly operate together.
+        Teams facilitate adding groups of users to events.
       type: object
       properties:
         id:
           type: number
-        title:
+        name:
           type: string
-        value:
+        description:
           type: string
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserRef'
+        acl: { $ref: '#/components/schemas/ACL' }
+    TeamIn:
+      type: object
+      properties:
+        name: { $ref: '#/components/schemas/Team/properties/name' }
+        description: { $ref: '#/components/schemas/Team/properties/description' }
+        users:
+          type: array
+          items: { $ref: '#/components/schemas/UserRef' }
+    TeamCreate:
+      allOf:
+        - { $ref: '#/components/schemas/TeamIn' }
+        - required: [ name ]
+    Event:
+      required:
+      - id
+      - name
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        complete:
+          description: >
+            When `true`, the `complete` flag indicates the event is no longer
+            active.  One can reactivate a complete event at any time.
+          type: boolean
+        style:
+          description: >
+            The event's geometry style is the default style applied to each
+            form of the event.  Individual forms can override the default
+            style.
+          $ref: '#/components/schemas/GeometryStyle'
+        forms:
+          type: array
+          items: { $ref: '#/components/schemas/Form' }
+        teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/Team'
+        layers:
+          type: array
+        acl:
+          $ref: '#/components/schemas/ACL'
+    EventCreate:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/Event/properties/name'
+        description:
+          $ref: '#/components/schemas/Event/properties/description'
+    EventUpdate:
+      allOf:
+        - $ref: '#/components/schemas/EventCreate'
+        - type: object
+          properties:
+            complete:
+              $ref: '#/components/schemas/Event/properties/complete'
     Form:
       type: object
       properties:
@@ -2291,22 +2375,49 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Field'
+    GeometryStyle:
+      type: object
+      properties:
+        strokeWidth:
+          type: integer
+        strokeOpacity:
+          $ref: '#/components/schemas/NormalizedRange'
+        stroke:
+          type: string
+
+    Field:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        value:
+          type: string
+        required:
+          type: boolean
+        choices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Choice'
+    Choice:
+      type: object
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        value:
+          type: string
     ObservationImportantCreate:
       type: object
       properties:
         description:
           type: string
-    EventCreate:
-      required:
-      - name
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        form:
-          $ref: '#/components/schemas/FormCreate'
     Attachment:
       type: object
       properties:
@@ -2330,8 +2441,8 @@ components:
             $ref: '#/components/schemas/Thumbnail'
     LocalCredentials:
       required:
-      - password
-      - username
+        - password
+        - username
       type: object
       properties:
         username:
@@ -2366,25 +2477,6 @@ components:
         properties:
           type: object
           properties: {}
-    Field:
-      type: object
-      properties:
-        id:
-          type: number
-        name:
-          type: string
-        title:
-          type: string
-        type:
-          type: string
-        value:
-          type: string
-        required:
-          type: boolean
-        choices:
-          type: array
-          items:
-            $ref: '#/components/schemas/Choice'
     Phone:
       type: object
       properties:
@@ -2406,35 +2498,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Field'
-    Team:
-      description: >
-        A team is simply a grouping of users that commonly operate together.
-        Teams facilitate adding groups of users to events.
-      type: object
-      properties:
-        id:
-          type: number
-        name:
-          type: string
-        description:
-          type: string
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/UserRef'
-        acl: { $ref: '#/components/schemas/ACL' }
-    TeamIn:
-      type: object
-      properties:
-        name: { $ref: '#/components/schemas/Team/properties/name' }
-        description: { $ref: '#/components/schemas/Team/properties/description' }
-        users:
-          type: array
-          items: { $ref: '#/components/schemas/UserRef' }
-    TeamCreate:
-      allOf:
-        - { $ref: '#/components/schemas/TeamIn' }
-        - required: [ name ]
     FeatureStateCreate:
       type: object
       properties:
@@ -2546,25 +2609,6 @@ components:
           type: boolean
         format:
           type: string
-    Event:
-      required:
-      - id
-      - name
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        description:
-          type: string
-        forms:
-          type: array
-          items: { $ref: '#/components/schemas/Form' }
-        teams:
-          type: array
-          items:
-            $ref: '#/components/schemas/Team'
 
   parameters:
     userIdInPath:
