@@ -283,7 +283,7 @@ function transform(event, ret, options) {
       delete ret.layerIds;
     }
 
-    // if read only permissions in event acl on return users acl
+    // if read only permissions in event acl, only return users acl
     if (options.access) {
       var userAccess = ret.acl[options.access.user._id];
       var roles = rolesWithPermission('update').concat(rolesWithPermission('delete'));
@@ -301,6 +301,7 @@ function transform(event, ret, options) {
       };
     }
 
+    // TODO: this should be done at query time
     // make sure only projected fields are returned
     if (options.projection) {
       var projection = convertProjection(options.projection);
