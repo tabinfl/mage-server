@@ -2356,12 +2356,16 @@ components:
         description:
           $ref: '#/components/schemas/Event/properties/description'
     EventUpdate:
-      allOf:
-        - $ref: '#/components/schemas/EventCreate'
-        - type: object
-          properties:
-            complete:
-              $ref: '#/components/schemas/Event/properties/complete'
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/Event/properties/name'
+        description:
+          $ref: '#/components/schemas/Event/properties/description'
+        complete:
+          $ref: '#/components/schemas/Event/properties/complete'
+        forms:
+          $ref: '#/components/schemas/Event/properties/forms'
     Form:
       type: object
       properties:
