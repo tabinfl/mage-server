@@ -177,7 +177,7 @@ module.exports = function(app, security) {
     function (req, res, next) {
       // TODO already queried event to check access, don't need to get it again.  Just need to populate the
       // correct fields based on query params
-      Event.getById(req.event._id, {access: req.access, populate: req.parameters.populate, projection: req.parameters.projection}, function(err, event) {
+      Event.getById(req.event._id, {access: req.access, populate: req.parameters.populate}, function(err, event) {
         if (err) return next(err);
         if (!event) return res.sendStatus(404);
 
