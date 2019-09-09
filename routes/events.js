@@ -46,9 +46,7 @@ module.exports = function(app, security) {
     }
 
     parameters.userId = req.param('userId');
-
-    parameters.populate = true;
-    if (req.query.populate === 'false') parameters.populate = false;
+    parameters.populate = req.query.populate !== 'false';
 
     var form = req.body.form || {};
     var fields = form.fields || [];
@@ -127,8 +125,9 @@ module.exports = function(app, security) {
     access.authorize('CREATE_EVENT'),
     function(req, res, next) {
       new api.Event().createEvent(req.body, req.user, function(err, event) {
-        if (err) return next(err);
-
+        if (err) {
+          return next(err);
+        }
         res.status(201).json(event);
       });
     }
@@ -190,14 +189,15 @@ module.exports = function(app, security) {
     '/api/events/:eventId',
     passport.authenticate('bearer'),
     authorizeAccess('UPDATE_EVENT', 'update'),
-    parseEventQueryParams,
     function(req, res, next) {
-      new api.Event(req.event).updateEvent(req.body, {populate: req.parameters.populate}, function(err, event) {
-        if (err) return next(err);
-
+      new api.Event(req.event).updateEvent(req.body, {}, function(err, event) {
+        if (err) {
+          return next(err);
+        }
         new api.Form(event).populateUserFields(function(err) {
-          if (err) return next(err);
-
+          if (err) {
+            return next(err);
+          }
           res.json(event);
         });
       });
