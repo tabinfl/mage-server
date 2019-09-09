@@ -643,25 +643,43 @@ paths:
         Get all events.  The requesting user must have `READ_EVENT` permission.
       operationId: getEvents
       parameters:
-        - name: userId
-          in: query
+        - in: query
+          name: projection
           schema:
             type: string
-        - name: state
-          in: query
+        - in: query
+          name: state
           schema:
             type: string
-        - name: projection
-          in: query
+            enum: [ active, complete ]
+        - in: query
+          name: userId
           schema:
-            type: object
+            $ref: '#/components/schemas/User/properties/id'
+          description: >
+            Return only events the given user can access.
+        - in: query
+          name: populate
+          schema:
+            type: boolean
+          description: >
+            When omitted or not `false`, populate the teams and layers related
+            to each event.  Otherwise, the event documents will only contain
+            the IDs of the related teams and layers.  When populated, the
+            event documents will contain the `teams` and `layers` keys mapped to
+            arrays of their respective documents.  When not populated, the
+            event documents will contain the `eventIds` and `layerIds` keys
+            mapped to arrays of ID strings.  Populated team documents will NOT
+            contain populated user documents.
       responses:
         200:
-          description: event response
+          description: Success - return an array of event documents.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Event'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
   /api/events/count:
     get:
       tags: [ Event ]
@@ -685,6 +703,24 @@ paths:
         user must have `READ_EVENT_ALL` permission and an ACL entry with `read`
         permission on the even.
       operationId: getEventById
+      parameters:
+        - in: query
+          name: populate
+          schema:
+            type: boolean
+          description: >
+            When omitted or not `false`, populate the teams and layers related
+            to each event.  Otherwise, the event documents will only contain
+            the IDs of the related teams and layers.  When populated, the
+            event documents will contain the `teams` and `layers` keys mapped to
+            with arrays of their respective documents.  When not populated, the
+            event documents will contain the `eventIds` and `layerIds` keys
+            mapped to arrays of ID strings.  Populated team documents will NOT
+            contain populated user documents.
+        - in: query
+          name: projection
+          schema:
+            type: string
       responses:
         200:
           description: Sucess - return the event document.
@@ -722,7 +758,7 @@ paths:
       operationId: deleteEvent
       responses:
         204:
-          description: event deleted
+          description: Success - event deleted
           content: {}
   /api/events/{id}/teams:
     get:
@@ -819,23 +855,18 @@ paths:
           description: event deleted
           content: {}
   /api/events/{eventId}/layers:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
     get:
-      tags:
-      - Layer
+      tags: [ Event ]
       description: get layers for the specified event
       operationId: getLayersForEvent
       parameters:
-      - name: eventId
-        in: path
-        description: id of the event to get layers for
-        required: true
-        schema:
-          type: number
-      - name: type
-        in: query
-        description: layer type filter, i.e. Imagery or Feature
-        schema:
-          type: string
+        - name: type
+          in: query
+          description: layer type filter, i.e. Imagery or Feature
+          schema:
+            type: string
       responses:
         200:
           description: layer responses
@@ -846,19 +877,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Layer'
     post:
-      tags:
-      - Event
-      description: add a layer to an event
+      tags: [ Event ]
+      description: Add a layer to an event
       operationId: addLayerToEvent
-      parameters:
-      - name: eventId
-        in: path
-        description: id of event to update
-        required: true
-        schema:
-          type: number
       requestBody:
-        description: layer body
+        description: A layer document
         content:
           application/json:
             schema:
@@ -866,266 +889,131 @@ paths:
         required: true
       responses:
         200:
-          description: event update response
+          description: Success - return the updated event document
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
-  /api/events/{id}/layers/{layerId}:
+  /api/events/{eventId}/layers/{layerId}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/layerIdInPath'
     delete:
-      tags:
-      - Event
+      tags: [ Event ]
       description: removes a layer from the event
       operationId: removeLayerFromEvent
-      parameters:
-      - name: id
-        in: path
-        description: id of event
-        required: true
-        schema:
-          type: number
-      - name: layerId
-        in: path
-        description: id of the layer to remove from event
-        required: true
-        schema:
-          type: number
       responses:
         204:
           description: event deleted
           content: {}
-  /api/events/{id}/form.zip:
+  /api/events/{eventId}/form.zip:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
     get:
-      tags:
-      - Event
+      tags: [ Event ]
       description: Export a zip archive of the form .  Includes metadata and icon
         symbology
       operationId: getFormArchive
-      parameters:
-      - name: id
-        in: path
-        description: id of event to fetch
-        required: true
-        schema:
-          type: number
       responses:
         200:
           description: form archive response
           content: {}
   /api/events/{eventId}/form/icons.zip:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
     get:
-      tags:
-      - Event
+      tags: [ Event ]
       description: get all icons
       operationId: getIcons
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which icon resides
-        required: true
-        schema:
-          type: string
       responses:
         200:
           description: icon response
           content: {}
   /api/events/{eventId}/form/icons:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
     get:
-      tags:
-      - Event
+      tags: [ Event ]
       description: Returns the default icon for this form
       operationId: getDefaultIcon
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which icon resides
-        required: true
-        schema:
-          type: string
       responses:
         200:
           description: form response
           content: {}
     post:
-      tags:
-      - Event
+      tags: [ Event ]
       description: add new default icon
       operationId: addDefaultIcon
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which icon resides
-        required: true
-        schema:
-          type: string
       responses:
         200:
           description: new icon response
           content: {}
     delete:
-      tags:
-      - Event
+      tags: [ Event ]
       description: deletes the default icon
       operationId: deleteDefaultIcon
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which icon resides
-        required: true
-        schema:
-          type: string
       responses:
         204:
           description: icon deleted
           content: {}
-  /api/events/{eventId}/form/icons/{type}:
+  /api/events/{eventId}/form/icons/{iconType}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/iconTypeInPath'
     get:
-      tags:
-      - Event
+      tags: [ Event ]
       description: Returns a icon based on type
       operationId: getTypeIcon
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which icon resides
-        required: true
-        schema:
-          type: string
-      - name: type
-        in: path
-        description: icon type
-        required: true
-        schema:
-          type: string
       responses:
         200:
           description: form response
           content: {}
     post:
-      tags:
-      - Event
+      tags: [ Event ]
       description: add new type icon
       operationId: addTypeIcon
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which icon resides
-        required: true
-        schema:
-          type: string
-      - name: type
-        in: path
-        description: icon type
-        required: true
-        schema:
-          type: string
       responses:
         200:
           description: new icon response
           content: {}
     delete:
-      tags:
-      - Event
+      tags: [ Event ]
       description: deletes a type icon
       operationId: deleteTypeIcon
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which icon resides
-        required: true
-        schema:
-          type: string
-      - name: type
-        in: path
-        description: icon type
-        required: true
-        schema:
-          type: string
       responses:
         204:
           description: icon deleted
           content: {}
   /api/events/{eventId}/form/icons/{type}/{variant}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/iconTypeInPath'
+      - in: path
+        name: variant
+        description: Variant type
+        required: true
+        schema:
+          type: string
     get:
-      tags:
-      - Event
+      tags: [ Event ]
       description: Returns a single form based on id
       operationId: getIcon
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which icon resides
-        required: true
-        schema:
-          type: string
-      - name: type
-        in: path
-        description: icon type
-        required: true
-        schema:
-          type: string
-      - name: variant
-        in: path
-        description: variant type
-        required: true
-        schema:
-          type: string
       responses:
         200:
           description: form response
           content: {}
     post:
-      tags:
-      - Event
+      tags: [ Event ]
       description: add new icon
       operationId: addIcon
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which icon resides
-        required: true
-        schema:
-          type: string
-      - name: type
-        in: path
-        description: icon type
-        required: true
-        schema:
-          type: string
-      - name: variant
-        in: path
-        description: variant type
-        required: true
-        schema:
-          type: string
       responses:
         200:
           description: new icon response
           content: {}
     delete:
-      tags:
-      - Event
+      tags: [ Event ]
       description: deletes a single icon
       operationId: deleteIcon
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which icon resides
-        required: true
-        schema:
-          type: string
-      - name: type
-        in: path
-        description: icon type
-        required: true
-        schema:
-          type: string
-      - name: variant
-        in: path
-        description: variant type
-        required: true
-        schema:
-          type: string
       responses:
         204:
           description: icon deleted
@@ -2314,8 +2202,8 @@ components:
         - required: [ name ]
     Event:
       required:
-      - id
-      - name
+        - id
+        - name
       type: object
       properties:
         id:
@@ -2337,7 +2225,8 @@ components:
           $ref: '#/components/schemas/GeometryStyle'
         forms:
           type: array
-          items: { $ref: '#/components/schemas/Form' }
+          items:
+            $ref: '#/components/schemas/Form'
         teams:
           type: array
           items:
@@ -2373,6 +2262,10 @@ components:
           type: string
         name:
           type: string
+        description:
+          type: string
+        color:
+          $ref: '#/components/schemas/ColorHex'
         variantField:
           type: string
         fields:
@@ -2388,7 +2281,6 @@ components:
           $ref: '#/components/schemas/NormalizedRange'
         stroke:
           type: string
-
     Field:
       type: object
       properties:
@@ -2629,6 +2521,19 @@ components:
       required: true
       example: 5d0b2bfeeec24262f1a5fdf3
       schema: { $ref: '#/components/schemas/Event/properties/id' }
+    iconTypeInPath:
+      in: path
+      name: iconType
+      description: Icon type
+      required: true
+      schema:
+        type: string
+    layerIdInPath:
+      in: path
+      name: layerId
+      description: The ID of the target layer document
+      required: true
+      schema: { $ref: '#/components/schemas/Layer/properties/id' }
     deviceIdInPath:
       in: path
       name: deviceId
