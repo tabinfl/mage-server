@@ -9,7 +9,7 @@
         <img data-ng-src="data:image/png;base64,{{$ctrl.strategy.icon}}"></img>
       </span>
 
-      <span>{{$ctrl.buttonText}}</span>
+      <span ng-style="{'color': $ctrl.strategy.textColor}">Sign in With {{$ctrl.strategy.title}}</span>
     </button>
   </div>
 </div>

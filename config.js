@@ -13,18 +13,21 @@ module.exports = {
     authenticationStrategies: {
       local: {
         passwordMinLength: 14
-      },
-      saml: {
-        type: 'saml',
-        title: '',
-        displayNameAttribute: 'displayName',
-        emailAttribute: 'email',
-        options: {
-          entryPoint: '',
-          callbackPath: '/auth/saml/callback',
-          uidAttribute: 'uid',
-        }
-      },
+      }
+      // saml: {
+      //   type: 'saml',
+      //   title: 'SAML',
+      //   displayNameAttribute: 'displayName',
+      //   emailAttribute: 'email',
+      //   textColor: '#FFFFFF',
+      //   buttonColor: '#000000',
+      //   icon: '',
+      //   options: {
+      //     entryPoint: '',
+      //     callbackPath: '/auth/saml/callback',
+      //     uidAttribute: 'uid',
+      //   }
+      // },
       // ldap: {
       //   title: 'LDAP',
       //   type: 'ldap',
@@ -35,8 +38,8 @@ module.exports = {
       //   ldapUsernameField: '',
       //   ldapDisplayNameField: '',
       //   ldapEmailField: '',
-      //   textColor: '#000000',
-      //   buttonColor: '#FFFFFF',
+      //   textColor: '#FFFFFF',
+      //   buttonColor: '#000000',
       //   icon: ''
       // }
       // google: {
