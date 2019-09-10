@@ -753,31 +753,51 @@ paths:
       tags: [ Event ]
       description: >
         Delete the event with the ID specified in the path.  The requesting
-        user must have `DELETE_EVENT` permission and an ACL entry with `delete`
-        permission on the event.
+        user must have `DELETE_EVENT` permission and an ACL entry on the event
+        with `delete` permission.
       operationId: deleteEvent
       responses:
         204:
           description: Success - event deleted
           content: {}
-  /api/events/{id}/teams:
+  /api/events/{eventId}/forms:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+    post:
+      tags: [ Event ]
+      description: >
+        Add a form to the specified event.  The requesting user must have
+        `UPDATE_EVENT` permission and an ACL entry on the event with `update`
+        permission.
+      operationId: addFormToEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FormCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FormCreate'
+      responses:
+        201:
+          description: Success - return the updated event document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+  /api/events/{eventId}/teams:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
     get:
-      tags:
-      - Event
-      description: get teams for an event
+      tags: [ Event ]
+      description: Get the teams with access to the specified event.
       operationId: getTeamsForEvent
       parameters:
-      - name: id
-        in: path
-        description: id of event to update
-        required: true
-        schema:
-          type: number
-      - name: populate
-        in: query
-        description: populate parameter
-        schema:
-          type: string
+        - in: query
+          name: populate
+          description: populate parameter
+          schema:
+            type: string
       responses:
         200:
           description: teams response
@@ -786,44 +806,31 @@ paths:
               schema:
                 $ref: '#/components/schemas/Team'
     post:
-      tags:
-      - Event
-      description: add a team to an event
+      tags: [ Event ]
+      description: Add a team to the specified event.
       operationId: addTeamToEvent
-      parameters:
-      - name: id
-        in: path
-        description: id of event to update
-        required: true
-        schema:
-          type: number
       requestBody:
-        description: team body
+        description: >
+          Document referencing the ID of the team to add to the event
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Team'
+              $ref: '#/components/schemas/TeamRef'
         required: true
       responses:
         200:
-          description: event update response
+          description: Success - return the updated event.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
-  /api/events/{id}/users:
+  /api/events/{eventId}/users:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
     get:
-      tags:
-      - Event
+      tags: [ Event ]
       description: get users for an event
       operationId: getUsersForEvent
-      parameters:
-      - name: id
-        in: path
-        description: id of event to update
-        required: true
-        schema:
-          type: number
       responses:
         200:
           description: users response
@@ -831,25 +838,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-  /api/events/{id}/teams/{teamId}:
+  /api/events/{eventId}/teams/{teamId}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/teamIdInPath'
     delete:
-      tags:
-      - Event
+      tags: [ Event ]
       description: removes a team from the event
       operationId: removeTeamFromEvent
-      parameters:
-      - name: id
-        in: path
-        description: id of event
-        required: true
-        schema:
-          type: number
-      - name: teamId
-        in: path
-        description: id of the team to remove from event
-        required: true
-        schema:
-          type: number
       responses:
         204:
           description: event deleted
@@ -1019,50 +1015,45 @@ paths:
           description: icon deleted
           content: {}
   /api/events/{eventId}/observations:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
     get:
-      tags:
-      - Observation
+      tags: [ Observation ]
       description: get all observations for event
       operationId: getObservations
       parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to retrieve observations
-        required: true
-        schema:
-          type: number
-      - name: fields
-        in: query
-        description: feature fields to project in response (JSON)
-        schema:
-          type: string
-      - name: startDate
-        in: query
-        schema:
-          type: string
-          format: dateTime
-      - name: endDate
-        in: query
-        schema:
-          type: string
-          format: dateTime
-      - name: bbox
-        in: query
-        description: bounding box array [minx,miny,maxx,maxy]
-        style: form
-        explode: false
-        schema:
-          type: array
-          items:
-            type: number
-      - name: states
-        in: query
-        style: form
-        explode: false
-        schema:
-          type: array
-          items:
+        - in: query
+          name: fields
+          description: feature fields to project in response (JSON)
+          schema:
             type: string
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: dateTime
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: dateTime
+        - in: query
+          name: bbox
+          description: bounding box array [minx,miny,maxx,maxy]
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: number
+        - in: query
+          name: states
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: observation response
@@ -1073,17 +1064,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/Feature'
     post:
-      tags:
-      - Observation
+      tags: [ Observation ]
       description: add new observation
       operationId: addObservationDeprecated
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId for which to create observation
-        required: true
-        schema:
-          type: number
       requestBody:
         description: observation request body
         content:
@@ -1100,18 +1083,12 @@ paths:
                 $ref: '#/components/schemas/Feature'
       deprecated: true
   /api/events/{eventId}/observations/id:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
     post:
-      tags:
-      - Observation
+      tags: [ Observation ]
       description: Generate a new observation resource location
       operationId: createObservationId
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId for which to create observation
-        required: true
-        schema:
-          type: number
       responses:
         200:
           description: new observation location
@@ -1123,18 +1100,14 @@ paths:
                   id:
                     type: string
   /api/events/{eventId}/observations/{observationId}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/observationIdInPath'
     get:
-      tags:
-      - Observation
+      tags: [ Observation ]
       description: get observation for eventId
       operationId: getObservation
       parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to retrieve observation
-        required: true
-        schema:
-          type: number
       - name: observationId
         in: path
         description: observationId for observation
@@ -2200,6 +2173,11 @@ components:
       allOf:
         - { $ref: '#/components/schemas/TeamIn' }
         - required: [ name ]
+    TeamRef:
+      allOf:
+        - $ref: '#/components/schemas/Team'
+        - required:
+          - id
     Event:
       required:
         - id
@@ -2309,6 +2287,11 @@ components:
           type: string
         value:
           type: string
+    Observation:
+      type: object
+      properties:
+        id:
+          type: string
     ObservationImportantCreate:
       type: object
       properties:
@@ -2388,9 +2371,15 @@ components:
       properties:
         name:
           type: string
+        primaryField:
+          type: string
         variantField:
           type: string
         fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/Field'
+        userFields:
           type: array
           items:
             $ref: '#/components/schemas/Field'
@@ -2546,6 +2535,12 @@ components:
       description: The ID of the target team document
       required: true
       schema: { $ref: '#/components/schemas/Team/properties/id' }
+    observationIdInPath:
+      in: path
+      name: observationId
+      description: The ID of the target observation document
+      required: true
+      schema: { $ref: '#/components/schemas/Observation/properties/id' }
 
   requestBodies:
     DeviceIn:
