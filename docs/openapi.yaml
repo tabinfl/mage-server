@@ -813,27 +813,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Form'
-  /api/events/{eventId}/teams:
-    parameters:
-      - $ref: '#/components/parameters/eventIdInPath'
-    get:
-      tags: [ Event ]
-      operationId: getTeamsForEvent
-      description: >
-        Get the teams with access to the specified event.
-      parameters:
-        - in: query
-          name: populate
-          description: populate parameter
-          schema:
-            type: string
-      responses:
-        200:
-          description: teams response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Team'
     post:
       tags: [ Event ]
       description: Add a team to the specified event.
@@ -1536,6 +1515,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+  /api/events/{eventId}/teams:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+    get:
+      tags: [ Event ]
+      operationId: getTeamsForEvent
+      description: >
+        Get the teams with access to the specified event.
+      parameters:
+        - in: query
+          name: populate
+          description: populate parameter
+          schema:
+            type: string
+      responses:
+        200:
+          description: teams response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
   /api/events/{eventId}/teams/{teamId}:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
