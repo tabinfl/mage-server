@@ -65,7 +65,6 @@ module.exports = function(app, security) {
 
   function parseForm(req, res, next) {
     var form = req.body || {};
-
     var fields = form.fields || [];
     var userFields = form.userFields || [];
     fields.forEach(function(field) {
@@ -77,14 +76,12 @@ module.exports = function(app, security) {
 
     if (form.style) {
       var whitelistStyle = reduceStyle(form.style);
-
       var primaryField = form.fields.filter(function(field) {
         return field.name === form.primaryField;
       }).shift();
       var primaryChoices = primaryField ? primaryField.choices.map(function(item) {
         return item.title;
       }) : [];
-
       var secondaryField = form.fields.filter(function(field) {
         return field.name === form.variantField;
       }).shift();
