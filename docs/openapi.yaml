@@ -777,7 +777,7 @@ paths:
               $ref: '#/components/schemas/FormCreate'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/FormCreate'
+              $ref: '#/components/schemas/FormImport'
       responses:
         201:
           description: Success - return the updated event document
@@ -785,13 +785,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
+
+  /api/events/{eventId}/forms/{formId}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - in: path
+        name: formId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Form/properties/id'
+    put:
+      tags: [ Event ]
+      operationId: updateFormById
+      description: >
+        Update the specified form for the specified event.  The requesting
+        client must have `UPDATE_EVENT` permission and an ACL entry on the
+        event with `update` permission.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Form'
+      responses:
+        200:
+          description: Success - return the updated form document.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Form'
   /api/events/{eventId}/teams:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
     get:
       tags: [ Event ]
-      description: Get the teams with access to the specified event.
       operationId: getTeamsForEvent
+      description: >
+        Get the teams with access to the specified event.
       parameters:
         - in: query
           name: populate
@@ -824,32 +853,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
-  /api/events/{eventId}/users:
-    parameters:
-      - $ref: '#/components/parameters/eventIdInPath'
-    get:
-      tags: [ Event ]
-      description: get users for an event
-      operationId: getUsersForEvent
-      responses:
-        200:
-          description: users response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-  /api/events/{eventId}/teams/{teamId}:
-    parameters:
-      - $ref: '#/components/parameters/eventIdInPath'
-      - $ref: '#/components/parameters/teamIdInPath'
-    delete:
-      tags: [ Event ]
-      description: removes a team from the event
-      operationId: removeTeamFromEvent
-      responses:
-        204:
-          description: event deleted
-          content: {}
   /api/events/{eventId}/layers:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -1518,6 +1521,32 @@ paths:
       responses:
         200:
           description: attachment delete
+          content: {}
+  /api/events/{eventId}/users:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+    get:
+      tags: [ Event ]
+      description: get users for an event
+      operationId: getUsersForEvent
+      responses:
+        200:
+          description: users response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /api/events/{eventId}/teams/{teamId}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/teamIdInPath'
+    delete:
+      tags: [ Event ]
+      description: removes a team from the event
+      operationId: removeTeamFromEvent
+      responses:
+        204:
+          description: event deleted
           content: {}
   /api/layers:
     get:
@@ -2244,12 +2273,56 @@ components:
           type: string
         color:
           $ref: '#/components/schemas/ColorHex'
+          description: >
+            The form's color is a visual discriminator that displays in the
+            observation form selector when an event has multiple forms.
+        primaryField:
+          type: string
+          description: >
+            The primary field must be a single-select-type field whose choices
+            determine the map symbology used to represent the observation on a
+            map.
         variantField:
           type: string
+          description: >
+            The variant field must be another single-select-type field whose
+            values can further refine the map symbology associated with the
+            primary field's value of in an observation.
         fields:
           type: array
           items:
             $ref: '#/components/schemas/Field'
+          minItems: 1
+        userFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/Field/properties/name'
+          description: >
+            A list of field names that will be drop-downs whose choices are
+            dynamically populated with the names of users in the event.
+    FormCreate:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Form'
+        - required: [ name, color, fields ]
+    FormImport:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/Form/properties/name'
+        color:
+          $ref: '#/components/schemas/Form/properties/color'
+        form:
+          type: string
+          format: binary
+          description: |
+            The form is a zip file the user uploads.  THe layout of the zip
+            file is as follows.
+            ```
+            form/form.json # the form document
+            icons/ # a directory that contains the form's icon image files
+            ```
+      required: [ name, color, form ]
     GeometryStyle:
       type: object
       properties:
@@ -2366,23 +2439,6 @@ components:
           type: string
         number:
           type: string
-    FormCreate:
-      type: object
-      properties:
-        name:
-          type: string
-        primaryField:
-          type: string
-        variantField:
-          type: string
-        fields:
-          type: array
-          items:
-            $ref: '#/components/schemas/Field'
-        userFields:
-          type: array
-          items:
-            $ref: '#/components/schemas/Field'
     FeatureStateCreate:
       type: object
       properties:
