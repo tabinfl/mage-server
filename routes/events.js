@@ -345,11 +345,11 @@ module.exports = function(app, security) {
   );
 
   app.get(
-    '/api/events/:eventId/icons/:id.json',
+    '/api/events/:eventId/icons/:formId.json',
     passport.authenticate('bearer'),
     authorizeAccess('READ_EVENT_ALL', 'read'),
     function(req, res, next) {
-      new api.Icon(req.event._id, req.params.id).getIcons(function(err, icons) {
+      new api.Icon(req.event._id, req.params.formId).getIcons(function(err, icons) {
         if (err) return next();
 
         async.map(icons, function(icon, done) {
