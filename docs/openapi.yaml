@@ -785,7 +785,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
-
   /api/events/{eventId}/forms/{formId}:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -813,25 +812,168 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Form'
-    post:
+  /api/events/{eventId}/{formId}/form.zip:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/formIdInPath'
+    get:
       tags: [ Event ]
-      description: Add a team to the specified event.
-      operationId: addTeamToEvent
-      requestBody:
-        description: >
-          Document referencing the ID of the team to add to the event
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TeamRef'
-        required: true
+      operationId: exportForm
+      description: >
+        Export a zip archive of the form.  The zip file includes metadata and
+        map symbology icons in the following layout.
+        ```
+        form/form.json # the form document
+        icons/ # a directory that contains the form's icon image files
+        icons/icon.png
+        # icon for 'primary_1' primary value with no variant value
+        icons/<primary_1>/icon.png
+        # icon for 'primary_1' primary value with 'variant_1' variant value
+        icons/<primary_1>/<variant_1>/icon.png
+        # icon for 'primary_1' primary value with 'variant_2' variant value
+        icons/<primary_1>/<variant_2>/icon.png
+        ...
+        # and so on for any combination of primary and variant field values
+        # that one wishes to have a specific map icon
+        icons/<primary_n>/<variant_n>/icon.png
+        ```
+        The `<primary_x>` and `<variant_x>` directory components above are
+        named after the choice values of the form's primary and variant
+        select fields, respectively.  Each `primary_x/variant_x` directory
+        contains the map icon image that MAGE clients will use to represent
+        observations with those values on a map.  MAGE clients will use the
+        form's default icon image to represent primary/variant combinations
+        that are not present in the `icons` directory.
       responses:
         200:
-          description: Success - return the updated event.
+          description: >
+            Success - return a zip file of the form meta-data and icons.
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+  /api/events/{eventId}/form/icons.zip:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+    get:
+      tags: [ Event ]
+      operationId: getEventIcons
+      description: >
+        Get a zip file containing all the map icons for the forms of an event.
+        The requesting client must have `READ_EVENT_ALL` permission and an ACL
+        entry with `read` permission on the event.  The top level of the zip
+        file will contain one directory entry, `icons/`, which contains the
+        icon files under directories named according to primary and variant
+        field values as described above in the `exportForm` operation.
+      responses:
+        200:
+          description: Success - return a zip file of icon images for the event.
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+  /api/events/{eventId}/form/icons:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+    get:
+      tags: [ Event ]
+      operationId: getDefaultIcon
+      description: Returns the default icon for this form
+      responses:
+        200:
+          description: form response
+          content: {}
+    post:
+      tags: [ Event ]
+      description: add new default icon
+      operationId: addDefaultIcon
+      responses:
+        200:
+          description: new icon response
+          content: {}
+    delete:
+      tags: [ Event ]
+      description: deletes the default icon
+      operationId: deleteDefaultIcon
+      responses:
+        204:
+          description: icon deleted
+          content: {}
+  /api/events/{eventId}/icons/{formId}.json:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/formIdInPath'
+    get:
+      tags: [ Event ]
+      description: >
+        Return all the icons for the specified form as base-64 strings in a
+        JSON document.
+      operationId: getFormIcons
+      responses:
+        200:
+          description: form response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Event'
+                type: object
+                properties:
+                  eventId:
+                    $ref: '#/components/schemas/Event/properties/id'
+                  formId:
+                    $ref: '#/components/schemas/Form/properties/id'
+                  primary:
+                    type: string
+                  variant:
+                    type: string
+                  icon:
+                    type: string
+                    format: byte
+  /api/events/{eventId}/icons/{formId}/{primary}/{variant}:
+    description: >
+      Note that although OpenAPI mandates `required: true` for path parameters,
+      i.e. `primary` and `variant` here, MAGE does not actually require these
+      parameters.
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/formIdInPath'
+      - in: path
+        name: primary
+        description: The value of the primary form field
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: variant
+        description: The value of the variant form field
+        required: true
+        schema:
+          type: string
+    post:
+      tags: [ Event ]
+      description: add new icon
+      operationId: addIcon
+      responses:
+        200:
+          description: new icon response
+          content: {}
+    get:
+      tags: [ Event ]
+      description: Returns a single form based on id
+      operationId: getIcon
+      responses:
+        200:
+          description: form response
+          content: {}
+    delete:
+      tags: [ Event ]
+      description: deletes a single icon
+      operationId: deleteIcon
+      responses:
+        204:
+          description: icon deleted
+          content: {}
   /api/events/{eventId}/layers:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -883,118 +1025,6 @@ paths:
       responses:
         204:
           description: event deleted
-          content: {}
-  /api/events/{eventId}/form.zip:
-    parameters:
-      - $ref: '#/components/parameters/eventIdInPath'
-    get:
-      tags: [ Event ]
-      description: Export a zip archive of the form .  Includes metadata and icon
-        symbology
-      operationId: getFormArchive
-      responses:
-        200:
-          description: form archive response
-          content: {}
-  /api/events/{eventId}/form/icons.zip:
-    parameters:
-      - $ref: '#/components/parameters/eventIdInPath'
-    get:
-      tags: [ Event ]
-      description: get all icons
-      operationId: getIcons
-      responses:
-        200:
-          description: icon response
-          content: {}
-  /api/events/{eventId}/form/icons:
-    parameters:
-      - $ref: '#/components/parameters/eventIdInPath'
-    get:
-      tags: [ Event ]
-      description: Returns the default icon for this form
-      operationId: getDefaultIcon
-      responses:
-        200:
-          description: form response
-          content: {}
-    post:
-      tags: [ Event ]
-      description: add new default icon
-      operationId: addDefaultIcon
-      responses:
-        200:
-          description: new icon response
-          content: {}
-    delete:
-      tags: [ Event ]
-      description: deletes the default icon
-      operationId: deleteDefaultIcon
-      responses:
-        204:
-          description: icon deleted
-          content: {}
-  /api/events/{eventId}/form/icons/{iconType}:
-    parameters:
-      - $ref: '#/components/parameters/eventIdInPath'
-      - $ref: '#/components/parameters/iconTypeInPath'
-    get:
-      tags: [ Event ]
-      description: Returns a icon based on type
-      operationId: getTypeIcon
-      responses:
-        200:
-          description: form response
-          content: {}
-    post:
-      tags: [ Event ]
-      description: add new type icon
-      operationId: addTypeIcon
-      responses:
-        200:
-          description: new icon response
-          content: {}
-    delete:
-      tags: [ Event ]
-      description: deletes a type icon
-      operationId: deleteTypeIcon
-      responses:
-        204:
-          description: icon deleted
-          content: {}
-  /api/events/{eventId}/form/icons/{type}/{variant}:
-    parameters:
-      - $ref: '#/components/parameters/eventIdInPath'
-      - $ref: '#/components/parameters/iconTypeInPath'
-      - in: path
-        name: variant
-        description: Variant type
-        required: true
-        schema:
-          type: string
-    get:
-      tags: [ Event ]
-      description: Returns a single form based on id
-      operationId: getIcon
-      responses:
-        200:
-          description: form response
-          content: {}
-    post:
-      tags: [ Event ]
-      description: add new icon
-      operationId: addIcon
-      responses:
-        200:
-          description: new icon response
-          content: {}
-    delete:
-      tags: [ Event ]
-      description: deletes a single icon
-      operationId: deleteIcon
-      responses:
-        204:
-          description: icon deleted
           content: {}
   /api/events/{eventId}/observations:
     parameters:
@@ -1518,6 +1548,25 @@ paths:
   /api/events/{eventId}/teams:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
+    post:
+      tags: [ Event ]
+      description: Add a team to the specified event.
+      operationId: addTeamToEvent
+      requestBody:
+        description: >
+          Document referencing the ID of the team to add to the event
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamRef'
+        required: true
+      responses:
+        200:
+          description: Success - return the updated event.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
     get:
       tags: [ Event ]
       operationId: getTeamsForEvent
@@ -2317,11 +2366,7 @@ components:
           format: binary
           description: |
             The form is a zip file the user uploads.  THe layout of the zip
-            file is as follows.
-            ```
-            form/form.json # the form document
-            icons/ # a directory that contains the form's icon image files
-            ```
+            file is the same as described in the `exportForm` operation.
       required: [ name, color, form ]
     GeometryStyle:
       type: object
@@ -2566,6 +2611,12 @@ components:
       required: true
       example: 5d0b2bfeeec24262f1a5fdf3
       schema: { $ref: '#/components/schemas/Event/properties/id' }
+    formIdInPath:
+      in: path
+      name: formId
+      description: The ID of a form within an event
+      required: true
+      schema: { $ref: '#/components/schemas/Form/properties/id' }
     iconTypeInPath:
       in: path
       name: iconType
