@@ -304,6 +304,22 @@ module.exports = function(app, security) {
     }
   );
 
+  // export a zip of the form json and icons
+  // TODO: why not /api/events/:eventId/forms/:formId.zip?
+  app.get(
+    '/api/events/:eventId/:formId/form.zip',
+    passport.authenticate('bearer'),
+    authorizeAccess('READ_EVENT_ALL', 'read'),
+    function(req, res, next) {
+      new api.Form(req.event).export(parseInt(req.params.formId, 10), function(err, form) {
+        if (err) return next(err);
+
+        res.attachment(req.event.name + "-" + form.name + "-form.zip");
+        form.file.pipe(res);
+      });
+    }
+  );
+
   app.get(
     '/api/events/:eventId/form/icons.zip',
     passport.authenticate('bearer'),
@@ -326,21 +342,6 @@ module.exports = function(app, security) {
     authorizeAccess('READ_EVENT_ALL', 'read'),
     function(req, res) {
       res.sendFile(api.Icon.defaultIconPath);
-    }
-  );
-
-  // export a zip of the form json and icons
-  app.get(
-    '/api/events/:eventId/:formId/form.zip',
-    passport.authenticate('bearer'),
-    authorizeAccess('READ_EVENT_ALL', 'read'),
-    function(req, res, next) {
-      new api.Form(req.event).export(parseInt(req.params.formId, 10), function(err, form) {
-        if (err) return next(err);
-
-        res.attachment(req.event.name + "-" + form.name + "-form.zip");
-        form.file.pipe(res);
-      });
     }
   );
 
@@ -380,6 +381,7 @@ module.exports = function(app, security) {
   );
 
   // Create a new icon
+  // TODO: should be PUT?
   app.post(
     '/api/events/:eventId/icons/:formId?/:primary?/:variant?',
     passport.authenticate('bearer'),
