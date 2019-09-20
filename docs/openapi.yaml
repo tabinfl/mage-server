@@ -788,11 +788,7 @@ paths:
   /api/events/{eventId}/forms/{formId}:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
-      - in: path
-        name: formId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Form/properties/id'
+      - $ref: '#/components/parameters/formIdInPath'
     put:
       tags: [ Event ]
       operationId: updateFormById
@@ -843,7 +839,9 @@ paths:
         contains the map icon image that MAGE clients will use to represent
         observations with those values on a map.  MAGE clients will use the
         form's default icon image to represent primary/variant combinations
-        that are not present in the `icons` directory.
+        that are not present in the `icons` directory.  The requesting user
+        must have `READ_EVENT_ALL` permission and an ACL entry with `read`
+        permission on the event.
       responses:
         200:
           description: >
@@ -861,7 +859,7 @@ paths:
       operationId: getEventIcons
       description: >
         Get a zip file containing all the map icons for the forms of an event.
-        The requesting client must have `READ_EVENT_ALL` permission and an ACL
+        The requesting user must have `READ_EVENT_ALL` permission and an ACL
         entry with `read` permission on the event.  The top level of the zip
         file will contain one directory entry, `icons/`, which contains the
         icon files under directories named according to primary and variant
@@ -880,56 +878,40 @@ paths:
     get:
       tags: [ Event ]
       operationId: getDefaultIcon
-      description: Returns the default icon for this form
+      description: >
+        Return the default observation map icon for the server.  The `eventId`
+        parameter currently serves no purpose other than to verify the
+        requesting user has permission to read the event.  The requesting user
+        must have `READ_EVENT_ALL` permission and an ACL entry with `read`
+        permission on the event.
       responses:
         200:
           description: form response
-          content: {}
-    post:
-      tags: [ Event ]
-      description: add new default icon
-      operationId: addDefaultIcon
-      responses:
-        200:
-          description: new icon response
-          content: {}
-    delete:
-      tags: [ Event ]
-      description: deletes the default icon
-      operationId: deleteDefaultIcon
-      responses:
-        204:
-          description: icon deleted
-          content: {}
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
   /api/events/{eventId}/icons/{formId}.json:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
       - $ref: '#/components/parameters/formIdInPath'
     get:
       tags: [ Event ]
+      operationId: getFormIcons
       description: >
         Return all the icons for the specified form as base-64 strings in a
-        JSON document.
-      operationId: getFormIcons
+        JSON document.  The requesting user must have `READ_EVENT_ALL`
+        permission and an ACL entry with `read` permission on the event.
       responses:
         200:
           description: form response
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  eventId:
-                    $ref: '#/components/schemas/Event/properties/id'
-                  formId:
-                    $ref: '#/components/schemas/Form/properties/id'
-                  primary:
-                    type: string
-                  variant:
-                    type: string
-                  icon:
-                    type: string
-                    format: byte
+                type: array
+                items:
+                  $ref: '#/components/schemas/FormMapIcon'
   /api/events/{eventId}/icons/{formId}/{primary}/{variant}:
     description: >
       Note that although OpenAPI mandates `required: true` for path parameters,
@@ -2405,6 +2387,28 @@ components:
           type: string
         value:
           type: string
+    FormMapIcon:
+      type: object
+      properties:
+        eventId:
+          $ref: '#/components/schemas/Event/properties/id'
+        formId:
+          $ref: '#/components/schemas/Form/properties/id'
+        primary:
+          type: string
+          nullable: true
+          description: >
+            The value of the primary form field associated with the icon
+        variant:
+          type: string
+          nullable: true
+          description: >
+            The value of the variant form field associated with the icon
+        icon:
+          type: string
+          format: byte
+          description: >
+            The base-64-encoded bytes of the icon image
     Observation:
       type: object
       properties:
@@ -2617,13 +2621,6 @@ components:
       description: The ID of a form within an event
       required: true
       schema: { $ref: '#/components/schemas/Form/properties/id' }
-    iconTypeInPath:
-      in: path
-      name: iconType
-      description: Icon type
-      required: true
-      schema:
-        type: string
     layerIdInPath:
       in: path
       name: layerId
