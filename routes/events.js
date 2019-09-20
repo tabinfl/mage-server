@@ -336,6 +336,8 @@ module.exports = function(app, security) {
     }
   );
 
+  // TODO: this is a strangely named route for just getting the default icon.
+  // the eventId parameter is not even used.
   app.get(
     '/api/events/:eventId/form/icons*',
     passport.authenticate('bearer'),
