@@ -897,7 +897,7 @@ paths:
       - $ref: '#/components/parameters/eventIdInPath'
     post:
       tags: [ Event ]
-      operationId: uploadDefaultEventIcon
+      operationId: uploadEventIcon
       description: >
         Upload the default icon for the specified event.  The requesting user
         must have `UPDATE_EVENT` permission and an ACL entry on the event with
@@ -909,7 +909,7 @@ paths:
           $ref: '#/components/responses/FormIconInfo'
     get:
       tags: [ Event ]
-      operationId: getDefaultEventIcon
+      operationId: getEventIcon
       description: >
         Get the default icon image for the specified event.  The requesting user
         must have `READ_EVENT_ALL` permission and an ACL entry on the event with
@@ -919,8 +919,11 @@ paths:
           $ref: '#/components/responses/FormIconContent'
     delete:
       tags: [ Event ]
-      operationId: deleteVariantFormIcon
-      description: Delete the specified icon from the form.
+      operationId: deleteEventIcon
+      description: >
+        Delete the default icon from the specified event.  The requesting user
+        must have `UPDATE_EVENT` permission and an ACL entry on the event with
+        `update` permission.
       responses:
         204:
           description: Success - icon deleted.
@@ -953,8 +956,11 @@ paths:
           $ref: '#/components/responses/FormIconContent'
     delete:
       tags: [ Event ]
-      operationId: deleteVariantFormIcon
-      description: Delete the specified icon from the form.
+      operationId: deleteDefaultFormIcon
+      description: >
+        Delete the default icon from the form.  The requesting user must have
+        `UPDATE_EVENT` permission and an ACL entry on the event with `update`
+        permission.
       responses:
         204:
           description: Success - icon deleted.
@@ -984,8 +990,11 @@ paths:
           $ref: '#/components/responses/FormIconContent'
     delete:
       tags: [ Event ]
-      operationId: deleteVariantFormIcon
-      description: Delete the specified icon from the form.
+      operationId: deletePrimaryFormIcon
+      description: >
+        Delete the primary icon from the form.  The requesting user must have
+        `UPDATE_EVENT` permission and an ACL entry on the event with `update`
+        permission.
       responses:
         204:
           description: Success - icon deleted.
@@ -1018,7 +1027,10 @@ paths:
     delete:
       tags: [ Event ]
       operationId: deleteVariantFormIcon
-      description: Delete the specified icon from the form.
+      description: >
+        Delete the variant icon from the form.  The requesting user  must have
+        `UPDATE_EVENT` permission and an ACL entry on the event with `update`
+        permission.
       responses:
         204:
           description: Success - icon deleted.
