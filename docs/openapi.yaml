@@ -872,26 +872,6 @@ paths:
               schema:
                 type: string
                 format: binary
-  /api/events/{eventId}/form/icons:
-    parameters:
-      - $ref: '#/components/parameters/eventIdInPath'
-    get:
-      tags: [ Event ]
-      operationId: getDefaultIcon
-      description: >
-        Return the default observation map icon for the server.  The `eventId`
-        parameter currently serves no purpose other than to verify the
-        requesting user has permission to read the event.  The requesting user
-        must have `READ_EVENT_ALL` permission and an ACL entry with `read`
-        permission on the event.
-      responses:
-        200:
-          description: form response
-          content:
-            image/*:
-              schema:
-                type: string
-                format: binary
   /api/events/{eventId}/icons/{formId}.json:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -905,56 +885,143 @@ paths:
         permission and an ACL entry with `read` permission on the event.
       responses:
         200:
-          description: form response
+          description: Success - return the array of form icons.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/FormMapIcon'
-  /api/events/{eventId}/icons/{formId}/{primary}/{variant}:
-    description: >
-      Note that although OpenAPI mandates `required: true` for path parameters,
-      i.e. `primary` and `variant` here, MAGE does not actually require these
-      parameters.
+                  $ref: '#/components/schemas/FormIconEmbedded'
+  /api/events/{eventId}/icons:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+    post:
+      tags: [ Event ]
+      operationId: uploadDefaultEventIcon
+      description: >
+        Upload the default icon for the specified event.  The requesting user
+        must have `UPDATE_EVENT` permission and an ACL entry on the event with
+        `update` permission.
+      requestBody:
+        $ref: '#/components/requestBodies/FormIconUpload'
+      responses:
+        200:
+          $ref: '#/components/responses/FormIconInfo'
+    get:
+      tags: [ Event ]
+      operationId: getDefaultEventIcon
+      description: >
+        Get the default icon image for the specified event.  The requesting user
+        must have `READ_EVENT_ALL` permission and an ACL entry on the event with
+        `read` permission.
+      responses:
+        200:
+          $ref: '#/components/responses/FormIconContent'
+    delete:
+      tags: [ Event ]
+      operationId: deleteVariantFormIcon
+      description: Delete the specified icon from the form.
+      responses:
+        204:
+          description: Success - icon deleted.
+          content: {}
+  /api/events/{eventId}/icons/{formId}:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
       - $ref: '#/components/parameters/formIdInPath'
-      - in: path
-        name: primary
-        description: The value of the primary form field
-        required: true
-        schema:
-          type: string
-      - in: path
-        name: variant
-        description: The value of the variant form field
-        required: true
-        schema:
-          type: string
     post:
       tags: [ Event ]
-      description: add new icon
-      operationId: addIcon
+      operationId: uploadDefaultFormIcon
+      description: >
+        Upload the default icon for the specified form.  The requesting user
+        must have 'UPDATE_EVENT' permission and an ACL entry on the event with
+        `update` permission.
+      requestBody:
+        $ref: '#/components/requestBodies/FormIconUpload'
       responses:
         200:
-          description: new icon response
-          content: {}
+          $ref: '#/components/responses/FormIconInfo'
     get:
       tags: [ Event ]
-      description: Returns a single form based on id
-      operationId: getIcon
+      operationId: getDefaultFormIcon
+      description: >
+        Get the default icon for the specified form.  The requesting user must
+        have `READ_EVENT_ALL` permission and an ACL entry on the event with
+        `read` permission.
       responses:
         200:
-          description: form response
-          content: {}
+          $ref: '#/components/responses/FormIconContent'
     delete:
       tags: [ Event ]
-      description: deletes a single icon
-      operationId: deleteIcon
+      operationId: deleteVariantFormIcon
+      description: Delete the specified icon from the form.
       responses:
         204:
-          description: icon deleted
+          description: Success - icon deleted.
+          content: {}
+  /api/events/{eventId}/icons/{formId}/{primary}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/formIdInPath'
+      - $ref: '#/components/parameters/primaryFieldValueInPath'
+    post:
+      tags: [ Event ]
+      operationId: uploadPrimaryFormIcon
+      requestBody:
+        $ref: '#/components/requestBodies/FormIconUpload'
+      responses:
+        200:
+          $ref: '#/components/responses/FormIconInfo'
+    get:
+      tags: [ Event ]
+      operationId: getPrimaryFormIcon
+      description: >
+        Get the default icon for the specified form.  The requesting user must
+        have `READ_EVENT_ALL` permission and an ACL entry on the event with
+        `read` permission.
+      responses:
+        200:
+          $ref: '#/components/responses/FormIconContent'
+    delete:
+      tags: [ Event ]
+      operationId: deleteVariantFormIcon
+      description: Delete the specified icon from the form.
+      responses:
+        204:
+          description: Success - icon deleted.
+          content: {}
+  /api/events/{eventId}/icons/{formId}/{primary}/{variant}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/formIdInPath'
+      - $ref: '#/components/parameters/primaryFieldValueInPath'
+      - $ref: '#/components/parameters/variantFieldValueInPath'
+    post:
+      tags: [ Event ]
+      operationId: uploadVariantFormIcon
+      description: >
+        Upload the icon image associated with the specified primary + variant
+        field value combination.
+      responses:
+        200:
+          $ref: '#/components/responses/FormIconInfo'
+    get:
+      tags: [ Event ]
+      operationId: getVariantFormIcon
+      description: >
+        Get the variant icon for the specified form.  The requesting user must
+        have `READ_EVENT_ALL` permission and an ACL entry on the event with
+        `read` permission.
+      responses:
+        200:
+          $ref: '#/components/responses/FormIconContent'
+    delete:
+      tags: [ Event ]
+      operationId: deleteVariantFormIcon
+      description: Delete the specified icon from the form.
+      responses:
+        204:
+          description: Success - icon deleted.
           content: {}
   /api/events/{eventId}/layers:
     parameters:
@@ -1406,7 +1473,7 @@ paths:
           multipart/form-data:
             schema:
               required:
-              - attachment
+                - attachment
               properties:
                 attachment:
                   type: string
@@ -2387,7 +2454,11 @@ components:
           type: string
         value:
           type: string
-    FormMapIcon:
+    FormIcon:
+      description: >
+        `FormIcon` documents are the meta-data about icon images that MAGE
+        clients use to mark the location on the map display of observations
+        with the associated form.
       type: object
       properties:
         eventId:
@@ -2404,11 +2475,29 @@ components:
           nullable: true
           description: >
             The value of the variant form field associated with the icon
+        relativePath:
+          type: string
+          pattern: ^/\\d+/\\d+(/[^/]+){0,2}$
+          description: >
+            The relative path of the icon image URL, which looks like
+            `<event_id>/<form_id>[/<primary>[/variant]]`
+    FormIconEmbedded:
+      allOf:
+        - $ref: '#/components/schemas/FormIcon'
+        - properties:
+            icon:
+              type: string
+              pattern: ^data:image/[^;]+;base64,[A-Za-z0-9+/]+$
+              description: >
+                The base-64-encoded image bytes of the icon, formatted as a
+                data URL suitable for use as the value of the HTML `img` tag's
+                `src` attribute
+    FormIconUpload:
+      type: object
+      properties:
         icon:
           type: string
-          format: byte
-          description: >
-            The base-64-encoded bytes of the icon image
+          format: binary
     Observation:
       type: object
       properties:
@@ -2621,6 +2710,20 @@ components:
       description: The ID of a form within an event
       required: true
       schema: { $ref: '#/components/schemas/Form/properties/id' }
+    primaryFieldValueInPath:
+      in: path
+      name: primary
+      description: The value of the primary form field
+      required: true
+      schema:
+        type: string
+    variantFieldValueInPath:
+      in: path
+      name: primary
+      description: The value of the variant form field
+      required: true
+      schema:
+        type: string
     layerIdInPath:
       in: path
       name: layerId
@@ -2646,6 +2749,26 @@ components:
       required: true
       schema: { $ref: '#/components/schemas/Observation/properties/id' }
 
+  responses:
+    FormIconInfo:
+      description: Return the meta-data about a form icon.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FormIcon'
+    FormIconContent:
+      description: >
+        Return the form icon as a base-64-encoded string value within the icon
+        meta-data document, or as a binary image.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FormIconEmbedded'
+        image/*:
+          schema:
+            type: string
+            format: binary
+
   requestBodies:
     DeviceIn:
       description: >
@@ -2657,5 +2780,14 @@ components:
           schema: { $ref: '#/components/schemas/DeviceIn' }
         application/x-www-form-urlencoded:
           schema: { $ref: '#/components/schemas/DeviceIn' }
+    FormIconUpload:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: '#/components/schemas/FormIconUpload'
+          encoding:
+            icon:
+              contentType: image/*
 
 
