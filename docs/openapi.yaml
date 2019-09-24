@@ -618,11 +618,16 @@ paths:
   /api/events:
     post:
       tags: [ Event ]
+      operationId: createEvent
       description: >
         Create a new event.  The requesting user must have `CREATE_EVENT`
         permission.  MAGE assigns the requesting user to the event's ACL with
-        the `OWNER` role.
-      operationId: createEvent
+        the `OWNER` role.  Creating a new event implicitly creates a team
+        coupled to the event by the team's `teamEventId` property.  One can
+        add users to this team to allow access to the event on an individual
+        basis.  This allows team and user access management to remain
+        consistent across the API without having to maintain a list of users
+        separately for each event.
       requestBody:
         description: The new event document
         content:
@@ -640,7 +645,9 @@ paths:
     get:
       tags: [ Event ]
       description: >
-        Get all events.  The requesting user must have `READ_EVENT` permission.
+        Get all of the MAGE server's events.  The requesting user must have
+        `READ_EVENT_ALL` permission and an ACL entry on the even with `read`
+        permission.
       operationId: getEvents
       parameters:
         - in: query
@@ -1100,7 +1107,10 @@ paths:
       - $ref: '#/components/parameters/eventIdInPath'
     post:
       tags: [ Event ]
-      description: Add a team to the specified event.
+      description: >
+        Add a team to the specified event.  The requesting user must have
+        `UPDATE_EVENT` permission and an ACL entry on the event with `update`
+        permission.  All of the team's members will have access to the event.
       operationId: addTeamToEvent
       requestBody:
         description: >
@@ -1121,32 +1131,49 @@ paths:
       tags: [ Event ]
       operationId: getTeamsForEvent
       description: >
-        Get the teams with access to the specified event.
+        Get the teams with access to the specified event.  The requesting user
+        must have `READ_EVENT_ALL` permission and an ACL entry on the event
+        with `read` permission.
       parameters:
         - in: query
           name: populate
-          description: populate parameter
+          description: >
+            The `populate` parameter is a comma-separated list of keys in the
+            returned team documents to populate with their referenced documents.
+            When the value of `populate` includes `users`, MAGE will populate
+            the returned team documents with the user documents they reference,
+            replacing the `userIds` key in each team document with `users`.
           schema:
             type: string
+            enum:
+              - users
       responses:
         200:
-          description: teams response
+          description: Success - return an array of team documents.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Team'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
   /api/events/{eventId}/teams/{teamId}:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
       - $ref: '#/components/parameters/teamIdInPath'
     delete:
       tags: [ Event ]
-      description: removes a team from the event
+      description: >
+        Remove the specified team from the specified event.  The requesting
+        user must have `UPDATE_EVENT` permission and an ACL entry on the event
+        with `update` permission.
       operationId: removeTeamFromEvent
       responses:
-        204:
-          description: event deleted
-          content: {}
+        200:
+          description: Success - return the updated team document.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
   /api/events/{eventId}/observations:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -2293,7 +2320,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/UserRef'
-        acl: { $ref: '#/components/schemas/ACL' }
+        teamEventId:
+          $ref: '#/components/schemas/Event/properties/id'
+          description: >
+            MAGE adds this property to indicate that a team is the implicitly
+            created team paired with an event for grouping the event's users
+            on an individual basis.  This property references the ID of the
+            event document to which the team belongs.  To add an individual
+            user to an event, add the user to the team with the `teamEventId`
+            property that references the target event.
+        acl:
+          $ref: '#/components/schemas/ACL'
     TeamIn:
       type: object
       properties:
