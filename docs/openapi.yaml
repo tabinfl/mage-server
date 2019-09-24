@@ -1038,39 +1038,22 @@ paths:
   /api/events/{eventId}/layers:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
-    get:
-      tags: [ Event ]
-      description: get layers for the specified event
-      operationId: getLayersForEvent
-      parameters:
-        - name: type
-          in: query
-          description: layer type filter, i.e. Imagery or Feature
-          schema:
-            type: string
-      responses:
-        200:
-          description: layer responses
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Layer'
     post:
       tags: [ Event ]
-      description: Add a layer to an event
       operationId: addLayerToEvent
+      description: >
+        Add a layer to the specified event.  The requesting user must have
+        `UPDATE_EVENT` permission and an ACL entry on the event with `update`
+        permission.
       requestBody:
-        description: A layer document
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Layer'
+              $ref: '#/components/schemas/LayerRef'
         required: true
       responses:
         200:
-          description: Success - return the updated event document
+          description: Success - return the updated event document.
           content:
             application/json:
               schema:
@@ -1081,8 +1064,85 @@ paths:
       - $ref: '#/components/parameters/layerIdInPath'
     delete:
       tags: [ Event ]
-      description: removes a layer from the event
       operationId: removeLayerFromEvent
+      description: >
+        Remove the specified layer from the specified event.  The requesting
+        user must have `UPDATE_EVENT` permission and an ACL entry on the event
+        with `update` permission.
+      responses:
+        200:
+          description: Success - return the updated event document.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+  /api/events/{eventId}/users:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+    get:
+      tags: [ Event ]
+      operationId: getUsersForEvent
+      description: >
+        Get a flat list of all the users of all the teams with access to the
+        specified event.  The requesting user must have `READ_EVENT_ALL`
+        permission and an ACL entry on the event with `read` permission.
+      responses:
+        200:
+          description: Success - return an array of user documents.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /api/events/{eventId}/teams:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+    post:
+      tags: [ Event ]
+      description: Add a team to the specified event.
+      operationId: addTeamToEvent
+      requestBody:
+        description: >
+          Document referencing the ID of the team to add to the event
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamRef'
+        required: true
+      responses:
+        200:
+          description: Success - return the updated event.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+    get:
+      tags: [ Event ]
+      operationId: getTeamsForEvent
+      description: >
+        Get the teams with access to the specified event.
+      parameters:
+        - in: query
+          name: populate
+          description: populate parameter
+          schema:
+            type: string
+      responses:
+        200:
+          description: teams response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+  /api/events/{eventId}/teams/{teamId}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/teamIdInPath'
+    delete:
+      tags: [ Event ]
+      description: removes a team from the event
+      operationId: removeTeamFromEvent
       responses:
         204:
           description: event deleted
@@ -1591,72 +1651,6 @@ paths:
       responses:
         200:
           description: attachment delete
-          content: {}
-  /api/events/{eventId}/users:
-    parameters:
-      - $ref: '#/components/parameters/eventIdInPath'
-    get:
-      tags: [ Event ]
-      description: get users for an event
-      operationId: getUsersForEvent
-      responses:
-        200:
-          description: users response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-  /api/events/{eventId}/teams:
-    parameters:
-      - $ref: '#/components/parameters/eventIdInPath'
-    post:
-      tags: [ Event ]
-      description: Add a team to the specified event.
-      operationId: addTeamToEvent
-      requestBody:
-        description: >
-          Document referencing the ID of the team to add to the event
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TeamRef'
-        required: true
-      responses:
-        200:
-          description: Success - return the updated event.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Event'
-    get:
-      tags: [ Event ]
-      operationId: getTeamsForEvent
-      description: >
-        Get the teams with access to the specified event.
-      parameters:
-        - in: query
-          name: populate
-          description: populate parameter
-          schema:
-            type: string
-      responses:
-        200:
-          description: teams response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Team'
-  /api/events/{eventId}/teams/{teamId}:
-    parameters:
-      - $ref: '#/components/parameters/eventIdInPath'
-      - $ref: '#/components/parameters/teamIdInPath'
-    delete:
-      tags: [ Event ]
-      description: removes a team from the event
-      operationId: removeTeamFromEvent
-      responses:
-        204:
-          description: event deleted
           content: {}
   /api/layers:
     get:
@@ -2510,6 +2504,26 @@ components:
         icon:
           type: string
           format: binary
+    Layer:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        type:
+          type: string
+        url:
+          type: string
+        base:
+          type: boolean
+        format:
+          type: string
+    LayerRef:
+      allOf:
+        - $ref: '#/components/schemas/Layer'
+        - required:
+          - id
     Observation:
       type: object
       properties:
@@ -2634,26 +2648,6 @@ components:
         - oneOf:
           - { required: [ userId ], not: { required: [ user ] } }
           - { required: [ user ], not: { required: [ userId ] } }
-    Layer:
-      required:
-      - id
-      - name
-      - type
-      - url
-      type: object
-      properties:
-        id:
-          type: number
-        name:
-          type: string
-        type:
-          type: string
-        url:
-          type: string
-        base:
-          type: boolean
-        format:
-          type: string
     FeatureState:
       type: object
       properties:
