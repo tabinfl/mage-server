@@ -531,11 +531,11 @@ module.exports = function(app, security) {
   );
 
   app.put(
-    '/api/events/:eventId/acl/:id',
+    '/api/events/:eventId/acl/:targetUserId',
     passport.authenticate('bearer'),
     authorizeAccess('UPDATE_EVENT', 'update'),
     function(req, res, next) {
-      Event.updateUserInAcl(req.event._id, req.params.id, req.body.role, function(err, event) {
+      Event.updateUserInAcl(req.event._id, req.params.targetUserId, req.body.role, function(err, event) {
         if (err) return next(err);
         res.json(event);
       });
@@ -543,11 +543,11 @@ module.exports = function(app, security) {
   );
 
   app.delete(
-    '/api/events/:eventId/acl/:id',
+    '/api/events/:eventId/acl/:targetUserId',
     passport.authenticate('bearer'),
     authorizeAccess('UPDATE_EVENT', 'update'),
     function(req, res, next) {
-      Event.removeUserFromAcl(req.event._id, req.params.id, function(err, event) {
+      Event.removeUserFromAcl(req.event._id, req.params.targetUserId, function(err, event) {
         if (err) return next(err);
         res.json(event);
       });
