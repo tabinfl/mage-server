@@ -541,11 +541,11 @@ paths:
       - { $ref: '#/components/parameters/teamIdInPath' }
     post:
       tags: [ Team ]
+      operationId: addUserToTeam
       description: >
         Add a user to a team.  The request user must have `UPDATE_TEAM`
         permission as well as an ACL entry in the team document with `update`
         permission.
-      operationId: addUserToTeam
       requestBody:
         description: The user ID reference to add to the target team
         content:
@@ -565,11 +565,11 @@ paths:
       - { $ref: '#/components/parameters/userIdInPath' }
     delete:
       tags: [ Team ]
+      operationId: removeUserFromTeam
       description: >
         Remove a user from a team.  The requesting user must have `UPDATE_TEAM`
         permission as well as an ACL entry in the team document with `update`
         permission.
-      operationId: removeUserFromTeam
       responses:
         200:
           description: Success - return the updated team document.
@@ -582,19 +582,13 @@ paths:
       - { $ref: '#/components/parameters/userIdInPath' }
     put:
       tags: [ Team ]
+      operationId: setUserAccessForTeam
       description: >
         Update a team ACL entry.  The requesting user must have `UPDATE_TEAM`
         permission, as well as an ACL entry in the team document with `update`
         permission.
-      operationId: updateTeamAclEntry
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                role: { $ref: '#/components/schemas/ACLRole' }
-              required: [ role ]
+        $ref: '#/components/requestBodies/ACLRoleUpdate'
       responses:
         200:
           description: Success - return the updated team document.
@@ -603,11 +597,11 @@ paths:
               schema: { $ref: '#/components/schemas/Team' }
     delete:
       tags: [ Team ]
+      operationId: removeUserAccessFromTeam
       description: >
         Delete a team ACL entry.  The requesting user must have `UPDATE_TEAM`
         permission, as well as an ACL entry in the team document with `update`
         permission.
-      operationId: deleteTeamAclEntry
       responses:
         200:
           description: Success - return the updated team document.
@@ -1107,11 +1101,11 @@ paths:
       - $ref: '#/components/parameters/eventIdInPath'
     post:
       tags: [ Event ]
+      operationId: addTeamToEvent
       description: >
         Add a team to the specified event.  The requesting user must have
         `UPDATE_EVENT` permission and an ACL entry on the event with `update`
         permission.  All of the team's members will have access to the event.
-      operationId: addTeamToEvent
       requestBody:
         description: >
           Document referencing the ID of the team to add to the event
@@ -1162,14 +1156,48 @@ paths:
       - $ref: '#/components/parameters/teamIdInPath'
     delete:
       tags: [ Event ]
+      operationId: removeTeamFromEvent
       description: >
         Remove the specified team from the specified event.  The requesting
         user must have `UPDATE_EVENT` permission and an ACL entry on the event
         with `update` permission.
-      operationId: removeTeamFromEvent
       responses:
         200:
           description: Success - return the updated team document.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+  /api/events/{eventId}/acl/{userId}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/userIdInPath'
+    put:
+      tags: [ Event ]
+      operationId: setUserAccessForEvent
+      description: >
+        Set the specified user's ACL role on the specified event.  The
+        requesting user must have `UPDATE_EVENT` permission and an ACL entry on
+        the event with `update` permission.
+      requestBody:
+        $ref: '#/components/requestBodies/ACLRoleUpdate'
+      responses:
+        200:
+          description: Success - return the updated event document.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+    delete:
+      tags: [ Event ]
+      operationId: removeUserAccessFromEvent
+      description: >
+        Remove the specified user's ACL role from the specified event.  The
+        requesting user must have `UPDATE_EVENT` permission and an ACL entry on
+        the event with `update` permission.
+      responses:
+        200:
+          description: Success - return the updated event document.
           content:
             application/json:
               schema:
@@ -2832,5 +2860,15 @@ components:
           encoding:
             icon:
               contentType: image/*
+    ACLRoleUpdate:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              role:
+                $ref: '#/components/schemas/ACLRole'
+            required: [ role ]
 
 
