@@ -279,6 +279,40 @@ module.exports = function(app, security) {
     next();
   }
 
+  // TODO: set a location header for the created observation
+  app.post(
+    '/api/events/:eventId/observations/id',
+    passport.authenticate('bearer'),
+    validateObservationCreateAccess(false),
+    function (req, res, next) {
+      new api.Observation().createObservationId(function(err, doc) {
+        if (err) return next(err);
+
+        var response = observationXform.transform(doc, transformOptions(req));
+        res.status(201).json(response);
+      });
+    }
+  );
+
+  app.put(
+    '/api/events/:eventId/observations/:id',
+    passport.authenticate('bearer'),
+    getObservation,
+    validateCreateOrUpdateAccess,
+    populateObservation,
+    populateUserFields,
+    function (req, res, next) {
+      new api.Observation(req.event).update(req.param('id'), req.observation, function(err, updatedObservation) {
+        if (err) return next(err);
+
+        if (!updatedObservation) return res.status(404).send('Observation with id ' + req.params.id + " does not exist");
+
+        var response = observationXform.transform(updatedObservation, transformOptions(req));
+        res.json(response);
+      });
+    }
+  );
+
   app.get(
     '/api/events/:eventId/observations',
     passport.authenticate('bearer'),
@@ -294,6 +328,24 @@ module.exports = function(app, security) {
       new api.Observation(req.event).getAll(options, function(err, observations) {
         if (err) return next(err);
         res.json(observationXform.transform(observations, transformOptions(req)));
+      });
+    }
+  );
+
+  app.get(
+    '/api/events/:eventId/observations/:id',
+    passport.authenticate('bearer'),
+    validateObservationReadAccess,
+    parseQueryParams,
+    function (req, res, next) {
+      var options = {fields: req.parameters.fields};
+      new api.Observation(req.event).getById(req.param('id'), options, function(err, observation) {
+        if (err) return next(err);
+
+        if (!observation) return res.sendStatus(404);
+
+        var response = observationXform.transform(observation, transformOptions(req));
+        res.json(response);
       });
     }
   );
@@ -336,57 +388,6 @@ module.exports = function(app, security) {
       });
 
       archive.finalize();
-    }
-  );
-
-  app.get(
-    '/api/events/:eventId/observations/:id',
-    passport.authenticate('bearer'),
-    validateObservationReadAccess,
-    parseQueryParams,
-    function (req, res, next) {
-      var options = {fields: req.parameters.fields};
-      new api.Observation(req.event).getById(req.param('id'), options, function(err, observation) {
-        if (err) return next(err);
-
-        if (!observation) return res.sendStatus(404);
-
-        var response = observationXform.transform(observation, transformOptions(req));
-        res.json(response);
-      });
-    }
-  );
-
-  app.post(
-    '/api/events/:eventId/observations/id',
-    passport.authenticate('bearer'),
-    validateObservationCreateAccess(false),
-    function (req, res, next) {
-      new api.Observation().createObservationId(function(err, doc) {
-        if (err) return next(err);
-
-        var response = observationXform.transform(doc, transformOptions(req));
-        res.status(201).json(response);
-      });
-    }
-  );
-
-  app.put(
-    '/api/events/:eventId/observations/:id',
-    passport.authenticate('bearer'),
-    getObservation,
-    validateCreateOrUpdateAccess,
-    populateObservation,
-    populateUserFields,
-    function (req, res, next) {
-      new api.Observation(req.event).update(req.param('id'), req.observation, function(err, updatedObservation) {
-        if (err) return next(err);
-
-        if (!updatedObservation) return res.status(404).send('Observation with id ' + req.params.id + " does not exist");
-
-        var response = observationXform.transform(updatedObservation, transformOptions(req));
-        res.json(response);
-      });
     }
   );
 
@@ -481,6 +482,25 @@ module.exports = function(app, security) {
     }
   );
 
+  app.post(
+    '/api/events/:eventId/observations/:observationId/attachments',
+    passport.authenticate('bearer'),
+    access.authorize('CREATE_OBSERVATION'),
+    function(req, res, next) {
+      var attachment = req.files.attachment;
+      if (!attachment) return res.status(400).send("no attachment");
+
+      new api.Attachment(req.event, req.observation).create(req.observationId, req.files.attachment, function(err, attachment) {
+        if (err) return next(err);
+
+        var observation = req.observation;
+        observation.attachments = [attachment.toObject()];
+        return res.json(observationXform.transform(observation, transformOptions(req)).attachments[0]);
+      });
+    }
+  );
+
+  // TODO: user :observationId parameter like other routes
   app.get(
     '/api/events/:eventId/observations/:id/attachments',
     passport.authenticate('bearer'),
@@ -550,24 +570,6 @@ module.exports = function(app, security) {
             return res.sendStatus(404);
           });
         }
-      });
-    }
-  );
-
-  app.post(
-    '/api/events/:eventId/observations/:observationId/attachments',
-    passport.authenticate('bearer'),
-    access.authorize('CREATE_OBSERVATION'),
-    function(req, res, next) {
-      var attachment = req.files.attachment;
-      if (!attachment) return res.status(400).send("no attachment");
-
-      new api.Attachment(req.event, req.observation).create(req.observationId, req.files.attachment, function(err, attachment) {
-        if (err) return next(err);
-
-        var observation = req.observation;
-        observation.attachments = [attachment.toObject()];
-        return res.json(observationXform.transform(observation, transformOptions(req)).attachments[0]);
       });
     }
   );
