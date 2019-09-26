@@ -132,10 +132,12 @@ module.exports = function(app, security) {
   app.param('observationId', function(req, res, next, observationId) {
     req.observationId = observationId;
     new api.Observation(req.event).getById(observationId, function(err, observation) {
-      if (err) return next(err);
-
-      if (!observation) return res.status(404).send('Observation (ID: ' + observationId + ') not found');
-
+      if (err) {
+        return next(err);
+      }
+      if (!observation) {
+        return res.status(404).send(`Observation ID ${observationId} not found`);
+      }
       req.observation = observation;
       next();
     });
