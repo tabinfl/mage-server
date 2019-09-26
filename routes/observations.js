@@ -471,21 +471,24 @@ module.exports = function(app, security) {
     passport.authenticate('bearer'),
     authorizeDeleteAccess,
     function(req, res) {
-      var state = req.body;
-      if (!state) return res.send(400);
-      if (!state.name) return res.status(400).send('name required');
-      if (state.name !== 'active' && state.name !== 'complete' && state.name !== 'archive') {
+      let state = req.body;
+      if (!state) {
+        return res.send(400);
+      }
+      if (!state.name) {
+        return res.status(400).send('name required');
+      }
+      if (state.name !== 'active' && state.name !== 'archive') {
         return res.status(400).send("state name must be one of 'active', 'complete', 'archive'");
       }
-
       state = { name: state.name };
-      if (req.user) state.userId = req.user._id;
-
+      if (req.user) {
+        state.userId = req.user._id;
+      }
       new api.Observation(req.event).addState(req.observation._id, state, function(err, state) {
         if (err) {
           return res.status(400).send('state is already ' + "'" + state.name + "'");
         }
-
         res.status(201).json(state);
       });
     }
