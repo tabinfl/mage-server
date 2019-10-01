@@ -2584,55 +2584,109 @@ components:
         - required:
           - id
     Observation:
+      description: >
+        The `Observation` is the operative concept of MAGE's geospatial data
+        collection functionality.  Observation documents are the geo-tagged
+        form and media records that MAGE users submit to the MAGE server.
+        Observation documents are extensions of GeoJSON feature docuemnts, so
+        all observations have a `type` property whose value is `Feature`, as
+        well as a `geometry` property that holds the geospatial geometry of the
+        observation, such as point or polygon coordinates.  The values of the
+        observation's form fields reside under the GeoJSON `properties` key.
       properties:
         id:
           type: string
+        createdAt:
+          type: string
+          format: date-time
+        lastModified:
+          type: string
+          format: date-time
         userId:
           $ref: '#/components/schemas/User/properties/id'
         deviceId:
           $ref: '#/components/schemas/Device/properties/id'
-        states:
+        eventId:
+          $ref: '#/components/schemas/Event/properties/id'
+        state:
+          $ref: '#/components/schemas/ObservationState'
+        url:
+          type: string
+          format: uri
+        favoriteUserIds:
           type: array
           items:
-            $ref: '#/components/schemas/ObservationState'
+            $ref: '#/components/schemas/User/properties/id'
+        attachements:
+          type: array
+        properties:
+          type: object
+          properties:
+            timestamp:
+              type: string
+              format: date-time
+            forms:
+              type: array
+              items:
+                type: object
+                properties:
+                  formId:
+                    $ref: '#/components/schemas/Form/properties/id'
+                additionalProperties: true
       allOf:
         - $ref: 'geojson.yaml#/definitions/feature'
       example: {
-        "createdAt": "2019-06-21T09:47:41.637Z",
-        "deviceId": "5d0b2bfe831c1a6b49f73891",
+        "createdAt": "2019-09-25T19:50:05.065Z",
+        "deviceId": "5d697f88951c51a926e9dba4",
         "geometry": {
           "type": "Point",
           "coordinates": [
-            -0.079953,
-            51.526181
+            -0.08910298347473145,
+            51.527068718503244
           ],
         },
-        "lastModified": "2019-06-21T09:47:41.637Z",
+        "lastModified": "2019-10-01T04:24:45.466Z",
         "properties": {
-          "timestamp": "2019-06-21T09:46:57.351Z",
+          "timestamp": "2019-09-25T19:48:55.859Z",
           "forms": [
             {
-              "formId": 1,
+              "formId": 3,
               "field1": [
-                "Features"
+                "Umbarela"
               ],
-              "field2": "hacking",
-              "field3": "2019-06-21T06:00:00.000Z"
             }
           ],
         },
         "type": "Feature",
-        "userId": "5d0b2bfeeec24262f1a5fdf3",
-        "favoriteUserIds": [],
-        "attachments": [],
-        "id": "5d0ca7bd6ef821172250b286",
-        "eventId": 1,
-        "url": "http://localhost:4242/api/events/1/observations/5d0ca7bd6ef821172250b286",
+        "userId": "5d697f88b8ed5f29bef7b10c",
+        "favoriteUserIds": [
+          "5d697f88b8ed5f29bef7b10c"
+        ],
+        "important": {
+          "description": "Come back later",
+          "timestamp": "2019-10-01T04:24:45.466Z",
+          "userId": "5d697f88b8ed5f29bef7b10c"
+        },
+        "attachments": [
+          {
+            "contentType": "image/jpeg",
+            "size": 24875,
+            "name": "c1816efcab6e00c39623ddd8262b852e.jpg",
+            "relativePath": "observations2/2019/9/25/c1816efcab6e00c39623ddd8262b852e.jpg",
+            "lastModified": "2019-09-25T19:50:22.383Z",
+            "oriented": false,
+            "id": "5d8bc4fe038559417fffbb55",
+            "url": "http://localhost:4242/api/events/2/observations/5d8bc4ed038559417fffbb53/attachments/5d8bc4fe038559417fffbb55"
+          }
+        ],
+        "id": "5d8bc4ed038559417fffbb53",
+        "eventId": 2,
+        "url": "http://localhost:4242/api/events/2/observations/5d8bc4ed038559417fffbb53",
         "state": {
-          "userId": "5d0b2bfeeec24262f1a5fdf3",
+          "userId": "5d697f88b8ed5f29bef7b10c",
           "name": "active",
-          "id": "5d0ca7bd6ef821172250b287",
-          "url": "http://localhost:4242/api/events/1/observations/5d0ca7bd6ef821172250b286/states/5d0ca7bd6ef821172250b287"
+          "id": "5d8bc4ed038559417fffbb54",
+          "url": "http://localhost:4242/api/events/2/observations/5d8bc4ed038559417fffbb53/states/5d8bc4ed038559417fffbb54"
         }
       }
     ObservationState:
