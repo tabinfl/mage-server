@@ -130,7 +130,7 @@ module.exports = function(app, security) {
   }
 
   function fetchExistingObservation(req, res, next) {
-    new api.Observation(req.event).getById(req.params.optionalObservationId, function (err, observation) {
+    new api.Observation(req.event).getById(req.params.existingObservationId, function (err, observation) {
       req.existingObservation = observation;
       next(err);
     });
@@ -297,19 +297,19 @@ module.exports = function(app, security) {
   );
 
   app.put(
-    '/api/events/:eventId/observations/:optionalObservationId',
+    '/api/events/:eventId/observations/:existingObservationId',
     passport.authenticate('bearer'),
     fetchExistingObservation,
     validateCreateOrUpdateAccess,
     populateObservation,
     populateUserFields,
     function (req, res, next) {
-      new api.Observation(req.event).update(req.params.optionalObservationId, req.observation, function(err, updatedObservation) {
+      new api.Observation(req.event).update(req.params.existingObservationId, req.observation, function(err, updatedObservation) {
         if (err) {
           return next(err);
         }
         if (!updatedObservation) {
-          return res.status(404).send(`Observation with ID ${req.params.optionalObservationId} does not exist`);
+          return res.status(404).send(`Observation with ID ${req.params.existingObservationId} does not exist`);
         }
         const body = observationXform.transform(updatedObservation, transformOptions(req));
         res.json(body);
