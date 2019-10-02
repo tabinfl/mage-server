@@ -1211,15 +1211,20 @@ paths:
       description: >
         Generate a new observation ID with which to save a new observation.
       responses:
-        200:
-          description: new observation location
+        201:
+          description: >
+            Success - return a stub observation document including the `id`,
+            `eventId`, and `url` properties.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
+                $ref: '#/components/schemas/Observation'
+          links:
+            createObservation:
+              operationId: saveObservation
+              parameters:
+                eventId: $request.path.eventId
+                ovservationId: $response.body#/id
   /api/events/{eventId}/observations/{observationId}:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -1234,14 +1239,14 @@ paths:
         team with access to the event.  To update an observation, the
         requesting user must have `UPDATE_OBSERVATION_ALL` permission, or have
         `UPDATE_OBSERVATION_EVENT` permission as well as an ACL entry on the
-        event with `read` permission or be a member of a team with access to
+        event with `read` permission, or be a member of a team with access to
         the event.
       requestBody:
         description: The observation properties
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Observation'
+              $ref: '#/components/schemas/ObservationIn'
         required: true
       responses:
         200:
@@ -2583,6 +2588,16 @@ components:
         - $ref: '#/components/schemas/Layer'
         - required:
           - id
+    ObservationIn:
+      description: >
+        This schema defines the observation properties a client sends to save
+        a new or updated observation.
+      allOf:
+        - $ref: 'geojson.yaml#/definitions/feature'
+        - properties:
+            properties:
+              $ref: '#/components/schemas/ObservationFeatureProperties'
+        - required: [ type, geometry, properties ]
     Observation:
       description: >
         The `Observation` is the operative concept of MAGE's geospatial data
@@ -2613,28 +2628,17 @@ components:
         url:
           type: string
           format: uri
+          description: >
+            This is the absolute URL of the observation where the client can
+            fetch and update the observation document.
         favoriteUserIds:
           type: array
           items:
             $ref: '#/components/schemas/User/properties/id'
         attachements:
           type: array
-        properties:
-          type: object
-          properties:
-            timestamp:
-              type: string
-              format: date-time
-            forms:
-              type: array
-              items:
-                type: object
-                properties:
-                  formId:
-                    $ref: '#/components/schemas/Form/properties/id'
-                additionalProperties: true
       allOf:
-        - $ref: 'geojson.yaml#/definitions/feature'
+        - $ref: '#/components/schemas/ObservationIn'
       example: {
         "createdAt": "2019-09-25T19:50:05.065Z",
         "deviceId": "5d697f88951c51a926e9dba4",
@@ -2689,6 +2693,24 @@ components:
           "url": "http://localhost:4242/api/events/2/observations/5d8bc4ed038559417fffbb53/states/5d8bc4ed038559417fffbb54"
         }
       }
+    ObservationFeatureProperties:
+      description: >
+        This schema defines the specific keys that MAGE recognizes under the
+        GeoJSON feature's `properties` entry.
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        forms:
+          type: array
+          items:
+            type: object
+            properties:
+              formId:
+                $ref: '#/components/schemas/Form/properties/id'
+            additionalProperties: true
+      required: [ timestamp ]
     ObservationState:
       type: object
       properties:
