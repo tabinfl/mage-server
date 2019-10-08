@@ -12,6 +12,8 @@ oneOf:
 additionalProperties: true
 definitions:
   geoJsonBase:
+    description: >
+
     properties:
       type:
         $ref: '#/definitions/geoJsonType'
@@ -52,12 +54,12 @@ definitions:
       coordinates:
         $ref: '#/definitions/pointCoordinates'
     allOf:
-      - $ref: '#/definitions/locatedGeometryObject'
+      - $ref: '#/definitions/locatedGeometryBase'
   multiPoint:
-    title: Multi Point Geometry
+    title: Multi-Point
     description: >
-      For type `MultiPoint`, the `coordinates` member must be an array of
-      positions.
+      The `MultiPoint` geometry type has a `coordinates` member must be an array
+      of positions.
     properties:
       type:
         enum:
@@ -65,7 +67,7 @@ definitions:
       coordinates:
         - $ref: '#/definitions/multiPointCoordinates'
     allOf:
-      - $ref: '#/definitions/locatedGeometryObject'
+      - $ref: '#/definitions/locatedGeometryBase'
   lineString:
     title: Line String
     description: >-
@@ -84,7 +86,7 @@ definitions:
       coordinates:
         $ref: '#/definitions/lineStringCoordinates'
     allOf:
-      - $ref: '#/definitions/locatedGeometryObject'
+      - $ref: '#/definitions/locatedGeometryBase'
   multiLineString:
     title: MultiLineString
     description: >
@@ -97,7 +99,7 @@ definitions:
       coordinates:
         $ref: '#/definitions/lineStringCoordinates'
     allOf:
-      - $ref: '#/definitions/locatedGeometryObject'
+      - $ref: '#/definitions/locatedGeometryBase'
   polygon:
     title: Polygon
     description: >
@@ -111,7 +113,7 @@ definitions:
       coordinates:
         $ref: '#/definitions/polygonCoordinates'
     allOf:
-      - $ref: '#/definitions/locatedGeometryObject'
+      - $ref: '#/definitions/locatedGeometryBase'
   multiPolygon:
     title: Multi-Polygon Geometry
     description: >
@@ -124,7 +126,7 @@ definitions:
       coordinates:
         $ref: "#/definitions/polygonCoordinates"
     allOf:
-      - $ref: '#/definitions/locatedGeometryObject'
+      - $ref: '#/definitions/locatedGeometryBase'
   geometryCollection:
     title: Geometry Collection
     description: >-
@@ -224,12 +226,12 @@ definitions:
       - $ref: '#/definitions/multiPointCoordinates'
       - $ref: '#/definitions/multiLineStringCoordinates'
       - $ref: '#/definitions/multiPolygonCoordinates'
-  locatedGeometryObject:
-    title: Located Geometry Object
+  locatedGeometryBase:
     description: >
-      This type includes the GeoJSON Geometry Objects that include a
-      `coordinates` member specifying a location.  This simply excludes the
-      GeometryCollection object.
+      This schema defines the shared attributes of all the Geometry Object
+      types that have a `coordinates` member specifying the location(s) of the
+      geometry.  This schema is solely an abstract definition to share common
+      characteristics to the concrete Geometry Object types.
     properties:
       type:
         $ref: '#/definitions/locatedGeometryType'
@@ -238,6 +240,20 @@ definitions:
     required: [ type, coordinates ]
     allOf:
       - $ref: '#/definitions/geoJsonBase'
+  locatedGeometryObject:
+    title: Located Geometry Object
+    description: >
+      This type includes the GeoJSON Geometry Objects that include a
+      `coordinates` member specifying a location.  This simply excludes the
+      GeometryCollection object.  This schema restricts the range of concrete
+      Geometry Object types to those the GeoJSON specification defines.
+    oneOf:
+      - $ref: '#/definitions/point'
+      - $ref: '#/definitions/multiPoint'
+      - $ref: '#/definitions/lineString'
+      - $ref: '#/definitions/multiLineString'
+      - $ref: '#/definitions/polygon'
+      - $ref: '#/definitions/multiPolygon'
   geometryObject:
     title: Geometry Object
     description: >
@@ -249,6 +265,8 @@ definitions:
     oneOf:
       - $ref: '#/definitions/locatedGeometryObject'
       - $ref: '#/definitions/geometryCollection'
+    allOf:
+      - $ref: '#/definitions/geoJsonBase'
   pointCoordinates:
     title: Point Coordinates
     $ref: '#/definitions/position'
