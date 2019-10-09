@@ -13,7 +13,8 @@ additionalProperties: true
 definitions:
   geoJsonBase:
     description: >
-
+      This schema is solely an abstract definition to share the common GeoJSON
+      attributes to the concrete GeoJSON types.
     properties:
       type:
         $ref: '#/definitions/geoJsonType'
@@ -65,7 +66,7 @@ definitions:
         enum:
           - MultiPoint
       coordinates:
-        - $ref: '#/definitions/multiPointCoordinates'
+        $ref: '#/definitions/multiPointCoordinates'
     allOf:
       - $ref: '#/definitions/locatedGeometryBase'
   lineString:
@@ -97,7 +98,7 @@ definitions:
         enum:
           - MultiLineString
       coordinates:
-        $ref: '#/definitions/lineStringCoordinates'
+        $ref: '#/definitions/multiLineStringCoordinates'
     allOf:
       - $ref: '#/definitions/locatedGeometryBase'
   polygon:
@@ -124,7 +125,7 @@ definitions:
         enum:
           - MultiPolygon
       coordinates:
-        $ref: "#/definitions/polygonCoordinates"
+        $ref: "#/definitions/multiPolygonCoordinates"
     allOf:
       - $ref: '#/definitions/locatedGeometryBase'
   geometryCollection:
@@ -168,17 +169,23 @@ definitions:
         enum:
           - Feature
       geometry:
-        title: Geometry
-        oneOf:
+        title: Feature Geometry
+        description: >
+          The `geometry` member specifies the location Geometry Object of the
+          feature.  If the feature has no location, the value should be null.
+        allOf:
           - $ref: '#/definitions/geometryObject'
-          - type: 'null'
       properties:
-        title: Properties
-        oneOf:
-          - type: object
-          - type: 'null'
+        title: Feature Properties
+        description: >
+          The `properties` member is an object containing application-specific
+          attributes of the feature.
+        type: [ object, 'null' ]
       id:
         type: [ string, number ]
+        description: >
+          The `id` member is an optional, commonly used identifier of the
+          feature.
     allOf:
       - $ref: '#/definitions/geoJsonBase'
   featureCollection:
@@ -219,7 +226,7 @@ definitions:
       type: number
   coordinates:
     title: Coordinates
-    oneOf:
+    anyOf:
       - $ref: '#/definitions/pointCoordinates'
       - $ref: '#/definitions/lineStringCoordinates'
       - $ref: '#/definitions/polygonCoordinates'
@@ -270,24 +277,34 @@ definitions:
   pointCoordinates:
     title: Point Coordinates
     $ref: '#/definitions/position'
+  multiPointCoordinates:
+    type: array
+    items:
+      $ref: '#/definitions/pointCoordinates'
   lineStringCoordinates:
     title: Line String Coordinates
     description: >
       For type `LineString`, the `coordinates` member must be an array of two
       or more positions.
-    allOf:
-      - $ref: '#/definitions/coordinates'
-      - type: array
-        minItems: 2
-        items:
-          $ref: '#/definitions/position'
+    type: array
+    minItems: 2
+    items:
+      $ref: '#/definitions/position'
+  multiLineStringCoordinates:
+    type: array
+    items:
+      $ref: '#/definitions/lineStringCoordinates'
   linearRingCoordinates:
     title: Linear Ring Coordinates
     description: >
       A LinearRing is a closed LineString with 4 or more positions. The first
       and last positions are equivalent (they represent equivalent points).
       Though a LinearRing is not explicitly represented as a GeoJSON geometry
-      type, it is referenced in the Polygon geometry type definition.
+      type, it is referenced in the Polygon geometry type definition.  Note
+      that JSON Schema cannot express the constraint that the first and last
+      position of a LinearRing must be equivalent, so instances that are valid
+      with respect to this schema may not actually be valid with respect to the
+      GeoJSON specification.
     allOf:
       - $ref: '#/definitions/lineStringCoordinates'
       - minItems: 4
@@ -300,14 +317,6 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/linearRingCoordinates'
-  multiPointCoordinates:
-    type: array
-    items:
-      $ref: '#/definitions/pointCoordinates'
-  multiLineStringCoordinates:
-    type: array
-    items:
-      $ref: '#/definitions/lineStringCoordinates'
   multiPolygonCoordinates:
     type: array
     items:
