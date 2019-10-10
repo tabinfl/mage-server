@@ -216,7 +216,7 @@ Object.keys(fixture).forEach(geoJsonType => {
 
 expect(fixture.FeatureCollection.valid['featurecollection with all features'].features.length).to.be.greaterThan(1);
 
-describe.only('GeoJSON schema', function() {
+describe('GeoJSON schema', function() {
 
   const schemaPath = path.join(__dirname, '..', '..', 'docs', 'geojson.yaml');
   const schemaDoc = YAML.parse(fs.readFileSync(schemaPath).toString('utf-8'));
