@@ -1310,50 +1310,95 @@ paths:
       - $ref: '#/components/parameters/eventIdInPath'
     get:
       tags: [ Observation ]
-      description: get all observations for event
-      operationId: getObservations
+      description: >
+        Get all the observations for the specified event that match the
+        specified query parameters.  The requesting users must have
+        `READ_OBSERVATION_ALL` permission, or have `READ_OBSERVATION_EVENT`
+        permission and an ACL entry on the event with `read` permission.
+      operationId: getObservationsForEvent
       parameters:
         - in: query
           name: fields
-          description: feature fields to project in response (JSON)
+          description: >
+            The form fields to project in the result observation documents (JSON)
           schema:
             type: string
         - in: query
           name: startDate
           schema:
             type: string
-            format: dateTime
+            format: date-time
+          description: >
+            The low end of the range for the observations' `lastModified`
+            property
         - in: query
           name: endDate
           schema:
             type: string
-            format: dateTime
+            format: date-time
+          description: >
+            The high end of the range for the observations' `lastModified`
+            property
+        - in: query
+          name: observationStartDate
+          schema:
+            type: string
+            format: date-time
+          description: >
+            The low end of the range for the observations' `timestamp`
+            property
+        - in: query
+          name: observationEndDate
+          schema:
+            type: string
+            format: date-time
+          description: >
+            The low end of the range for the observations' `lastModified`
+            property
         - in: query
           name: bbox
-          description: bounding box array [minx,miny,maxx,maxy]
-          style: form
+          description: >
+            Bounding box array as a JSON string, e.g.
+            `[xMin, yMin, xMax, yMax]`
           explode: false
           schema:
-            type: array
-            items:
-              type: number
+            $ref: 'geojson.yaml#/definitions/boundingBox'
+        - in: query
+          name: geometry
+          description: >
+            A URL-encoded, stringified JSON object that is a GeoJSON geometry
+            as defined in geojson.yaml#/definitions/geometryObject
+          schema:
+            type: string
+            format: json
         - in: query
           name: states
-          style: form
           explode: false
           schema:
             type: array
             items:
-              type: string
+              $ref: '#/components/schemas/ObservationStateName'
+        - in: query
+          name: sort
+          description: >
+            The `sort` query parameter is a comma-separated list of sort keys.
+            Currently, this operation only supports sorting on the
+            `lastModified` key.
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SortKey'
       responses:
         200:
-          description: observation response
+          description: >
+            Success - return the observation documents matching the query
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Feature'
+                  $ref: '#/components/schemas/Observation'
     post:
       tags: [ Observation ]
       description: add new observation
@@ -2098,6 +2143,13 @@ components:
       format: float
       minimum: 0.0
       maximum: 1.0
+    SortKey:
+      description: >
+        A `SortKey` is a string comprising the name of a document key,
+        optionally suffixed with a sort direction modifier of `+DESC` or `+ASC`
+        for descending or ascending, respectively.
+      type: string
+      pattern: ^\w+(\+(ASC|DESC))?
     User:
       description: >
         The `User` schema defines the structure of persisted user documents as
@@ -2368,7 +2420,7 @@ components:
           items: { $ref: '#/components/schemas/UserRef' }
     TeamCreate:
       allOf:
-        - { $ref: '#/components/schemas/TeamIn' }
+        - $ref: '#/components/schemas/TeamIn'
         - required: [ name ]
     TeamRef:
       allOf:
@@ -2599,6 +2651,7 @@ components:
               $ref: '#/components/schemas/ObservationFeatureProperties'
         - required: [ type, geometry, properties ]
     Observation:
+      title: Observation
       description: >
         The `Observation` is the operative concept of MAGE's geospatial data
         collection functionality.  Observation documents are the geo-tagged
@@ -2611,6 +2664,7 @@ components:
       properties:
         id:
           type: string
+          description: The unique observation ID
         createdAt:
           type: string
           format: date-time
