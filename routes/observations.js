@@ -318,6 +318,26 @@ module.exports = function(app, security) {
   );
 
   app.get(
+    '/api/events/:eventId/observations/:observationIdInPath',
+    passport.authenticate('bearer'),
+    validateObservationReadAccess,
+    parseQueryParams,
+    function (req, res, next) {
+      const options = { fields: req.parameters.fields };
+      new api.Observation(req.event).getById(req.params.observationIdInPath, options, function(err, observation) {
+        if (err) {
+          return next(err);
+        }
+        if (!observation) {
+          return res.sendStatus(404);
+        }
+        const response = observationXform.transform(observation, transformOptions(req));
+        res.json(response);
+      });
+    }
+  );
+
+  app.get(
     '/api/events/:eventId/observations',
     passport.authenticate('bearer'),
     validateObservationReadAccess,
@@ -332,26 +352,6 @@ module.exports = function(app, security) {
       new api.Observation(req.event).getAll(options, function(err, observations) {
         if (err) return next(err);
         res.json(observationXform.transform(observations, transformOptions(req)));
-      });
-    }
-  );
-
-  app.get(
-    '/api/events/:eventId/observations/:id',
-    passport.authenticate('bearer'),
-    validateObservationReadAccess,
-    parseQueryParams,
-    function (req, res, next) {
-      const options = { fields: req.parameters.fields };
-      new api.Observation(req.event).getById(req.param('id'), options, function(err, observation) {
-        if (err) {
-          return next(err);
-        }
-        if (!observation) {
-          return res.sendStatus(404);
-        }
-        const response = observationXform.transform(observation, transformOptions(req));
-        res.json(response);
       });
     }
   );
