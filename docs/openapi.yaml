@@ -1250,22 +1250,20 @@ paths:
         required: true
       responses:
         200:
-          description: observation response
+          description: Success - return the updated observation.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Feature'
+                $ref: '#/components/schemas/Observation'
     get:
       tags: [ Observation ]
-      description: get observation for eventId
-      operationId: getObservation
+      operationId: getObservationById
+      description: >
+        Get the specified observation in the specified event.  The requesting
+        user must have `READ_OBSERVATION_ALL` permission, or have
+        `READ_OBSERVATION_EVENT` permission and an ACL entry on the event with
+        `read` permission.
       parameters:
-      - name: observationId
-        in: path
-        description: observationId for observation
-        required: true
-        schema:
-          type: string
       - name: fields
         in: query
         description: feature fields to project in response (JSON)
@@ -1304,7 +1302,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Feature'
+                $ref: '#/components/schemas/Observation'
   /api/events/{eventId}/observations:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -1399,77 +1397,14 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Observation'
-    post:
-      tags: [ Observation ]
-      description: add new observation
-      operationId: addObservationDeprecated
-      requestBody:
-        description: observation request body
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Feature'
-        required: true
-      responses:
-        200:
-          description: observation response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Feature'
-      deprecated: true
-  /api/events/{eventId}/observations/id/{observationId}/:
-    put:
-      tags:
-      - Observation
-      description: update observation for eventId
-      operationId: updateObservation
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to update observation
-        required: true
-        schema:
-          type: number
-      - name: observationId
-        in: path
-        description: observationId for observation
-        required: true
-        schema:
-          type: string
-      requestBody:
-        description: observation request body
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Feature'
-        required: true
-      responses:
-        200:
-          description: observation response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Feature'
   /api/events/{eventId}/observations/{observationId}/favorite:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/observationIdInPath'
     put:
-      tags:
-      - Observation
+      tags: [ Observation ]
       description: favorite observation for provided event
       operationId: addFavoriteObservation
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to observation lives
-        required: true
-        schema:
-          type: number
-      - name: observationId
-        in: path
-        description: observationId for observation to favorite
-        required: true
-        schema:
-          type: string
       responses:
         200:
           description: observation response
@@ -1878,7 +1813,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Feature'
+                  $ref: 'geojson.yaml#/definitions/feature'
   /api/events/{eventId}/locations:
     get:
       tags:
@@ -1920,7 +1855,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Feature'
+                  $ref: 'geojson.yaml#/definitions/feature'
     post:
       tags:
       - Location
@@ -1938,7 +1873,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Feature'
+              $ref: 'geojson.yaml#/definitions/feature'
         required: true
       responses:
         200:
@@ -1985,7 +1920,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Feature'
+                  $ref: 'geojson.yaml#/definitions/feature'
   /api/roles:
     get:
       tags:
@@ -2833,19 +2768,6 @@ components:
           type: number
         minDimension:
           type: number
-    Feature:
-      type: object
-      properties:
-        id:
-          type: number
-        type:
-          type: string
-        geometry:
-          type: object
-          properties: {}
-        properties:
-          type: object
-          properties: {}
     Phone:
       type: object
       properties:
