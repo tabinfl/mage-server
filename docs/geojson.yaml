@@ -166,6 +166,7 @@ definitions:
       - properties
     properties:
       type:
+        type: string
         enum:
           - Feature
       geometry:
@@ -200,6 +201,7 @@ definitions:
     required: [ features ]
     properties:
       type:
+        type: string
         enum:
           - FeatureCollection
       features:
@@ -344,6 +346,7 @@ definitions:
     type: string
     enum: [ Feature, FeatureCollection ]
   geoJsonType:
+    type: string
     oneOf:
       - $ref: '#/definitions/geometryType'
       - $ref: '#/definitions/containerType'
