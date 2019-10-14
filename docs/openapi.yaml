@@ -1263,39 +1263,16 @@ paths:
         user must have `READ_OBSERVATION_ALL` permission, or have
         `READ_OBSERVATION_EVENT` permission and an ACL entry on the event with
         `read` permission.
-      parameters:
-      - name: fields
-        in: query
-        description: feature fields to project in response (JSON)
-        schema:
-          type: string
-      - name: startDate
-        in: query
-        schema:
-          type: string
-          format: dateTime
-      - name: endDate
-        in: query
-        schema:
-          type: string
-          format: dateTime
-      - name: bbox
-        in: query
-        description: bounding box array [minx,miny,maxx,maxy]
-        style: form
-        explode: false
-        schema:
-          type: array
-          items:
-            type: number
-      - name: states
-        in: query
-        style: form
-        explode: false
-        schema:
-          type: array
-          items:
-            type: string
+      parameters: &obsQueryParams
+        - $ref: '#/components/parameters/observationQuery.fields'
+        - $ref: '#/components/parameters/observationQuery.startDate'
+        - $ref: '#/components/parameters/observationQuery.endDate'
+        - $ref: '#/components/parameters/observationQuery.observationStartDate'
+        - $ref: '#/components/parameters/observationQuery.observationEndDate'
+        - $ref: '#/components/parameters/observationQuery.bbox'
+        - $ref: '#/components/parameters/observationQuery.geometry'
+        - $ref: '#/components/parameters/observationQuery.states'
+        - $ref: '#/components/parameters/observationQuery.sort'
       responses:
         200:
           description: observation response
@@ -1314,79 +1291,7 @@ paths:
         `READ_OBSERVATION_ALL` permission, or have `READ_OBSERVATION_EVENT`
         permission and an ACL entry on the event with `read` permission.
       operationId: getObservationsForEvent
-      parameters:
-        - in: query
-          name: fields
-          description: >
-            The form fields to project in the result observation documents (JSON)
-          schema:
-            type: string
-        - in: query
-          name: startDate
-          schema:
-            type: string
-            format: date-time
-          description: >
-            The low end of the range for the observations' `lastModified`
-            property
-        - in: query
-          name: endDate
-          schema:
-            type: string
-            format: date-time
-          description: >
-            The high end of the range for the observations' `lastModified`
-            property
-        - in: query
-          name: observationStartDate
-          schema:
-            type: string
-            format: date-time
-          description: >
-            The low end of the range for the observations' `timestamp`
-            property
-        - in: query
-          name: observationEndDate
-          schema:
-            type: string
-            format: date-time
-          description: >
-            The low end of the range for the observations' `lastModified`
-            property
-        - in: query
-          name: bbox
-          description: >
-            Bounding box array as a JSON string, e.g.
-            `[xMin, yMin, xMax, yMax]`
-          explode: false
-          schema:
-            $ref: 'geojson.yaml#/definitions/boundingBox'
-        - in: query
-          name: geometry
-          description: >
-            A URL-encoded, stringified JSON object that is a GeoJSON geometry
-            as defined in geojson.yaml#/definitions/geometryObject
-          schema:
-            type: string
-            format: json
-        - in: query
-          name: states
-          explode: false
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/ObservationStateName'
-        - in: query
-          name: sort
-          description: >
-            The `sort` query parameter is a comma-separated list of sort keys.
-            Currently, this operation only supports sorting on the
-            `lastModified` key.
-          explode: false
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/SortKey'
+      parameters: *obsQueryParams
       responses:
         200:
           description: >
@@ -2929,6 +2834,90 @@ components:
       description: The ID of the target observation document
       required: true
       schema: { $ref: '#/components/schemas/Observation/properties/id' }
+    observationQuery.fields:
+      in: query
+      name: fields
+      description: >
+        The form fields to project in the result observation documents (JSON)
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+    observationQuery.startDate:
+      in: query
+      name: startDate
+      schema:
+        type: string
+        format: date-time
+      description: >
+        The low end of the range for the observations' `lastModified`
+        property
+    observationQuery.endDate:
+      in: query
+      name: endDate
+      schema:
+        type: string
+        format: date-time
+      description: >
+        The high end of the range for the observations' `lastModified`
+        property
+    observationQuery.observationStartDate:
+      in: query
+      name: observationStartDate
+      schema:
+        type: string
+        format: date-time
+      description: >
+        The low end of the range for the observations' `timestamp`
+        property
+    observationQuery.observationEndDate:
+      in: query
+      name: observationEndDate
+      schema:
+        type: string
+        format: date-time
+      description: >
+        The low end of the range for the observations' `lastModified`
+        property
+    observationQuery.bbox:
+      in: query
+      name: bbox
+      description: >
+        Bounding box array as a JSON string, e.g.
+        `[xMin, yMin, xMax, yMax]`
+      explode: false
+      schema:
+        $ref: 'geojson.yaml#/definitions/boundingBox'
+    observationQuery.geometry:
+      in: query
+      name: geometry
+      description: >
+        A URL-encoded, stringified JSON object that is a GeoJSON geometry
+        as defined in geojson.yaml#/definitions/geometryObject
+      schema:
+        type: string
+        format: json
+    observationQuery.states:
+      in: query
+      name: states
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ObservationStateName'
+    observationQuery.sort:
+      in: query
+      name: sort
+      description: >
+        The `sort` query parameter is a comma-separated list of sort keys.
+        Currently, this operation only supports sorting on the
+        `lastModified` key.
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/SortKey'
 
   responses:
     FormIconInfo:
