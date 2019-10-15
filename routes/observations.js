@@ -338,25 +338,6 @@ module.exports = function(app, security) {
   );
 
   app.get(
-    '/api/events/:eventId/observations',
-    passport.authenticate('bearer'),
-    validateObservationReadAccess,
-    parseQueryParams,
-    function (req, res, next) {
-      var options = {
-        filter: req.parameters.filter,
-        fields: req.parameters.fields,
-        sort: req.parameters.sort
-      };
-
-      new api.Observation(req.event).getAll(options, function(err, observations) {
-        if (err) return next(err);
-        res.json(observationXform.transform(observations, transformOptions(req)));
-      });
-    }
-  );
-
-  app.get(
     '/api/events/:eventId/observations/(:observationId).zip',
     passport.authenticate('bearer'),
     validateObservationReadAccess,
@@ -394,6 +375,25 @@ module.exports = function(app, security) {
       });
 
       archive.finalize();
+    }
+  );
+
+  app.get(
+    '/api/events/:eventId/observations',
+    passport.authenticate('bearer'),
+    validateObservationReadAccess,
+    parseQueryParams,
+    function (req, res, next) {
+      var options = {
+        filter: req.parameters.filter,
+        fields: req.parameters.fields,
+        sort: req.parameters.sort
+      };
+
+      new api.Observation(req.event).getAll(options, function(err, observations) {
+        if (err) return next(err);
+        res.json(observationXform.transform(observations, transformOptions(req)));
+      });
     }
   );
 
