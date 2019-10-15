@@ -1280,6 +1280,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Observation'
+  /api/events/{eventId}/observations/{observationId}.zip:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/observationIdInPath'
+    get:
+      tags: [ Observation ]
+      operationId: getObservationArchive
+      description: >
+        Get a zip archive of the specified observation content.  The requesting
+        user must have `READ_OBSERVATION_ALL` permission, or have
+        `READ_OBSERVATION_EVENT` permission and an ACL entry on the event with
+        `read` permission.  The returned archive contains an entry named
+        `<observation_id>/index.html`, as well as related resources for any
+        media attached to the observation.
+      responses:
+        200:
+          description: Success - return the observation zip archive.
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
   /api/events/{eventId}/observations:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -1295,7 +1317,7 @@ paths:
       responses:
         200:
           description: >
-            Success - return the observation documents matching the query
+            Success - return the observation documents matching the query.
           content:
             application/json:
               schema:
