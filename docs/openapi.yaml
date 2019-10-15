@@ -1309,7 +1309,7 @@ paths:
       tags: [ Observation ]
       description: >
         Get all the observations for the specified event that match the
-        specified query parameters.  The requesting users must have
+        specified query parameters.  The requesting user must have
         `READ_OBSERVATION_ALL` permission, or have `READ_OBSERVATION_EVENT`
         permission and an ACL entry on the event with `read` permission.
       operationId: getObservationsForEvent
@@ -1330,61 +1330,49 @@ paths:
       - $ref: '#/components/parameters/observationIdInPath'
     put:
       tags: [ Observation ]
-      description: favorite observation for provided event
-      operationId: addFavoriteObservation
+      operationId: addObservationFavorite
+      description: >
+        Mark the specified observation as a favorite of the requesting user by
+        adding the user's ID to the `favoriteUserIds` array on the observation.
+        The requesting user must have `UPDATE_OBSERVATION_ALL` permission, or
+        have `UPDATE_OBSERVATION_EVENT` permission and an ACL entry on the
+        event with `read` permission.
       responses:
         200:
-          description: observation response
+          description: Success - return the updated observation.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FeatureState'
+                $ref: '#/components/schemas/Observation'
     delete:
-      tags:
-      - Observation
-      description: remove favorite for observation for provided event
-      operationId: removeFavoriteObservation
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to observation lives
-        required: true
-        schema:
-          type: number
-      - name: observationId
-        in: path
-        description: observationId for observation to remove favorite
-        required: true
-        schema:
-          type: string
+      tags: [ Observation ]
+      operationId: removeObservationFavorite
+      description: >
+        Remove the requesting user's ID from the `favoriteUserIds` of the
+        specified observation.  The requesting user must have
+        `UPDATE_OBSERVATION_ALL` permission, or have `UPDATE_OBSERVATION_EVENT`
+        permission and an ACL entry on the event with `read` permission.
       responses:
         200:
-          description: observation response
+          description: Success - return the updated observation.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FeatureState'
+                $ref: '#/components/schemas/Observation'
   /api/events/{eventId}/observations/{observationId}/important:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/observationIdInPath'
     put:
-      tags:
-      - Observation
-      description: add/update important on provided observation for provided event
-      operationId: addObservationImportant
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to add/update observation important
-        required: true
-        schema:
-          type: number
-      - name: observationId
-        in: path
-        description: observationId for observation
-        required: true
-        schema:
-          type: string
+      tags: [ Observation ]
+      operationId: setObservationImportant
+      description: >
+        Mark the specified observation as important.  This operation allows
+        administrators and event managers to flag important observations for
+        all users with access to the event.  The requesting user must have
+        `UPDATE_EVENT` permission and an ACL entry on the event with `update`
+        permission.
       requestBody:
-        description: important request body
         content:
           application/json:
             schema:
@@ -1392,55 +1380,34 @@ paths:
         required: true
       responses:
         200:
-          description: observation response
+          description: Success - return the updated observation.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FeatureState'
+                $ref: '#/components/schemas/Observation'
     delete:
-      tags:
-      - Observation
-      description: remove important on provided observation for provided event
+      tags: [ Observation ]
       operationId: removeObservationImportant
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to remove observation important
-        required: true
-        schema:
-          type: number
-      - name: observationId
-        in: path
-        description: observationId for observation
-        required: true
-        schema:
-          type: string
+      description: >
+        Remove the important flag from the specified observation.  The
+        requesting user must have `UPDATE_EVENT` permission and an ACL entry on
+        the event with `update` permission.
       responses:
         200:
-          description: observation response
+          description: Success - return the updated observation.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FeatureState'
+                $ref: '#/components/schemas/Observation'
   /api/events/{eventId}/observations/{observationId}/states:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/observationIdInPath'
     post:
-      tags:
-      - Observation
-      description: update state on provided observation for provided event
+      tags: [ Observation ]
       operationId: addObservationState
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to update observation state
-        required: true
-        schema:
-          type: number
-      - name: observationId
-        in: path
-        description: observationId for observation
-        required: true
-        schema:
-          type: string
+      description: >
+        update state on provided observation for provided event
       requestBody:
         description: state request body
         content:
@@ -2644,11 +2611,23 @@ components:
       description: >
         Setting an observation's state to `archive` effectively deletes the
         observation from client views, but preserves the observation data.
+    ObservationImportant:
+      type: object
+      properties:
+        userId:
+          $ref: '#/components/schemas/User/properties/id'
+        timestamp:
+          type: string
+          format: date-time
+        description:
+          type: string
+          description: The reason for flagging an observation important
     ObservationImportantCreate:
       type: object
       properties:
         description:
           type: string
+      required: [ description ]
     Attachment:
       type: object
       properties:
@@ -2763,10 +2742,10 @@ components:
           type: string
     Role:
       required:
-      - description
-      - id
-      - name
-      - permissions
+        - description
+        - id
+        - name
+        - permissions
       type: object
       properties:
         id:
@@ -2781,9 +2760,9 @@ components:
             type: string
     LayerCreate:
       required:
-      - name
-      - type
-      - url
+        - name
+        - type
+        - url
       type: object
       properties:
         name:
