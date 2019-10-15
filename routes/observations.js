@@ -400,6 +400,7 @@ module.exports = function(app, security) {
   app.put(
     '/api/events/:eventId/observations/:observationIdInPath/favorite',
     passport.authenticate('bearer'),
+    validateObservationUpdateAccess,
     function (req, res, next) {
       new api.Observation(req.event).addFavorite(req.params.observationIdInPath, req.user, function(err, updatedObservation) {
         if (err) {
@@ -415,13 +416,14 @@ module.exports = function(app, security) {
   );
 
   app.delete(
-    '/api/events/:eventId/observations/:id/favorite',
+    '/api/events/:eventId/observations/:observationIdInPath/favorite',
     passport.authenticate('bearer'),
+    validateObservationUpdateAccess,
     function (req, res, next) {
 
-      new api.Observation(req.event).removeFavorite(req.params.id, req.user, function(err, updatedObservation) {
+      new api.Observation(req.event).removeFavorite(req.params.observationIdInPath, req.user, function(err, updatedObservation) {
         if (err) return next(err);
-        if (!updatedObservation) return res.status(404).send('Observation with id ' + req.params.id + " does not exist");
+        if (!updatedObservation) return res.status(404).send('Observation with id ' + req.params.observationIdInPath + " does not exist");
 
         var response = observationXform.transform(updatedObservation, transformOptions(req));
         res.json(response);
