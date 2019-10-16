@@ -15,6 +15,7 @@ definitions:
     description: >
       This schema is solely an abstract definition to share the common GeoJSON
       attributes to the concrete GeoJSON types.
+    type: object
     properties:
       type:
         $ref: '#/definitions/geoJsonType'
@@ -48,8 +49,10 @@ definitions:
     title: Point
     description: >
       For type `Point`, the `coordinates` member must be a single position.
+    type: object
     properties:
       type:
+        type: string
         enum:
           - Point
       coordinates:
@@ -61,8 +64,10 @@ definitions:
     description: >
       The `MultiPoint` geometry type has a `coordinates` member must be an array
       of positions.
+    type: object
     properties:
       type:
+        type: string
         enum:
           - MultiPoint
       coordinates:
@@ -80,8 +85,10 @@ definitions:
       Though a LinearRing is not explicitly represented as a GeoJSON
       geometry type, it is referred to in the Polygon geometry type
       definition.
+    type: object
     properties:
       type:
+        type: string
         enum:
           - LineString
       coordinates:
@@ -93,8 +100,10 @@ definitions:
     description: >
       For type `MultiLineString`, the `coordinates` member must be an array of
       LineString coordinate arrays.
+    type: object
     properties:
       type:
+        type: string
         enum:
           - MultiLineString
       coordinates:
@@ -107,8 +116,10 @@ definitions:
       For type `Polygon`, the `coordinates` member must be an array of
       LinearRing coordinate arrays. For Polygons with multiple rings, the first
       must be the exterior ring and any others must be interior rings or holes.
+    type: object
     properties:
       type:
+        type: string
         enum:
           - Polygon
       coordinates:
@@ -120,8 +131,10 @@ definitions:
     description: >
       For type `MultiPolygon`, the `coordinates` member must be an array of
       Polygon coordinate arrays.
+    type: object
     properties:
       type:
+        type: string
         enum:
           - MultiPolygon
       coordinates:
@@ -137,8 +150,10 @@ definitions:
       A geometry collection must have a member with the name `geometries`.
       The value corresponding to `geometries` is an array. Each element in
       this array is a GeoJSON geometry object.
+    type: object
     properties:
       type:
+        type: string
         enum:
           - GeometryCollection
       geometries:
@@ -161,6 +176,7 @@ definitions:
       a JSON null value).
       * If a feature has a commonly used identifier, that identifier should
       be included as a member of the feature object with the name `id`.
+    type: object
     required:
       - geometry
       - properties
@@ -176,17 +192,21 @@ definitions:
           feature.  If the feature has no location, the value should be null.
         allOf:
           - $ref: '#/definitions/geometryObject'
+        nullable: true
       properties:
         title: Feature Properties
         description: >
           The `properties` member is an object containing application-specific
           attributes of the feature.
-        type: [ object, 'null' ]
+        type: object
+        nullable: true
       id:
-        type: [ string, number ]
         description: >
           The `id` member is an optional, commonly used identifier of the
           feature.
+        oneOf:
+          - type: string
+          - type: number
     allOf:
       - $ref: '#/definitions/geoJsonBase'
   featureCollection:
@@ -241,6 +261,7 @@ definitions:
       types that have a `coordinates` member specifying the location(s) of the
       geometry.  This schema is solely an abstract definition to share common
       characteristics to the concrete Geometry Object types.
+    type: object
     properties:
       type:
         $ref: '#/definitions/locatedGeometryType'
@@ -274,8 +295,6 @@ definitions:
     oneOf:
       - $ref: '#/definitions/locatedGeometryObject'
       - $ref: '#/definitions/geometryCollection'
-    allOf:
-      - $ref: '#/definitions/geoJsonBase'
   pointCoordinates:
     title: Point Coordinates
     $ref: '#/definitions/position'
@@ -309,7 +328,10 @@ definitions:
       GeoJSON specification.
     allOf:
       - $ref: '#/definitions/lineStringCoordinates'
-      - minItems: 4
+      - type: array
+        items:
+          $ref: '#/definitions/position'
+        minItems: 4
   polygonCoordinates:
     title: Polygon Coordinates
     description: >

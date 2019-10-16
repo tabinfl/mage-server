@@ -77,6 +77,7 @@
     "mocha": "6.1.4",
     "mock-fs": "4.10.1",
     "nyc": "^14.1.1",
+    "openapi-enforcer": "^1.5.4",
     "proxyquire": "2.1.0",
     "sinon": "7.3.2",
     "sinon-chai": "3.3.0",

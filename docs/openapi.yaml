@@ -202,6 +202,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               properties:
                 newPassword:
                   type: string
@@ -224,10 +225,11 @@ paths:
         content:
           application/json:
             schema:
-              required: [ status ]
+              type: object
               properties:
                 status:
                   type: string
+              required: [ status ]
       responses:
         200:
           description: Successful status update
@@ -1407,40 +1409,34 @@ paths:
       tags: [ Observation ]
       operationId: addObservationState
       description: >
-        update state on provided observation for provided event
+        Set the current state of the specified observation.  The state is
+        appended to a list of states on the observation, the head of which is
+        the current state.  The requesting user must have `UPDATE_EVENT`
+        permission and an ACL entry on the event with `update` permission.
       requestBody:
-        description: state request body
+        description: >
+          The request body contains the name of the state to set on the
+          target observation.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FeatureStateCreate'
+              $ref: '#/components/schemas/ObservationStateCreate'
         required: true
       responses:
-        200:
-          description: observation response
+        201:
+          description: Success - return the added state document.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FeatureState'
+                $ref: '#/components/schemas/ObservationState'
   /api/events/{eventId}/observations/{observationId}/attachments:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/observationIdInPath'
     get:
-      tags:
-      - Observation
-      description: get attachments for observation in event
+      tags: [ Observation ]
       operationId: getAttachments
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to retrieve observation attachments
-        required: true
-        schema:
-          type: number
-      - name: observationId
-        in: path
-        description: observationId for observation
-        required: true
-        schema:
-          type: string
+      description: get attachments for observation in event
       responses:
         200:
           description: attachment response
@@ -1451,147 +1447,76 @@ paths:
                 items:
                   $ref: '#/components/schemas/Attachment'
     post:
-      tags:
-      - Observation
-      description: add new attachment
+      tags: [ Observation ]
       operationId: addAttachment
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to create attachment
-        required: true
-        schema:
-          type: number
-      - name: observationId
-        in: path
-        description: observationId in which to create attachment
-        required: true
-        schema:
-          type: string
+      description: add new attachment
       requestBody:
         content:
           multipart/form-data:
             schema:
-              required:
-                - attachment
+              type: object
               properties:
                 attachment:
                   type: string
-                  description: attachment
                   format: binary
+              required:
+                - attachment
         required: true
       responses:
         200:
           description: attachment response
           content: {}
   /api/events/{eventId}/observations/{observationId}/attachments/{attachmentId}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/observationIdInPath'
+      - $ref: '#/components/parameters/attachmentIdInPath'
     get:
-      tags:
-      - Observation
-      description: get attachment for observation in event
+      tags: [ Observation ]
       operationId: getAttachment
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to retrieve observation
-        required: true
-        schema:
-          type: number
-      - name: observationId
-        in: path
-        description: observationId for observation
-        required: true
-        schema:
-          type: string
-      - name: attachmentId
-        in: path
-        description: id of attachment to fetch
-        required: true
-        schema:
-          type: string
+      description: get attachment for observation in event
       responses:
         200:
           description: attachment response
           content: {}
     put:
-      tags:
-      - Observation
-      description: update attachment for observation in event
+      tags: [ Observation ]
       operationId: updateAttachment
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to update observation attachment
-        required: true
-        schema:
-          type: number
-      - name: observationId
-        in: path
-        description: observationId for observation
-        required: true
-        schema:
-          type: string
-      - name: attachmentId
-        in: path
-        description: id of attachment to update
-        required: true
-        schema:
-          type: string
+      description: update attachment for observation in event
       requestBody:
         content:
           application/json:
             schema:
-              required:
-              - attachment
+              type: object
               properties:
                 attachment:
                   type: string
-                  description: attachment
                   format: binary
+              required: [ attachment ]
         required: true
       responses:
         200:
           description: attachment response
           content: {}
     delete:
-      tags:
-      - Observation
+      tags: [ Observation ]
+      operationId: deleteAttachment
       description: delete attachment for observation in event
-      parameters:
-      - name: eventId
-        in: path
-        description: eventId in which to retrieve features
-        required: true
-        schema:
-          type: number
-      - name: observationId
-        in: path
-        description: observationId for feature
-        required: true
-        schema:
-          type: string
-      - name: attachmentId
-        in: path
-        description: id of attachment to update
-        required: true
-        schema:
-          type: string
       responses:
         200:
           description: attachment delete
           content: {}
   /api/layers:
     get:
-      tags:
-      - Layer
-      description: get all layers
+      tags: [ Layer ]
       operationId: getLayers
+      description: get all layers
       parameters:
-      - name: type
-        in: query
-        description: layer type filter, i.e. Imagery or Feature
-        schema:
-          type: string
+        - in: query
+          name: type
+          description: layer type filter, i.e. Imagery or Feature
+          schema:
+            type: string
       responses:
         200:
           description: layer response
@@ -1600,10 +1525,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Layer'
     post:
-      tags:
-      - Layer
-      description: add new layer
+      tags: [ Layer ]
       operationId: addLayer
+      description: add new layer
       requestBody:
         description: new layer body
         content:
@@ -1620,17 +1544,16 @@ paths:
                 $ref: '#/components/schemas/Layer'
   /api/layers/{id}:
     get:
-      tags:
-      - Layer
+      tags: [ Layer ]
       description: Returns a single layer based on id
       operationId: getLayerById
       parameters:
-      - name: id
-        in: path
-        description: id of layer to fetch
-        required: true
-        schema:
-          type: string
+        - in: path
+          name: id
+          description: id of layer to fetch
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: layer response
@@ -1639,17 +1562,16 @@ paths:
               schema:
                 $ref: '#/components/schemas/Layer'
     put:
-      tags:
-      - Layer
-      description: update a single layer based on id
+      tags: [ Layer ]
       operationId: updateLayerById
+      description: update a single layer based on id
       parameters:
-      - name: id
-        in: path
-        description: id of layer to update
-        required: true
-        schema:
-          type: string
+        - in: path
+          name: id
+          description: id of layer to update
+          required: true
+          schema:
+            type: string
       requestBody:
         description: layer update body
         content:
@@ -1665,27 +1587,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/Layer'
     delete:
-      tags:
-      - Layer
-      description: deletes a single layer based on id
+      tags: [ Layer ]
       operationId: deleteLayer
+      description: deletes a single layer based on id
       parameters:
-      - name: id
-        in: path
-        description: id of layer to delete
-        required: true
-        schema:
-          type: string
+        - in: path
+          name: id
+          description: id of layer to delete
+          required: true
+          schema:
+            type: string
       responses:
         204:
           description: layer deleted
           content: {}
   /api/events/{eventId}/layers/{layerId}/features:
     get:
-      tags:
-      - Layer
-      description: get features for specified layer in event
+      tags: [ Layer ]
       operationId: getFeaturesForLayer
+      description: get features for specified layer in event
       parameters:
       - name: eventId
         in: path
@@ -1710,10 +1630,9 @@ paths:
                   $ref: 'geojson.yaml#/definitions/feature'
   /api/events/{eventId}/locations:
     get:
-      tags:
-      - Location
-      description: get all locations
+      tags: [ Location ]
       operationId: getLocations
+      description: get all locations
       parameters:
       - name: eventId
         in: path
@@ -1775,10 +1694,9 @@ paths:
           content: {}
   /api/events/{eventId}/locations/users:
     get:
-      tags:
-      - Location
-      description: get all locations grouped by user
+      tags: [ Location ]
       operationId: getLocationsByUser
+      description: get all locations grouped by user
       parameters:
       - name: eventId
         in: path
@@ -1817,10 +1735,9 @@ paths:
                   $ref: 'geojson.yaml#/definitions/feature'
   /api/roles:
     get:
-      tags:
-      - Role
-      description: get all roles
+      tags: [ Role ]
       operationId: getRoles
+      description: get all roles
       responses:
         200:
           description: role response
@@ -1831,10 +1748,9 @@ paths:
                 items: { $ref: '#/components/schemas/Role' }
   /api/roles/{id}:
     get:
-      tags:
-      - Role
-      description: get role by id
+      tags: [ Role ]
       operationId: getRoleById
+      description: get role by id
       parameters:
       - name: id
         in: path
@@ -1851,20 +1767,18 @@ paths:
                 $ref: '#/components/schemas/Role'
   /api/settings:
     get:
-      tags:
-      - Settings
-      description: get settings
+      tags: [ Settings ]
       operationId: getSettings
+      description: get settings
       responses:
         200:
           description: export response
           content: {}
   /api/settings/{type}:
     get:
-      tags:
-      - Settings
-      description: get settings by type
+      tags: [ Settings ]
       operationId: getSettingByType
+      description: get settings by type
       parameters:
       - name: type
         in: path
@@ -1880,10 +1794,9 @@ paths:
           description: settings response
           content: {}
     put:
-      tags:
-      - Settings
-      description: update settings by type
+      tags: [ Settings ]
       operationId: updateSettingByType
+      description: update settings by type
       parameters:
       - name: type
         in: path
@@ -1900,10 +1813,9 @@ paths:
           content: {}
   /api/{exportType}:
     get:
-      tags:
-      - Export
-      description: export mage data (GeoJSON, KML or Shapefiles)
+      tags: [ Export ]
       operationId: export
+      description: export mage data (GeoJSON, KML or Shapefiles)
       parameters:
       - name: exportType
         in: path
@@ -2028,9 +1940,9 @@ components:
           items:
             $ref: '#/components/schemas/Event/properties/id'
       oneOf:
-        - { required: [ role ], not: { required: [ roleId ] } }
-        - { required: [ roleId ], not: { required: [ role ] } }
-        - not: { required: [ role, roleId ] }
+        - { type: object, required: [ role ], not: { type: object, required: [ roleId ] } }
+        - { type: object, required: [ roleId ], not: { type: object, required: [ role ] } }
+        - { type: object, not: { type: object, required: [ role, roleId ] } }
     UserRef:
       description: >
         `UserRef` is an object that references an existing user document with
@@ -2039,7 +1951,7 @@ components:
       type: object
       allOf:
         - { $ref: '#/components/schemas/User' }
-        - required: [ id ]
+        - { type: object, required: [ id ] }
     UserIn:
       type: object
       properties:
@@ -2073,11 +1985,13 @@ components:
     UserCreate:
       allOf:
         - { $ref: '#/components/schemas/UserIn' }
-        - required: [ username, displayName, password, passwordconfirm ]
+        - { type: object, required: [ username, displayName, password, passwordconfirm ] }
     UserUpdateSelf:
       allOf:
         - { $ref: '#/components/schemas/UserIn' }
-        - not:
+        - type: object
+          not:
+            type: object
             required: [ password, passwordconfirm, icon, iconMetadata ]
     UserIcon:
       description: >
@@ -2114,11 +2028,12 @@ components:
         passwordconfirm:
           type: string
       oneOf:
-        - required: [ password, passwordconfirm ]
-        - not: { required: [ password, passwordconfirm ] }
+        - { type: object, required: [ password, passwordconfirm ] }
+        - { type: object, not: { type: object, required: [ password, passwordconfirm ] } }
     AuthStatus:
+      type: object
       required:
-       - type
+        - type
       properties:
         type:
           type: string
@@ -2198,8 +2113,8 @@ components:
         user:
           $ref: '#/components/schemas/User'
       oneOf:
-        - { required: [ userId ], not: { required: [ user ] } }
-        - { required: [ user ], not: { required: [ userId ] } }
+        - { type: object, required: [ userId ], not: { type: object, required: [ user ] } }
+        - { type: object, required: [ user ], not: { type: object, required: [ userId ] } }
     DeviceIn:
       type: object
       required: [ uid ]
@@ -2250,12 +2165,11 @@ components:
     TeamCreate:
       allOf:
         - $ref: '#/components/schemas/TeamIn'
-        - required: [ name ]
+        - { type: object, required: [ name ] }
     TeamRef:
       allOf:
         - $ref: '#/components/schemas/Team'
-        - required:
-          - id
+        - { type: object, required: [ id ] }
     Event:
       required:
         - id
@@ -2289,6 +2203,8 @@ components:
             $ref: '#/components/schemas/Team'
         layers:
           type: array
+          items:
+            $ref: '#/components/schemas/Layer'
         acl:
           $ref: '#/components/schemas/ACL'
     EventCreate:
@@ -2353,7 +2269,8 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/Form'
-        - required: [ name, color, fields ]
+        - type: object
+          required: [ name, color, fields ]
     FormImport:
       type: object
       properties:
@@ -2435,7 +2352,8 @@ components:
     FormIconEmbedded:
       allOf:
         - $ref: '#/components/schemas/FormIcon'
-        - properties:
+        - type: object
+          properties:
             icon:
               type: string
               pattern: ^data:image/[^;]+;base64,[A-Za-z0-9+/]+$
@@ -2467,18 +2385,20 @@ components:
     LayerRef:
       allOf:
         - $ref: '#/components/schemas/Layer'
-        - required:
-          - id
+        - type: object
+          required: [ id ]
     ObservationIn:
       description: >
         This schema defines the observation properties a client sends to save
         a new or updated observation.
       allOf:
         - $ref: 'geojson.yaml#/definitions/feature'
-        - properties:
+        - type: object
+          properties:
             properties:
               $ref: '#/components/schemas/ObservationFeatureProperties'
-        - required: [ type, geometry, properties ]
+        - type: object
+          required: [ type, geometry, properties ]
     Observation:
       title: Observation
       description: >
@@ -2490,6 +2410,7 @@ components:
         well as a `geometry` property that holds the geospatial geometry of the
         observation, such as point or polygon coordinates.  The values of the
         observation's form fields reside under the GeoJSON `properties` key.
+      type: object
       properties:
         id:
           type: string
@@ -2520,6 +2441,8 @@ components:
             $ref: '#/components/schemas/User/properties/id'
         attachements:
           type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
       allOf:
         - $ref: '#/components/schemas/ObservationIn'
       example: {
@@ -2594,23 +2517,6 @@ components:
                 $ref: '#/components/schemas/Form/properties/id'
             additionalProperties: true
       required: [ timestamp ]
-    ObservationState:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          $ref: '#/components/schemas/ObservationStateName'
-        userId:
-          $ref: '#/components/schemas/User/properties/id'
-          description: >
-            The ID of the user that set this state on the parent observation.
-    ObservationStateName:
-      type: string
-      enum: [ active, archive ]
-      description: >
-        Setting an observation's state to `archive` effectively deletes the
-        observation from client views, but preserves the observation data.
     ObservationImportant:
       type: object
       properties:
@@ -2623,11 +2529,32 @@ components:
           type: string
           description: The reason for flagging an observation important
     ObservationImportantCreate:
+      allOf:
+        - $ref: '#/components/schemas/ObservationImportant'
+        - type: object
+          required: [ description ]
+    ObservationState:
       type: object
       properties:
-        description:
+        id:
           type: string
-      required: [ description ]
+        name:
+          $ref: '#/components/schemas/ObservationStateName'
+        userId:
+          $ref: '#/components/schemas/User/properties/id'
+          description: >
+            The ID of the user that set this state on the parent observation.
+    ObservationStateCreate:
+      allOf:
+        - $ref: '#/components/schemas/ObservationState'
+        - type: object
+          required: [ name ]
+    ObservationStateName:
+      type: string
+      enum: [ active, archive ]
+      description: >
+        Setting an observation's state to `archive` effectively deletes the
+        observation from client views, but preserves the observation data.
     Attachment:
       type: object
       properties:
@@ -2684,15 +2611,6 @@ components:
           type: string
         number:
           type: string
-    FeatureStateCreate:
-      type: object
-      properties:
-        name:
-          type: string
-        url:
-          type: string
-        userId:
-          type: string
     LoginResponse:
       type: object
       properties:
@@ -2705,9 +2623,6 @@ components:
         role:
           $ref: '#/components/schemas/Role'
     Login:
-      required:
-        - id
-        - timestamp
       type: object
       properties:
         id:
@@ -2722,30 +2637,17 @@ components:
           $ref: '#/components/schemas/User'
         userId:
           $ref: '#/components/schemas/User/properties/id'
+      required:
+        - id
+        - timestamp
       allOf:
         - oneOf:
-          - { required: [ deviceId ], not: { required: [ device ] } }
-          - { required: [ device ], not: { required: [ deviceId ] } }
+          - { type: object, required: [ deviceId ], not: { type: object, required: [ device ] } }
+          - { type: object, required: [ device ], not: { type: object, required: [ deviceId ] } }
         - oneOf:
-          - { required: [ userId ], not: { required: [ user ] } }
-          - { required: [ user ], not: { required: [ userId ] } }
-    FeatureState:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        url:
-          type: string
-        userId:
-          type: string
+          - { type: object, required: [ userId ], not: { type: object, required: [ user ] } }
+          - { type: object, required: [ user ], not: { type: object, required: [ userId ] } }
     Role:
-      required:
-        - description
-        - id
-        - name
-        - permissions
       type: object
       properties:
         id:
@@ -2758,6 +2660,11 @@ components:
           type: array
           items:
             type: string
+      required:
+        - description
+        - id
+        - name
+        - permissions
     LayerCreate:
       required:
         - name
@@ -2789,7 +2696,7 @@ components:
       name: eventId
       description: The ID of the target event document
       required: true
-      example: 5d0b2bfeeec24262f1a5fdf3
+      example: 1234
       schema: { $ref: '#/components/schemas/Event/properties/id' }
     formIdInPath:
       in: path
@@ -2806,7 +2713,7 @@ components:
         type: string
     variantFieldValueInPath:
       in: path
-      name: primary
+      name: variant
       description: The value of the variant form field
       required: true
       schema:
@@ -2835,6 +2742,12 @@ components:
       description: The ID of the target observation document
       required: true
       schema: { $ref: '#/components/schemas/Observation/properties/id' }
+    attachmentIdInPath:
+      in: path
+      name: attachmentId
+      description: The ID of the target attachment document
+      required: true
+      schema: { $ref: '#/components/schemas/Attachment/properties/id' }
     observationQuery.fields:
       in: query
       name: fields
