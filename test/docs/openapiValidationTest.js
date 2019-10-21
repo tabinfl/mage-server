@@ -2,7 +2,7 @@ const path = require('path');
 const Enforcer = require('openapi-enforcer');
 const expect = require('chai').expect;
 
-describe.only('mage openapi document', function() {
+describe('mage openapi document', function() {
 
   it('is valid', async function() {
 
