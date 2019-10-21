@@ -2,19 +2,6 @@ const path = require('path');
 const Enforcer = require('openapi-enforcer');
 const expect = require('chai').expect;
 
-
-function logEnforcerException(err, key, level) {
-  key = key || 'root';
-  level = level || 0;
-  indent = ' '.repeat(level);
-  if (err.hasException) {
-    console.log(`${indent}> ${key}: ${err.header || err.message()}`);
-    for (childKey in err.children.at) {
-      logEnforcerException(err.children.at[childKey], childKey, level + 2);
-    }
-  }
-}
-
 describe.only('mage openapi document', function() {
 
   it('is valid', async function() {

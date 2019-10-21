@@ -191,8 +191,9 @@ definitions:
           The `geometry` member specifies the location Geometry Object of the
           feature.  If the feature has no location, the value should be null.
         allOf:
+          - type: object
+            nullable: true
           - $ref: '#/definitions/geometryObject'
-        nullable: true
       properties:
         title: Feature Properties
         description: >
@@ -248,6 +249,8 @@ definitions:
       type: number
   coordinates:
     title: Coordinates
+    # must be anyOf, not oneOf because instances of polygonCoordinates also
+    # satisfy lineStringCoordinates
     anyOf:
       - $ref: '#/definitions/pointCoordinates'
       - $ref: '#/definitions/lineStringCoordinates'
@@ -326,12 +329,10 @@ definitions:
       position of a LinearRing must be equivalent, so instances that are valid
       with respect to this schema may not actually be valid with respect to the
       GeoJSON specification.
-    allOf:
-      - $ref: '#/definitions/lineStringCoordinates'
-      - type: array
-        items:
-          $ref: '#/definitions/position'
-        minItems: 4
+    type: array
+    minItems: 4
+    items:
+      $ref: '#/definitions/position'
   polygonCoordinates:
     title: Polygon Coordinates
     description: >

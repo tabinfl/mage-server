@@ -216,11 +216,11 @@ Object.keys(fixture).forEach(geoJsonType => {
 
 expect(fixture.FeatureCollection.valid['featurecollection with all features'].features.length).to.be.greaterThan(1);
 
-describe('GeoJSON schema', function() {
+describe.only('GeoJSON schema', function() {
 
   const schemaPath = path.join(__dirname, '..', '..', 'docs', 'geojson.yaml');
   const schemaDoc = YAML.parse(fs.readFileSync(schemaPath).toString('utf-8'));
-  const ajv = new Ajv({ schemaId: 'id' });
+  const ajv = new Ajv({ schemaId: 'id', allErrors: true, nullable: true });
   ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
   let validate;
 
