@@ -10,7 +10,6 @@ describe('mage openapi document', function() {
     const { error, warning } = await Enforcer(openapiDocPath, { fullResult: true });
 
     if (error) {
-      // logEnforcerException(error);
       console.log(error.message());
       console.log(`\n${error.count} validation errors\n`);
     }
