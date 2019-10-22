@@ -20,7 +20,7 @@ const EventModel = mongoose.model('Event');
 const Observation = require('../../models/observation');
 const observationModel = Observation.observationModel;
 
-describe.only("creating attachments", function() {
+describe("creating attachments", function() {
 
   const userId = mongoose.Types.ObjectId();
 
