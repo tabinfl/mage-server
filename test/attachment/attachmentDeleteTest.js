@@ -13,7 +13,7 @@ const TokenModel = mongoose.model('Token');
 const TeamModel = mongoose.model('Team');
 const EventModel = mongoose.model('Event');
 
-describe.only("deleting attachments", function() {
+describe("deleting attachments", function() {
 
   const userId = mongoose.Types.ObjectId();
   const attachmentId = mongoose.Types.ObjectId();
