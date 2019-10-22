@@ -499,15 +499,17 @@ module.exports = function(app, security) {
   app.post(
     '/api/events/:eventId/observations/:observationId/attachments',
     passport.authenticate('bearer'),
-    access.authorize('CREATE_OBSERVATION'),
+    validateObservationUpdateAccess,
     function(req, res, next) {
-      var attachment = req.files.attachment;
-      if (!attachment) return res.status(400).send("no attachment");
-
+      const attachment = req.files.attachment;
+      if (!attachment) {
+        return res.status(400).send("no attachment");
+      }
       new api.Attachment(req.event, req.observation).create(req.observationId, req.files.attachment, function(err, attachment) {
-        if (err) return next(err);
-
-        var observation = req.observation;
+        if (err) {
+          return next(err);
+        }
+        const observation = req.observation;
         observation.attachments = [attachment.toObject()];
         return res.json(observationXform.transform(observation, transformOptions(req)).attachments[0]);
       });
@@ -527,6 +529,21 @@ module.exports = function(app, security) {
         }
         var response = observationXform.transform(observation, transformOptions(req));
         res.json(response.attachments);
+      });
+    }
+  );
+
+  app.put(
+    '/api/events/:eventId/observations/:observationId/attachments/:attachmentId',
+    passport.authenticate('bearer'),
+    validateObservationUpdateAccess,
+    function(req, res, next) {
+      new api.Attachment(req.event, req.observation).update(req.params.attachmentId, req.files.attachment, function(err, attachment) {
+        if (err) return next(err);
+
+        var observation = req.observation;
+        observation.attachments = [attachment.toObject()];
+        return res.json(observationXform.transform(observation, transformOptions(req)).attachments[0]);
       });
     }
   );
@@ -584,21 +601,6 @@ module.exports = function(app, security) {
             return res.sendStatus(404);
           });
         }
-      });
-    }
-  );
-
-  app.put(
-    '/api/events/:eventId/observations/:observationId/attachments/:attachmentId',
-    passport.authenticate('bearer'),
-    validateObservationUpdateAccess,
-    function(req, res, next) {
-      new api.Attachment(req.event, req.observation).update(req.params.attachmentId, req.files.attachment, function(err, attachment) {
-        if (err) return next(err);
-
-        var observation = req.observation;
-        observation.attachments = [attachment.toObject()];
-        return res.json(observationXform.transform(observation, transformOptions(req)).attachments[0]);
       });
     }
   );
