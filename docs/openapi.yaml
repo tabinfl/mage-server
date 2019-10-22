@@ -12,7 +12,6 @@ info:
 servers:
 - url: http://localhost:4242
 paths:
-
   /api/logins:
     get:
       tags: [ Auth ]
@@ -1411,8 +1410,9 @@ paths:
       description: >
         Set the current state of the specified observation.  The state is
         appended to a list of states on the observation, the head of which is
-        the current state.  The requesting user must have `UPDATE_EVENT`
-        permission and an ACL entry on the event with `update` permission.
+        the current state.  The requesting user must be the user that created
+        the observation, have `UPDATE_EVENT` permission, or have an ACL entry on
+        the event with `update` permission.
       requestBody:
         description: >
           The request body contains the name of the state to set on the
@@ -1433,23 +1433,14 @@ paths:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
       - $ref: '#/components/parameters/observationIdInPath'
-    get:
-      tags: [ Observation ]
-      operationId: getAttachments
-      description: get attachments for observation in event
-      responses:
-        200:
-          description: attachment response
-          content:
-            application/octet-stream:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Attachment'
     post:
       tags: [ Observation ]
       operationId: addAttachment
-      description: add new attachment
+      description: >
+        Add the given attachment to the specified observation.  The requesting
+        user must have `UPDATE_OBSERVATION_ALL` permission, or have
+        `UPDATE_OBSERVATION_EVENT` permission and an ACL entry on the event
+        with `read` permission.
       requestBody:
         content:
           multipart/form-data:
@@ -1464,28 +1455,44 @@ paths:
         required: true
       responses:
         200:
-          description: attachment response
-          content: {}
+          description: Success - return the attachment descriptor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attachment'
+    get:
+      tags: [ Observation ]
+      operationId: getAttachments
+      description: >
+        Get the attachment descriptors for the specified observation.  The
+        requesting user must have `READ_OBSERVATION_ALL` permission, or have
+        `READ_OBSERVATION_EVENT` permission and an ACL entry on the event with
+        `read` permission.
+      responses:
+        200:
+          description: Success - return an array of attachment descriptors.
+          content:
+            application/octet-stream:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attachment'
   /api/events/{eventId}/observations/{observationId}/attachments/{attachmentId}:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
       - $ref: '#/components/parameters/observationIdInPath'
       - $ref: '#/components/parameters/attachmentIdInPath'
-    get:
-      tags: [ Observation ]
-      operationId: getAttachment
-      description: get attachment for observation in event
-      responses:
-        200:
-          description: attachment response
-          content: {}
     put:
       tags: [ Observation ]
       operationId: updateAttachment
-      description: update attachment for observation in event
+      description: >
+        Update the specified attachment for the specified observation.  The
+        requesting user must have `UPDATE_OBSERVATION_ALL` permission, or have
+        `UPDATE_OBSERVATION_EVENT` permission and an ACL entry on the event
+        with `read` permission.
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
@@ -1496,16 +1503,39 @@ paths:
         required: true
       responses:
         200:
+          description: Success - return the updated attachment descriptor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attachment'
+    get:
+      tags: [ Observation ]
+      operationId: getAttachment
+      description: >
+        Get the specified attachment content.  This operation returns the
+        actual bytes of the attachment, not the attachment descriptor document.
+        The requesting user must have `READ_OBSERVATION_ALL` permission, or have
+        `READ_OBSERVATION_EVENT` permission and an ACL entry on the event with
+        `read` permission.
+      responses:
+        200:
           description: attachment response
-          content: {}
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
     delete:
       tags: [ Observation ]
       operationId: deleteAttachment
-      description: delete attachment for observation in event
+      description: >
+        Delete the specified attachment from the specified observation.  The
+        requesting user must be the user that created the observation, have
+        `UPDATE_EVENT` permission, or have an ACL entry on the event with
+        `update` permission.
       responses:
-        200:
-          description: attachment delete
-          content: {}
+        204:
+          description: Success - the attachment was deleted.
   /api/layers:
     get:
       tags: [ Layer ]
@@ -2392,7 +2422,7 @@ components:
         This schema defines the observation properties a client sends to save
         a new or updated observation.
       allOf:
-        - $ref: 'geojson.yaml#/definitions/feature'
+        # - $ref: 'geojson.yaml#/definitions/feature'
         - type: object
           properties:
             properties:
@@ -2562,20 +2592,15 @@ components:
           type: string
         name:
           type: string
+        relativePath:
+          type: string
         contentType:
           type: string
         url:
           type: string
-        height:
-          type: number
-        width:
-          type: number
+          format: uri
         oriented:
           type: boolean
-        thumbnails:
-          type: array
-          items:
-            $ref: '#/components/schemas/Thumbnail'
     LocalCredentials:
       required:
         - password
