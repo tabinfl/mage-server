@@ -608,12 +608,13 @@ module.exports = function(app, security) {
   app.delete(
     '/api/events/:eventId/observations/:observationId/attachments/:attachmentId',
     passport.authenticate('bearer'),
-    access.authorize('DELETE_OBSERVATION'),
+    authorizeDeleteAccess,
     function(req, res, next) {
       new api.Attachment(req.event, req.observation).delete(req.params.attachmentId, function(err) {
-        if (err) return next(err);
-
-        res.sendStatus(200);
+        if (err) {
+          return next(err);
+        }
+        res.sendStatus(204);
       });
     }
   );
