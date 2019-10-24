@@ -2422,7 +2422,7 @@ components:
         This schema defines the observation properties a client sends to save
         a new or updated observation.
       allOf:
-        # - $ref: 'geojson.yaml#/definitions/feature'
+        - $ref: 'geojson.yaml#/definitions/feature'
         - type: object
           properties:
             properties:
