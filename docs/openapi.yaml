@@ -1031,6 +1031,28 @@ paths:
   /api/events/{eventId}/layers:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
+    get:
+      tags: [ Layer ]
+      operationId: getLayersForEvent
+      description: >
+        Return an array of all layers for specified event.  
+        The client must have 'READ_LAYER_ALL' permission of `READ_LAYER_EVENT`
+        permission and an ACL entry on the event with `read` permission.
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [ Imagery, Feature, GeoPackage ]
+      responses:
+        200:
+          description: Success - return an array of layer documents for specified event.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Layer'
     post:
       tags: [ Event ]
       operationId: addLayerToEvent
@@ -1055,6 +1077,25 @@ paths:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
       - $ref: '#/components/parameters/layerIdInPath'
+    get:
+      tags: [ Layer ]
+      description: >
+        Return the layer for the event specified with the ID specified 
+        in the path.  The requesting user must have `READ_LAYER_ALL` permission
+        or `READ_LAYER_EVENT` permission and an ACL entry on the evebnt with
+        `update` permission.
+      operationId: getLayerForEventById
+      responses:
+        200:
+          description: layer response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Layer'
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
     delete:
       tags: [ Event ]
       operationId: removeLayerFromEvent
@@ -1069,6 +1110,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
+  /api/events/{eventId}/layers/{layerId}/{tableName}:
+    parameters:
+      - $ref: '#/components/parameters/eventIdInPath'
+      - $ref: '#/components/parameters/layerIdInPath'
+    get:
+      tags: [ Layer ]
+      operationId: getXYZTileForGeoPackage
+      description: >
+        Get an XYZ map tile for the specified layer in the specified event.
+      parameters:
+        - in: path
+          name: tableName
+          description: GeoPackage table name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success - XYZ map tile.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+                description: JPEG map tile
+            pbf:
+              schema:
+                type: string
+                format: binary
+                description: Google protobuf vector tile
+
   /api/events/{eventId}/users:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -1531,50 +1603,64 @@ paths:
     get:
       tags: [ Layer ]
       operationId: getLayers
-      description: get all layers
+      description: >
+        Return an array of all layers.  The client must have 'READ_LAYER_ALL' permission.
       parameters:
         - in: query
           name: type
-          description: layer type filter, i.e. Imagery or Feature
           schema:
             type: string
+            enum: [ Imagery, Feature, GeoPackage ]
       responses:
         200:
-          description: layer response
+          description: Success - return an array of layer documents.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Layer'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Layer'
     post:
       tags: [ Layer ]
-      operationId: addLayer
-      description: add new layer
+      operationId: createLayer
+      description: >
+        Create a new layer. The requesting user must have `CREATE_LAYER`
+        permission.
       requestBody:
-        description: new layer body
+        description: The new layer document
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/LayerCreate'
         required: true
       responses:
-        200:
-          description: new layer response
+        201:
+          description: Success - return the created event.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Layer'
-  /api/layers/{id}:
+  /api/layers/count:
     get:
       tags: [ Layer ]
-      description: Returns a single layer based on id
+      operationId: getLayerCount
+      description: Return the number of layers in the database.
+      responses:
+        200:
+          description: Success - return the layer count
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Count'
+  /api/layers/{layerId}:
+    parameters:
+      - { $ref: '#/components/parameters/layerIdInPath' }
+    get:
+      tags: [ Layer ]
+      description: >
+        Return the layer with the ID specified in the path.  The requesting
+        user must have `READ_LAYER_ALL` permission.
       operationId: getLayerById
-      parameters:
-        - in: path
-          name: id
-          description: id of layer to fetch
-          required: true
-          schema:
-            type: string
       responses:
         200:
           description: layer response
@@ -1582,17 +1668,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Layer'
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
     put:
       tags: [ Layer ]
       operationId: updateLayerById
-      description: update a single layer based on id
-      parameters:
-        - in: path
-          name: id
-          description: id of layer to update
-          required: true
-          schema:
-            type: string
+      description: >
+        Update the layer with the ID specified in the path.  The requesting
+        user must have `UPDATE_LAYER` permission
       requestBody:
         description: layer update body
         content:
@@ -1602,7 +1687,7 @@ paths:
         required: true
       responses:
         200:
-          description: layer update response
+          description: Success - return the update layer document.
           content:
             application/json:
               schema:
@@ -1610,38 +1695,44 @@ paths:
     delete:
       tags: [ Layer ]
       operationId: deleteLayer
-      description: deletes a single layer based on id
-      parameters:
-        - in: path
-          name: id
-          description: id of layer to delete
-          required: true
-          schema:
-            type: string
+      description: >
+        Delete the event with the ID specified in the path.  The requesting
+        user must have `DELETE_LAYER`.
       responses:
         204:
-          description: layer deleted
-  /api/events/{eventId}/layers/{layerId}/features:
+          description: Success - layer deleted
+  /api/layers/{layerId}/features:
+    parameters:
+      - { $ref: '#/components/parameters/layerIdInPath' }
     get:
       tags: [ Layer ]
       operationId: getFeaturesForLayer
-      description: get features for specified layer in event
-      parameters:
-      - name: eventId
-        in: path
-        description: id of the event to get features for
-        required: true
-        schema:
-          type: number
-      - name: layerId
-        in: path
-        description: id of the layer to get features for
-        required: true
-        schema:
-          type: number
+      description: >
+        Return an array of features for specified layer.
+        The requesting client must have `READ_LAYER_ALL`.      
       responses:
         200:
-          description: feature responses
+          description: Success - return an arrary of features.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'geojson.yaml#/definitions/feature'
+  /api/events/{eventId}/layers/{layerId}/features:
+    parameters:
+      - { $ref: '#/components/parameters/eventIdInPath' }
+      - { $ref: '#/components/parameters/layerIdInPath' }
+    get:
+      tags: [ Layer ]
+      operationId: getFeaturesForEventAndLayer
+      description: >
+        Return an array of features for specified layer for specified event.
+        The requesting client must have `READ_LAYER_ALL` permission or 
+        `READ_LAYER_EVENT` and an ACL entry on the event with `read` permission.      
+      responses:
+        200:
+          description: Success - return an arrary of features.
           content:
             application/json:
               schema:
@@ -2383,20 +2474,42 @@ components:
           type: string
           format: binary
     Layer:
+      title: Layer        
       type: object
       properties:
         id:
           type: number
+          description: The unique layer ID
         name:
+          type: string
+        description:
           type: string
         type:
           type: string
+          enum: [ Feature, Imagery, GeoPackage ]
         url:
           type: string
         base:
           type: boolean
         format:
           type: string
+          enum: [ WMS, XYZ, TMS ]
+    WMSLayer:
+      title: WMSLayer
+      type: object
+      properties:
+        layers:
+          type: string
+          description: Comma seperated list of WMS layer names
+        styles:
+          type: string
+          description: Comma seperated list of WMS style names
+        format:
+          type: string
+          description: WMS map tile format.
+        version:
+          type: string
+          description: WMS service version.
     LayerRef:
       allOf:
         - $ref: '#/components/schemas/Layer'
@@ -2420,7 +2533,7 @@ components:
         The `Observation` is the operative concept of MAGE's geospatial data
         collection functionality.  Observation documents are the geo-tagged
         form and media records that MAGE users submit to the MAGE server.
-        Observation documents are extensions of GeoJSON feature docuemnts, so
+        Observation documents are extensions of GeoJSON feature documents, so
         all observations have a `type` property whose value is `Feature`, as
         well as a `geometry` property that holds the geospatial geometry of the
         observation, such as point or polygon coordinates.  The values of the
@@ -2679,19 +2792,28 @@ components:
       required:
         - name
         - type
-        - url
       type: object
       properties:
         name:
-          type: string
+          $ref: '#/components/schemas/Layer/properties/name'
+        description:
+          $ref: '#/components/schemas/Layer/properties/description'
         type:
-          type: string
+          $ref: '#/components/schemas/Layer/properties/type'
         url:
-          type: string
+          $ref: '#/components/schemas/Layer/properties/url'
         base:
-          type: boolean
+          $ref: '#/components/schemas/Layer/properties/base'
         format:
+          $ref: '#/components/schemas/Layer/properties/format'
+        wms:
+          $ref: '#/components/schemas/WMSLayer'
+        geopackage:
           type: string
+          format: binary
+          description: |
+            The geopackage is a GeoPackage file the user uploads.  If uploading this file the `type` must
+            be GeoPackage
 
   parameters:
     userIdInPath:
