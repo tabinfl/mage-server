@@ -54,6 +54,7 @@
     "mgrs": "1.0.0",
     "moment": "2.22.2",
     "papaparse": "4.1.4",
+    "swagger-ui": "^3.24.0",
     "ui-select": "0.17.1",
     "underscore": "1.8.3",
     "videogular": "1.4.4",
