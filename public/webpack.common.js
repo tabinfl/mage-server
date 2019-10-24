@@ -6,7 +6,8 @@ const webpack = require('webpack'),
 module.exports = {
   context: __dirname,
   entry: {
-    app: './main.js'
+    app: './main.js',
+    api_docs: './api_docs/index.js'
   },
   output: {
     path: __dirname + '/dist',
@@ -31,15 +32,7 @@ module.exports = {
   },
   optimization: {
     splitChunks: {
-      chunks: 'all',
-      cacheGroups: {
-        vendor: {
-          test: /node_modules/,
-          chunks: 'initial',
-          name: 'vendor',
-          enforce: true
-        }
-      }
+      chunks: 'all'
     }
   },
   plugins: [
@@ -51,7 +44,13 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: './index.html'
+      template: './index.html',
+      excludeChunks: [ 'api_docs' ]
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'api_docs/index.html',
+      template: './api_docs/index.html',
+      excludeChunks: [ 'app' ]
     }),
     new webpack.ProvidePlugin({
       'window.jQuery': 'jquery',
