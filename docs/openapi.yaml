@@ -87,7 +87,6 @@ paths:
       responses:
         200:
           description: logout response
-          content: {}
 
   /api/users:
     post:
@@ -291,7 +290,6 @@ paths:
       responses:
         204:
           description: Success - user deleted
-          content: {}
   /api/users/{userId}/avatar:
     parameters:
       - { $ref: '#/components/parameters/userIdInPath' }
@@ -440,7 +438,6 @@ paths:
       responses:
         204:
           description: user deleted
-          content: {}
 
   /api/teams:
     post:
@@ -536,7 +533,6 @@ paths:
       responses:
         204:
           description: Success - team deleted
-          content: {}
   /api/teams/{teamId}/users:
     parameters:
       - { $ref: '#/components/parameters/teamIdInPath' }
@@ -761,7 +757,6 @@ paths:
       responses:
         204:
           description: Success - event deleted
-          content: {}
   /api/events/{eventId}/forms:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -929,7 +924,6 @@ paths:
       responses:
         204:
           description: Success - icon deleted.
-          content: {}
   /api/events/{eventId}/icons/{formId}:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -966,7 +960,6 @@ paths:
       responses:
         204:
           description: Success - icon deleted.
-          content: {}
   /api/events/{eventId}/icons/{formId}/{primary}:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -1000,7 +993,6 @@ paths:
       responses:
         204:
           description: Success - icon deleted.
-          content: {}
   /api/events/{eventId}/icons/{formId}/{primary}/{variant}:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -1036,7 +1028,6 @@ paths:
       responses:
         204:
           description: Success - icon deleted.
-          content: {}
   /api/events/{eventId}/layers:
     parameters:
       - $ref: '#/components/parameters/eventIdInPath'
@@ -1630,7 +1621,6 @@ paths:
       responses:
         204:
           description: layer deleted
-          content: {}
   /api/events/{eventId}/layers/{layerId}/features:
     get:
       tags: [ Layer ]
@@ -1674,12 +1664,12 @@ paths:
         in: query
         schema:
           type: string
-          format: dateTime
+          format: date-time
       - name: endDate
         in: query
         schema:
           type: string
-          format: dateTime
+          format: date-time
       - name: lastLocationId
         in: query
         description: locationId of last item in previous page (paging)
@@ -1721,7 +1711,6 @@ paths:
       responses:
         200:
           description: location response
-          content: {}
   /api/events/{eventId}/locations/users:
     get:
       tags: [ Location ]
@@ -1738,12 +1727,12 @@ paths:
         in: query
         schema:
           type: string
-          format: dateTime
+          format: date-time
       - name: endDate
         in: query
         schema:
           type: string
-          format: dateTime
+          format: date-time
       - name: lastLocationId
         in: query
         description: locationId of last item in previous page (paging)
@@ -1803,7 +1792,6 @@ paths:
       responses:
         200:
           description: export response
-          content: {}
   /api/settings/{type}:
     get:
       tags: [ Settings ]
@@ -1822,7 +1810,6 @@ paths:
       responses:
         200:
           description: settings response
-          content: {}
     put:
       tags: [ Settings ]
       operationId: updateSettingByType
@@ -1840,7 +1827,6 @@ paths:
       responses:
         200:
           description: settings response
-          content: {}
   /api/{exportType}:
     get:
       tags: [ Export ]
@@ -1860,12 +1846,12 @@ paths:
         in: query
         schema:
           type: string
-          format: dateTime
+          format: date-time
       - name: endDate
         in: query
         schema:
           type: string
-          format: dateTime
+          format: date-time
       - name: layerIds
         in: query
         description: ids of feature layers to export
@@ -1883,7 +1869,6 @@ paths:
       responses:
         200:
           description: export response
-          content: {}
 components:
   securitySchemes:
     authToken:
