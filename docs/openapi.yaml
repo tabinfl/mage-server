@@ -1964,12 +1964,19 @@ paths:
           - security
       responses:
         200:
-          description: settings response
+          description: Success - the update settings document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Setting'
   /api/{exportType}:
     get:
       tags: [ Export ]
       operationId: export
-      description: export mage data (GeoJSON, KML or Shapefiles)
+      description: >
+        Export mage data (GeoJSON, KML, Shapefiles, CSV). The requesting user must have 
+        `READ_OBSERVATION_ALL` permission or `READ_OBSERVATION_EVENT` and an ACL entry in the
+        event with `read`.
       parameters:
       - name: exportType
         in: path
@@ -1980,6 +1987,12 @@ paths:
           - geojson
           - kml
           - shapefile
+          - csv
+      - name: eventId
+        in: query
+        required: true
+        schema:
+          type: number
       - name: startDate
         in: query
         schema:
@@ -1990,18 +2003,14 @@ paths:
         schema:
           type: string
           format: date-time
-      - name: layerIds
+      - name: observations
         in: query
-        description: ids of feature layers to export
-        style: form
-        explode: false
+        description: Boolean flag indicating wheter or not to export observations
         schema:
-          type: array
-          items:
-            type: string
-      - name: fft
+          type: boolean
+      - name: locations
         in: query
-        description: export locations
+        description: Boolean flag indicating wheter or not to export user locations
         schema:
           type: boolean
       responses:
