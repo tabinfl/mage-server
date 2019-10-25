@@ -1740,17 +1740,16 @@ paths:
                 items:
                   $ref: 'geojson.yaml#/definitions/feature'
   /api/events/{eventId}/locations:
+    parameters:
+      - { $ref: '#/components/parameters/eventIdInPath' }
     get:
       tags: [ Location ]
       operationId: getLocations
-      description: get all locations
+      description: >
+        Return an array of locations for the specified event.
+        The requesting client must have `READ_LOCATION_ALL` permission or 
+        `READ_LOCATION_EVENT` and an ACL entry on the event with `read` permission.
       parameters:
-      - name: eventId
-        in: path
-        description: id of event to get locations for
-        required: true
-        schema:
-          type: number
       - name: startDate
         in: query
         schema:
@@ -1773,7 +1772,7 @@ paths:
           type: number
       responses:
         200:
-          description: location response
+          description: Success - array of user locations.
           content:
             application/json:
               schema:
@@ -1781,19 +1780,13 @@ paths:
                 items:
                   $ref: 'geojson.yaml#/definitions/feature'
     post:
-      tags:
-      - Location
-      description: add new location for current user in the specified event
-      operationId: addLocation
-      parameters:
-      - name: eventId
-        in: path
-        description: id of event to post location to
-        required: true
-        schema:
-          type: number
+      tags: [ Location ]
+      operationId: createLocation
+      description: >
+        Create a new location for user with token in the specified event.
+        The requesting client must have `CREATE_LOCATION` permission. 
       requestBody:
-        description: new location body
+        description: create location response
         content:
           application/json:
             schema:
@@ -1801,19 +1794,18 @@ paths:
         required: true
       responses:
         200:
-          description: location response
+          description: Success - the created location document.
   /api/events/{eventId}/locations/users:
+    parameters:
+      - { $ref: '#/components/parameters/eventIdInPath' }
     get:
       tags: [ Location ]
       operationId: getLocationsByUser
-      description: get all locations grouped by user
+      description: >
+        Return an array of user locations for the specified event.
+        The requesting client must have `READ_LOCATION_ALL` permission or 
+        `READ_LOCATION_EVENT` and an ACL entry on the event with `read` permission.
       parameters:
-      - name: eventId
-        in: path
-        description: id of event to update location to
-        required: true
-        schema:
-          type: number
       - name: startDate
         in: query
         schema:
@@ -1836,7 +1828,7 @@ paths:
           type: number
       responses:
         200:
-          description: location response
+          description: Success - array of user locations.
           content:
             application/json:
               schema:
