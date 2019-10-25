@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 
 describe('mage openapi document', function() {
 
-  it.only('is valid', async function() {
+  it('is valid', async function() {
 
     const openapiDocPath = path.resolve(__dirname, '..', '..', 'docs', 'openapi.yaml');
     const { error, warning } = await Enforcer(openapiDocPath, { fullResult: true });
