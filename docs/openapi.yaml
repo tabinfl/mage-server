@@ -1839,47 +1839,94 @@ paths:
     get:
       tags: [ Role ]
       operationId: getRoles
-      description: get all roles
+      description: >
+        Return an array of all roles.  The client must have `READ_ROLE` permission.
       responses:
         200:
-          description: role response
+          description: Success - an array of role documents.
           content:
             application/json:
               schema:
                 type: array
                 items: { $ref: '#/components/schemas/Role' }
-  /api/roles/{id}:
-    get:
+    post:
       tags: [ Role ]
-      operationId: getRoleById
-      description: get role by id
-      parameters:
-      - name: id
-        in: path
-        description: id of role to fetch
-        required: true
-        schema:
-          type: string
+      operationId: createRole
+      description: >
+        Create a new role. The client must have `CREATE_ROLE` permission.
       responses:
         200:
-          description: role response
+          description: Success - the created role document.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Role'
+  /api/roles/{roleId}:
+    parameters:
+      - { $ref: '#/components/parameters/roleIdInPath' }
+    get:
+      tags: [ Role ]
+      operationId: getRoleById
+      description: >
+        Return the role document whose `id` equals the `roleId` path parameter.
+        The client must have `READ_ROLE` permission.
+      responses:
+        200:
+          description: Success - role document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+    put:
+      tags: [ Role ]
+      operationId: updateRoleById
+      description: >
+        Update the user document whose `id` equals the `roleId` path parameter.
+        The client must have `UPDATE_ROLE` permission.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RoleIn' }
+      responses:
+        200:
+          description: Success - The updated role document.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+    delete:
+      tags: [ Device ]
+      description: >
+        Delete a role document whose ID matches the path parameter for the
+        role ID.  The requesting client must have `DELETE_ROLE` permission.
+      operationId: deleteRoleById
+      responses:
+        200:
+          description: Success - role deleted
   /api/settings:
     get:
       tags: [ Settings ]
       operationId: getSettings
-      description: get settings
+      description: >
+        Return an array of all the settings documents in the database.  The
+        requesting client must have `READ_SETTINGS` permission.
       responses:
         200:
-          description: export response
+          description: Success - an array of settings documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Setting'
   /api/settings/{type}:
     get:
       tags: [ Settings ]
       operationId: getSettingByType
-      description: get settings by type
+      description: >
+        Return a settings document by the referenced `type`.  The
+        requesting client must have `READ_SETTINGS` permission.
       parameters:
       - name: type
         in: path
@@ -1890,13 +1937,20 @@ paths:
           enum:
           - banner
           - disclaimer
+          - security
       responses:
         200:
-          description: settings response
+          description: Success - setting document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Setting'
     put:
       tags: [ Settings ]
       operationId: updateSettingByType
-      description: update settings by type
+      description: >
+        Update the settings document whose `type` matches the type in the path.
+        The requesting user must have `UPDATE_SETTINGS` permission.
       parameters:
       - name: type
         in: path
@@ -1907,6 +1961,7 @@ paths:
           enum:
           - banner
           - disclaimer
+          - security
       responses:
         200:
           description: settings response
@@ -2776,10 +2831,21 @@ components:
           items:
             type: string
       required:
-        - description
         - id
         - name
+        - description
         - permissions
+    RoleIn:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
     LayerCreate:
       required:
         - name
@@ -2806,7 +2872,15 @@ components:
           description: |
             The geopackage is a GeoPackage file the user uploads.  If uploading this file the `type` must
             be GeoPackage
-
+    Setting:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+        settings:
+          type: object
   parameters:
     userIdInPath:
       in: path
@@ -2852,6 +2926,12 @@ components:
       in: path
       name: deviceId
       description: The ID of the target device document
+      required: true
+      schema: { $ref: '#/components/schemas/Device/properties/id' }
+    roleIdInPath:
+      in: path
+      name: roleId
+      description: The ID of the target role document
       required: true
       schema: { $ref: '#/components/schemas/Device/properties/id' }
     teamIdInPath:
