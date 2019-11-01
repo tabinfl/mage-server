@@ -2,6 +2,7 @@ const async = require('async')
   , fs = require('fs-extra')
   , path = require('path')
   , geopackageManager = require('@ngageoint/geopackage')
+  , FeatureTile = require('@ngageoint/geopackage/lib/tiles/features')
   , GeoPackageOptimizer = require('@ngageoint/geopackage-mobile-optimizer')
   , environment = require('../environment/env');
 
@@ -43,10 +44,10 @@ function optimize(path, progress) {
             .then(() => {
               outputGeopackage.close();
             });
-          })
-          .then(() => {
-            console.log('Optimized the GeoPackage: ', path);
         })
+        .then(() => {
+          console.log('Optimized the GeoPackage: ', path);
+        });
     })
     .catch(err => console.log('err', err));
 }
@@ -60,12 +61,23 @@ function tile(layer, tableName, {x, y, z}) {
       if (!table) throw new Error("Table '" + table + "' does not exist in GeoPackage");
       var tile;
       switch(table.type) {
-        case 'tile':
-          tile = geopackageManager.getTileFromXYZ(geopackage, table.name, x, y, z, tileSize, tileSize);
-          break;
-        case 'feature':
-          tile = geopackageManager.getFeatureTileFromXYZ(geopackage, table.name, x, y, z, tileSize, tileSize);
-          break;
+      case 'tile':
+        tile = geopackageManager.getTileFromXYZ(geopackage, table.name, x, y, z, tileSize, tileSize);
+        break;
+      case 'feature':
+        x = Number(x);
+        y = Number(y);
+        z = Number(z);
+        var width = 256;
+        var height = 256;
+        var featureDao = geopackage.getFeatureDao(table.name);
+        if (!featureDao) return;
+        var ft = new FeatureTile(featureDao, width, height);
+        ft.setMaxFeaturesPerTile(10000);
+        tile = ft.drawTile(x, y, z);
+
+        // tile = geopackageManager.getFeatureTileFromXYZ(geopackage, table.name, x, y, z, tileSize, tileSize);
+        break;
       }
 
       geopackage.close();

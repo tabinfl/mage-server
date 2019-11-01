@@ -210,61 +210,61 @@ function LeafletController($rootScope, $scope, $interval, $timeout, MapService, 
 
   function createGeoPackageLayer(layerInfo) {
     _.each(layerInfo.tables, function(table) {
-      if (table.type === 'feature') {
-        var styles = {};
-        styles[table.name] = {
-          weight: 2,
-          radius: 3
-        };
+      // if (false || layerInfo.id === 174) { //table.type === 'feature') {
+      //   var styles = {};
+      //   styles[table.name] = {
+      //     weight: 2,
+      //     radius: 3
+      //   };
 
-        table.layer = L.vectorGrid.protobuf('api/events/' + $scope.filteredEvent.id + '/layers/' + layerInfo.id + '/' + table.name +'/{z}/{x}/{y}.pbf?access_token={token}', {
-          token: LocalStorageService.getToken(),
-          maxNativeZoom: 18,
-          pane: FEATURE_LAYER_PANE,
-          vectorTileLayerStyles: styles,
-          interactive: true,
-          rendererFactory: L.canvas.tile,
-          getFeatureId: function(feature) {
-            feature.properties.id = layerInfo.id + table.name + feature.id;
-            return feature.properties.id;
-          }
-        });
+      //   table.layer = L.vectorGrid.protobuf('api/events/' + $scope.filteredEvent.id + '/layers/' + layerInfo.id + '/' + table.name +'/{z}/{x}/{y}.pbf?access_token={token}', {
+      //     token: LocalStorageService.getToken(),
+      //     maxNativeZoom: 18,
+      //     pane: FEATURE_LAYER_PANE,
+      //     vectorTileLayerStyles: styles,
+      //     interactive: true,
+      //     rendererFactory: L.canvas.tile,
+      //     getFeatureId: function(feature) {
+      //       feature.properties.id = layerInfo.id + table.name + feature.id;
+      //       return feature.properties.id;
+      //     }
+      //   });
 
-        table.layer.on('click', function(e) {
-          var layer = e.layer;
-          table.layer.setFeatureStyle(layer.properties.id, {
-            color: '#00FF00'
-          });
+      //   table.layer.on('click', function(e) {
+      //     var layer = e.layer;
+      //     table.layer.setFeatureStyle(layer.properties.id, {
+      //       color: '#00FF00'
+      //     });
 
-          var content = '<b>' + table.name + '</b><br><br>';
-          var pairs = _.chain(layer.properties).omit('id').pairs().value();
-          if (pairs.length) {
-            content += '<table class="table table-striped">';
-            _.each(pairs, function(pair) {
-              content += '<tr>' + '<td>' + pair[0] + '</td>' +'<td>' + pair[1] + '</td>' + '</tr>';
-            });
-            content += '</table>';
-          }
+      //     var content = '<b>' + table.name + '</b><br><br>';
+      //     var pairs = _.chain(layer.properties).omit('id').pairs().value();
+      //     if (pairs.length) {
+      //       content += '<table class="table table-striped">';
+      //       _.each(pairs, function(pair) {
+      //         content += '<tr>' + '<td>' + pair[0] + '</td>' +'<td>' + pair[1] + '</td>' + '</tr>';
+      //       });
+      //       content += '</table>';
+      //     }
 
-          var popup = L.popup({
-            maxHeight: 250
-          })
-            .setLatLng(e.latlng)
-            .setContent(content)
-            .on('remove', function() {
-              table.layer.resetFeatureStyle(layer.properties.id);
-            });
+      //     var popup = L.popup({
+      //       maxHeight: 250
+      //     })
+      //       .setLatLng(e.latlng)
+      //       .setContent(content)
+      //       .on('remove', function() {
+      //         table.layer.resetFeatureStyle(layer.properties.id);
+      //       });
 
-          popup.openOn(map);
-        });
-      } else {
-        table.layer = L.tileLayer('api/events/' + $scope.filteredEvent.id + '/layers/' + layerInfo.id + '/' + table.name +'/{z}/{x}/{y}.png?access_token={token}', {
-          token: LocalStorageService.getToken(),
-          minZoom: table.minZoom,
-          maxZoom: table.maxZoom,
-          pane: TILE_LAYER_PANE
-        });
-      }
+      //     popup.openOn(map);
+      //   });
+      // } else {
+      table.layer = L.tileLayer('api/events/' + $scope.filteredEvent.id + '/layers/' + layerInfo.id + '/' + table.name +'/{z}/{x}/{y}.png?access_token={token}', {
+        token: LocalStorageService.getToken(),
+        minZoom: table.minZoom,
+        maxZoom: table.maxZoom,
+        pane: TILE_LAYER_PANE
+      });
+      // }
 
       var name = layerInfo.name + table.name;
       layers[name] = layerInfo;
