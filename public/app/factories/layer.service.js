@@ -7,7 +7,8 @@ LayerService.$inject = ['$q', 'Layer', 'LocalStorageService'];
 function LayerService($q, Layer, LocalStorageService) {
   var service = {
     getLayersForEvent: getLayersForEvent,
-    uploadGeopackage: uploadGeopackage
+    uploadGeopackage: uploadGeopackage,
+    getClosestFeaturesForLayers: getClosestFeaturesForLayers
   };
 
   return service;
@@ -16,6 +17,15 @@ function LayerService($q, Layer, LocalStorageService) {
     var deferred = $q.defer();
     Layer.queryByEvent({eventId: event.id}, function(layers) {
       deferred.resolve(layers);
+    });
+
+    return deferred.promise;
+  }
+
+  function getClosestFeaturesForLayers(layerIds, latlng, tile) {
+    var deferred = $q.defer();
+    Layer.closestFeatureByLayer({layerIds: layerIds, latlng: latlng, tile: tile}, function(features) {
+      deferred.resolve(features);
     });
 
     return deferred.promise;

@@ -1,8 +1,6 @@
 module.exports = function(app, security) {
   const fs = require('fs-extra')
     , path = require('path')
-    , geojsonvt = require('geojson-vt')
-    , vtpbf = require('vt-pbf')
     , Event = require('../models/event')
     , access = require('../access')
     , api = require('../api')
@@ -132,6 +130,35 @@ module.exports = function(app, security) {
     }
   );
 
+  app.post(
+    '/api/layers/features',
+    // access.authorize('READ_LAYER_ALL'),
+    async function(req, res, next) {
+      console.log('here i am', req.body);
+      var clientLayers = req.body.layerIds;
+      console.log('layerIds', clientLayers);
+      var layerIdMap = {};
+      for (var i = 0; i < clientLayers.length; i++) {
+        layerIdMap[clientLayers[i].id] = clientLayers[i];
+      }
+      try {
+        var layers = await new api.Layer().getLayers({layerIds: Object.keys(layerIdMap), type: 'GeoPackage', processing: 'processed'});
+        var gpLayers = [];
+        for (i = 0; i < layers.length; i++) {
+          gpLayers.push({
+            layer: layers[i],
+            table: layerIdMap[layers[i].id].table
+          });
+        }
+        var closest = await geopackage.getClosestFeatures(gpLayers, Number(req.body.latlng.lat), Number(req.body.latlng.lng), req.body.tile);
+        res.json(closest);
+        // var response = layerXform.transform(layers, {path: req.getPath()});
+        // res.json(response);
+      } catch (err) {
+        next(err);
+      }
+    });
+
   // get features for layer (must be a feature layer)
   app.get(
     '/api/layers/:layerId/features',
@@ -226,19 +253,19 @@ module.exports = function(app, security) {
         }
 
         geopackage.vectorTile(req.layer, req.params.tableName, tileParams)
-        .then(vectorTile => {
-          res.contentType('application/x-protobuf');
-          res.send(Buffer.from(vectorTile));
-        })
-        .catch(err => next(err));
+          .then(vectorTile => {
+            res.contentType('application/x-protobuf');
+            res.send(Buffer.from(vectorTile));
+          })
+          .catch(err => next(err));
       } else {
         geopackage.tile(req.layer, req.params.tableName, tileParams)
-        .then(tile => {
-          if (!tile) return res.sendStatus(404);
-          res.contentType('image/jpeg');
-          res.send(tile);
-        })
-        .catch(err => next(err));
+          .then(tile => {
+            if (!tile) return res.sendStatus(404);
+            res.contentType('image/jpeg');
+            res.send(tile);
+          })
+          .catch(err => next(err));
       }
     }
   );
@@ -295,11 +322,11 @@ module.exports = function(app, security) {
             layerStatus.description = progress.description;
             layer.save();
           })
-          .then(() => {
-            layer.processing = undefined;
-            layer.save();
-            console.log('GeoPackage optimized')
-          });
+            .then(() => {
+              layer.processing = undefined;
+              layer.save();
+              console.log('GeoPackage optimized');
+            });
         })
         .catch(err => next(err));
     }

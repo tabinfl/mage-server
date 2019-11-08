@@ -25,12 +25,13 @@ require('leaflet-editable');
 require('leaflet-groupedlayercontrol');
 require('leaflet.markercluster');
 
-LeafletController.$inject = ['$rootScope', '$scope', '$interval', '$timeout', 'MapService', 'LocalStorageService', 'GeometryService'];
+LeafletController.$inject = ['$rootScope', '$scope', '$interval', '$timeout', 'MapService', 'LocalStorageService', 'GeometryService', 'LayerService'];
 
-function LeafletController($rootScope, $scope, $interval, $timeout, MapService, LocalStorageService, GeometryService) {
+function LeafletController($rootScope, $scope, $interval, $timeout, MapService, LocalStorageService, GeometryService, LayerService) {
 
   var layers = {};
   var geopackageLayers = {};
+  var visibleGeoPackageLayers = [];
   var temporalLayers = [];
   var spiderfyState = null;
   var currentLocation = null;
@@ -65,12 +66,88 @@ function LeafletController($rootScope, $scope, $interval, $timeout, MapService, 
   L.Icon.Default.imagePath = 'images/';
 
   map.on('moveend', saveMapPosition);
+  map.on('click', mapClickEventHandler);
+  map.on('layeradd', mapLayerAdded);
+  map.on('layerremove', mapLayerRemoved);
 
   function saveMapPosition() {
     LocalStorageService.setMapPosition({
       center: map.getCenter(),
       zoom: map.getZoom()
     });
+  }
+
+  function mapLayerAdded(event) {
+    // console.log('map layer added', event);
+    if (event.layer.options.geopackageLayer) {
+      visibleGeoPackageLayers.push(event.layer.options.geopackageLayer);
+    }
+  }
+
+  function mapLayerRemoved(event) {
+    // console.log('map layer removed', event);
+    if (event.layer.options.geopackageLayer) {
+      visibleGeoPackageLayers = visibleGeoPackageLayers.filter(value => {
+        return value.id !== event.layer.options.geopackageLayer.id && value.table !== event.layer.options.geopackageLayer.table;
+      });
+    }
+  }
+
+  function getTileFromPoint(latlng) {
+    var xtile = parseInt(Math.floor( (latlng.lng + 180) / 360 * (1<<map.getZoom()) ));
+    var ytile = parseInt(Math.floor( (1 - Math.log(Math.tan(toRadians(latlng.lat)) + 1 / Math.cos(toRadians(latlng.lat))) / Math.PI) / 2 * (1<<map.getZoom()) ));
+    return {
+      z: map.getZoom(),
+      x: xtile,
+      y: ytile
+    };
+  }
+
+  function toRadians(degrees) {
+    return degrees * (Math.PI / 180.0);
+  }
+
+  var closestLayer;
+
+  function mapClickEventHandler(event) {
+    // console.log('map click', arguments);
+    // console.log('layers', layers);
+    // for (var layerName in layers) {
+    //   console.log('layer', layers[layerName]);
+    // }
+    console.log('event', event);
+    console.log('geopackage layers on', visibleGeoPackageLayers);
+    if (visibleGeoPackageLayers.length) {
+      LayerService.getClosestFeaturesForLayers(visibleGeoPackageLayers, event.latlng, getTileFromPoint(event.latlng)).then(function(features) {
+        console.log('features', features);
+        var popup;
+        if (closestLayer) {
+          map.removeLayer(closestLayer);
+        }
+        closestLayer = L.geoJSON(features[0], {
+          onEachFeature: function(feature, layer) {
+            var geojsonPopupHtml = '<div class="geojson-popup"><h6>'+feature.gp_table+'</h6>';
+            if (feature.coverage) {
+              geojsonPopupHtml += 'There are ' + feature.feature_count + ' features in this area.';
+            } else {
+              geojsonPopupHtml += '<table>';
+              for (var property in feature.properties) {
+                geojsonPopupHtml += '<tr><td class="title">' + property + '</td><td class="text">' + feature.properties[property] + '</td></tr>';
+              }
+              geojsonPopupHtml += '</table>';
+            }
+            geojsonPopupHtml += '</div>';
+            popup = layer.bindPopup(geojsonPopupHtml, {
+              maxHeight: 300
+            });
+          }
+        });
+        map.addLayer(closestLayer);
+        if (popup) {
+          popup.openPopup();
+        }
+      });
+    }
   }
 
   // toolbar  and controls config
@@ -260,6 +337,10 @@ function LeafletController($rootScope, $scope, $interval, $timeout, MapService, 
       // } else {
       table.layer = L.tileLayer('api/events/' + $scope.filteredEvent.id + '/layers/' + layerInfo.id + '/' + table.name +'/{z}/{x}/{y}.png?access_token={token}', {
         token: LocalStorageService.getToken(),
+        geopackageLayer: {
+          id: layerInfo.id,
+          table: table.name
+        },
         minZoom: table.minZoom,
         maxZoom: table.maxZoom,
         pane: TILE_LAYER_PANE
