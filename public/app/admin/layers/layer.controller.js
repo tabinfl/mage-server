@@ -2,9 +2,9 @@ var _ = require('underscore');
 
 module.exports = AdminLayerController;
 
-AdminLayerController.$inject = ['$scope', '$uibModal', '$routeParams', '$location', '$filter', 'Layer', 'Event', 'LocalStorageService', 'UserService'];
+AdminLayerController.$inject = ['$scope', '$uibModal', '$routeParams', '$location', '$filter', '$timeout', 'Layer', 'Event', 'LocalStorageService', 'UserService'];
 
-function AdminLayerController($scope, $uibModal, $routeParams, $location, $filter, Layer, Event, LocalStorageService, UserService) {
+function AdminLayerController($scope, $uibModal, $routeParams, $location, $filter, $timeout, Layer, Event, LocalStorageService, UserService) {
 
   $scope.layerEvents = [];
   $scope.nonTeamEvents = [];
@@ -22,8 +22,23 @@ function AdminLayerController($scope, $uibModal, $routeParams, $location, $filte
   $scope.uploads = [{}];
   $scope.uploadConfirmed = false;
 
+  function checkLayerProcessingStatus() {
+    Layer.get({id: $routeParams.layerId}, function(layer) {
+      if (layer.processing) {
+        $scope.layer.processing = layer.processing;
+        $timeout(checkLayerProcessingStatus, 5000);
+      } else {
+        $scope.layer.processing = false;
+      }
+    });
+  }
+
   Layer.get({id: $routeParams.layerId}, function(layer) {
     $scope.layer = layer;
+
+    if ($scope.layer.processing) {
+      $timeout(checkLayerProcessingStatus, 5000);
+    }
 
     Event.query(function(events) {
       $scope.event = {};

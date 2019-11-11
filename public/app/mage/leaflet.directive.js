@@ -24,12 +24,13 @@ require('leaflet-editable');
 require('leaflet-groupedlayercontrol');
 require('leaflet.markercluster');
 
-LeafletController.$inject = ['$scope', 'MapService', 'LocalStorageService', 'EventService'];
+LeafletController.$inject = ['$scope', 'MapService', 'LocalStorageService', 'EventService', 'LayerService'];
 
-function LeafletController($scope, MapService, LocalStorageService, EventService) {
+function LeafletController($scope, MapService, LocalStorageService, EventService, LayerService) {
 
   var layers = {};
   var geopackageLayers = {};
+  var visibleGeoPackageLayers = [];
   var temporalLayers = [];
   var spiderfyState = null;
   var currentLocation = null;
@@ -64,12 +65,87 @@ function LeafletController($scope, MapService, LocalStorageService, EventService
   L.Icon.Default.imagePath = 'images/';
 
   map.on('moveend', saveMapPosition);
+  map.on('click', mapClickEventHandler);
+  map.on('layeradd', mapLayerAdded);
+  map.on('layerremove', mapLayerRemoved);
+  map.on('zoom', onMapZoom);
 
   function saveMapPosition() {
     LocalStorageService.setMapPosition({
       center: map.getCenter(),
       zoom: map.getZoom()
     });
+  }
+
+  function mapLayerAdded(event) {
+    if (event.layer.options.geopackageLayer) {
+      visibleGeoPackageLayers.push(event.layer.options.geopackageLayer);
+    }
+  }
+
+  function mapLayerRemoved(event) {
+    if (event.layer.options.geopackageLayer) {
+      visibleGeoPackageLayers = visibleGeoPackageLayers.filter(value => {
+        return value.id !== event.layer.options.geopackageLayer.id && value.table !== event.layer.options.geopackageLayer.table;
+      });
+    }
+  }
+
+  function getTileFromPoint(latlng) {
+    var xtile = parseInt(Math.floor( (latlng.lng + 180) / 360 * (1<<map.getZoom()) ));
+    var ytile = parseInt(Math.floor( (1 - Math.log(Math.tan(toRadians(latlng.lat)) + 1 / Math.cos(toRadians(latlng.lat))) / Math.PI) / 2 * (1<<map.getZoom()) ));
+    return {
+      z: map.getZoom(),
+      x: xtile,
+      y: ytile
+    };
+  }
+
+  function toRadians(degrees) {
+    return degrees * (Math.PI / 180.0);
+  }
+
+  var closestLayer;
+  var closestFeature;
+
+  function mapClickEventHandler(event) {
+    if (visibleGeoPackageLayers.length) {
+      LayerService.getClosestFeaturesForLayers(visibleGeoPackageLayers, event.latlng, getTileFromPoint(event.latlng)).then(function(features) {
+        if (closestLayer) {
+          map.removeLayer(closestLayer);
+        }
+        closestFeature = features[0];
+        if (closestFeature) {
+          var popup;
+          closestLayer = L.geoJSON(features[0], {
+            onEachFeature: function(feature, layer) {
+              var geojsonPopupHtml = '<div class="geojson-popup"><h6>'+feature.gp_table+'</h6>';
+              if (feature.coverage) {
+                geojsonPopupHtml += 'There are ' + feature.feature_count + ' features in this area.';
+              } else {
+                geojsonPopupHtml += '<table>';
+                for (var property in feature.properties) {
+                  geojsonPopupHtml += '<tr><td class="title">' + property + '</td><td class="text">' + feature.properties[property] + '</td></tr>';
+                }
+                geojsonPopupHtml += '</table>';
+              }
+              geojsonPopupHtml += '</div>';
+              popup = layer.bindPopup(geojsonPopupHtml, {
+                maxHeight: 300
+              });
+            }
+          });
+          map.addLayer(closestLayer);
+          popup.openPopup();
+        }
+      });
+    }
+  }
+
+  function onMapZoom() {
+    if (closestFeature && closestFeature.coverage) {
+      map.removeLayer(closestLayer);
+    }
   }
 
   // toolbar  and controls config
@@ -197,61 +273,16 @@ function LeafletController($scope, MapService, LocalStorageService, EventService
 
   function createGeoPackageLayer(layerInfo) {
     _.each(layerInfo.tables, function(table) {
-      if (table.type === 'feature') {
-        var styles = {};
-        styles[table.name] = {
-          weight: 2,
-          radius: 3
-        };
-
-        table.layer = L.vectorGrid.protobuf('api/events/' + $scope.filteredEvent.id + '/layers/' + layerInfo.id + '/' + table.name +'/{z}/{x}/{y}.pbf?access_token={token}', {
-          token: LocalStorageService.getToken(),
-          maxNativeZoom: 18,
-          pane: FEATURE_LAYER_PANE,
-          vectorTileLayerStyles: styles,
-          interactive: true,
-          rendererFactory: L.canvas.tile,
-          getFeatureId: function(feature) {
-            feature.properties.id = layerInfo.id + table.name + feature.id;
-            return feature.properties.id;
-          }
-        });
-
-        table.layer.on('click', function(e) {
-          var layer = e.layer;
-          table.layer.setFeatureStyle(layer.properties.id, {
-            color: '#00FF00'
-          });
-
-          var content = '<b>' + table.name + '</b><br><br>';
-          var pairs = _.chain(layer.properties).omit('id').pairs().value();
-          if (pairs.length) {
-            content += '<table class="table table-striped">';
-            _.each(pairs, function(pair) {
-              content += '<tr>' + '<td>' + pair[0] + '</td>' +'<td>' + pair[1] + '</td>' + '</tr>';
-            });
-            content += '</table>';
-          }
-
-          var popup = L.popup({
-            maxHeight: 250
-          })
-            .setLatLng(e.latlng)
-            .setContent(content)
-            .on('remove', function() {
-              table.layer.resetFeatureStyle(layer.properties.id);
-            });
-
-          popup.openOn(map);
-        });
-      } else {
-        table.layer = L.tileLayer('api/events/' + $scope.filteredEvent.id + '/layers/' + layerInfo.id + '/' + table.name +'/{z}/{x}/{y}.png?access_token={token}', {
-          token: LocalStorageService.getToken(),
-          minZoom: table.minZoom,
-          maxZoom: table.maxZoom,
-          pane: TILE_LAYER_PANE
-        });
-      }
+      table.layer = L.tileLayer('api/events/' + $scope.filteredEvent.id + '/layers/' + layerInfo.id + '/' + table.name +'/{z}/{x}/{y}.png?access_token={token}', {
+        token: LocalStorageService.getToken(),
+        minZoom: table.minZoom,
+        maxZoom: table.maxZoom,
+        pane: TILE_LAYER_PANE,
+        geopackageLayer: {
+          id: layerInfo.id,
+          table: table.name
+        }
+      });
 
       var name = layerInfo.name + table.name;
       layers[name] = layerInfo;

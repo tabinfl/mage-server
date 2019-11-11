@@ -206,6 +206,10 @@
           <span class="mdc-button__label">CSV</span>
         </button>
         <button type="button" class="mdc-button mdc-dialog__button export-button" data-mdc-dialog-action="yes"
+          ng-click="$ctrl.exportData($event, 'geopackage')">
+          <span class="mdc-button__label">GeoPackage</span>
+        </button>
+        <button type="button" class="mdc-button mdc-dialog__button export-button" data-mdc-dialog-action="yes"
           ng-click="$ctrl.exportData($event, 'shapefile')">
           <span class="mdc-button__label">Shapefile</span>
         </button>

@@ -28,6 +28,14 @@ function Layer($resource) {
       isArray: true,
       url: '/api/events/:eventId/layers'
     },
+    closestFeatureByLayer: {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      isArray: true,
+      url: '/api/layers/features'
+    },
     count: {
       method: 'GET',
       url: '/api/layers/count',
