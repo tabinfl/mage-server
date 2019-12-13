@@ -37,38 +37,16 @@ module.exports = function(app, security) {
     if (!req.file) {
       return res.send(400, 'cannot create layer "geopackage" file not specified');
     }
-
-    geopackage.open(req.files.geopackage)
+    console.log('validating', req.file);
+    geopackage.validate(req.file)
       .then(result => {
-        const gp = result.geopackage;
-        req.newLayer.geopackage = req.files.geopackage;
+        console.log('validated', result);
+        req.newLayer.geopackage = req.file;
         req.newLayer.tables = result.metadata.tables;
-        req.newLayer.processing = [];
-        for (var i = 0; i < req.newLayer.tables.length; i++) {
-          var gpLayer = req.newLayer.tables[i];
-
-          if (gpLayer.type === 'tile') {
-            req.newLayer.processing.push({
-              layer: gpLayer.name,
-              description: '"' + gpLayer.name + '" layer optimization',
-              complete: false,
-              type: 'tile'
-            });
-          } else {
-            req.newLayer.processing.push({
-              layer: gpLayer.name,
-              description: '"' + gpLayer.name + '" layer index',
-              complete: false,
-              type: 'feature'
-            });
-          }
-        }
-
-        gp.close();
-        return next();
+        next();
       })
       .catch(() => {
-        return res.status(400).send('cannot create layer, geopackage is not valid');
+        return res.status(400).send('Cannot create layer, the GeoPackage is not valid');
       });
   }
 
@@ -292,38 +270,82 @@ module.exports = function(app, security) {
     validateLayerParams,
     validateGeopackage,
     function(req, res, next) {
-      new api.Layer().create(req.newLayer)
-        .then(layer => {
-          var response = layerXform.transform(layer, {path: req.getPath()});
-          res.location(layer._id.toString()).json(response);
+      console.log('creating layer');
+      if (req.body.type === 'GeoPackage') {
+        new api.Layer().create(req.newLayer)
+          .then(layer => {
+            console.log('opening geopackage', path.join(environment.layerBaseDirectory, layer.file.relativePath));
+            return geopackage.open(path.join(environment.layerBaseDirectory, layer.file.relativePath))
+              .then(result => {
+                console.log('result', result);
+                const gp = result.geopackage;
+                layer.processing = [];
+                for (var i = 0; i < result.metadata.tables.length; i++) {
+                  var gpLayer = result.metadata.tables[i];
+        
+                  if (gpLayer.type === 'tile') {
+                    layer.processing.push({
+                      layer: gpLayer.name,
+                      description: '"' + gpLayer.name + '" layer optimization',
+                      complete: false,
+                      type: 'tile'
+                    });
+                  } else {
+                    layer.processing.push({
+                      layer: gpLayer.name,
+                      description: '"' + gpLayer.name + '" layer index',
+                      complete: false,
+                      type: 'feature'
+                    });
+                  }
+                }
+        
+                gp.close();
+                layer.save();
+              })
+              .then(() => {
+                return layer;
+              });
+          })
+          .then(layer => {
+            var response = layerXform.transform(layer, {path: req.getPath()});
+            res.location(layer._id.toString()).json(response);
 
-          var layerStatusMap = {};
-          for (var i = 0; i < layer.processing.length; i++) {
-            layerStatusMap[layer.processing[i].layer] = i;
-          }
-
-          // optimize after the layer is returned to the client
-          var currentLayer;
-          geopackage.optimize(path.join(environment.layerBaseDirectory, layer.file.relativePath), function(progress) {
-            if (currentLayer && currentLayer !== progress.layer) {
-              var oldLayerStatus = layer.processing[layerStatusMap[currentLayer]];
-              oldLayerStatus.complete = true;
-              currentLayer = progress.layer;
+            var layerStatusMap = {};
+            for (var i = 0; i < layer.processing.length; i++) {
+              layerStatusMap[layer.processing[i].layer] = i;
             }
 
-            var layerStatus = layer.processing[layerStatusMap[progress.layer]];
-            layerStatus.count = progress.count;
-            layerStatus.total = progress.totalCount;
-            layerStatus.description = progress.description;
-            layer.save();
-          })
-            .then(() => {
-              layer.processing = undefined;
+            // optimize after the layer is returned to the client
+            var currentLayer;
+            geopackage.optimize(path.join(environment.layerBaseDirectory, layer.file.relativePath), function(progress) {
+              console.log('Progress in optimizing', progress);
+              if (currentLayer && currentLayer !== progress.layer) {
+                var oldLayerStatus = layer.processing[layerStatusMap[currentLayer]];
+                oldLayerStatus.complete = true;
+                currentLayer = progress.layer;
+              }
+
+              var layerStatus = layer.processing[layerStatusMap[progress.layer]];
+              layerStatus.count = progress.count;
+              layerStatus.total = progress.totalCount;
+              layerStatus.description = progress.description;
               layer.save();
-              console.log('GeoPackage optimized');
-            });
-        })
-        .catch(err => next(err));
+            })
+              .then(() => {
+                layer.processing = undefined;
+                layer.save();
+                console.log('GeoPackage optimized');
+              });
+          }).catch(err => next(err));
+      } else {
+        new api.Layer().create(req.newLayer)
+          .then(layer => {
+            var response = layerXform.transform(layer, {path: req.getPath()});
+            res.location(layer._id.toString()).json(response);
+          });
+      }
+        
     }
   );
 

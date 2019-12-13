@@ -22,19 +22,18 @@ class Layer {
     return LayerModel.getById(id);
   }
 
-  create(layer) {
-    return CounterModel.getNext('layer').then(id => {
-      log.info('Got id for layer ' + id);
+  async create(layer) {
+    var id = await CounterModel.getNext('layer');
+    log.info('Got id for layer ' + id);
 
-      switch (layer.type) {
-      case 'Feature':
-        return createFeatureLayer(id, layer);
-      case 'GeoPackage':
-        return createGeoPackageLayer(id, layer);
-      default:
-        return LayerModel.create(id, layer);
-      }
-    });
+    switch (layer.type) {
+    case 'Feature':
+      return await createFeatureLayer(id, layer);
+    case 'GeoPackage':
+      return await createGeoPackageLayer(id, layer);
+    default:
+      return await LayerModel.create(id, layer);
+    }
   }
 
   remove(layer) {
@@ -53,11 +52,11 @@ class Layer {
   }
 }
 
-function createFeatureLayer(id, layer) {
+async function createFeatureLayer(id, layer) {
   log.info('Creating feature collection for id: ' + id);
   layer.collectionName = `features${id}`;
-  return LayerModel.createFeatureCollection('features' + id)
-    .then(() => LayerModel.create(id, layer));
+  await LayerModel.createFeatureCollection('features' + id);
+  return await LayerModel.create(id, layer);
 }
 
 function removeFeatureLayer(layer) {
@@ -67,7 +66,7 @@ function removeFeatureLayer(layer) {
   return LayerModel.remove(layer);
 }
 
-function createGeoPackageLayer(id, layer) {
+async function createGeoPackageLayer(id, layer) {
   layer.file = {
     name: layer.geopackage.originalname,
     contentType: layer.geopackage.mimetype,
@@ -76,8 +75,9 @@ function createGeoPackageLayer(id, layer) {
   };
 
   const targetPath = path.join(environment.layerBaseDirectory, layer.file.relativePath);
-  return fs.copy(layer.geopackage.path, targetPath, {clobber: true})
-    .then(() => LayerModel.create(id, layer));
+  console.log('copy geopackage from ' + layer.geopackage.path + ' to ' + targetPath);
+  await fs.copy(layer.geopackage.path, targetPath, {clobber: true});
+  return await LayerModel.create(id, layer);
 }
 
 function removeGeoPackageLayer(layer) {

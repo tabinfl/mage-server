@@ -1,8 +1,8 @@
 const fs = require('fs-extra')
   , path = require('path')
-  , geopackageManager = require('@ngageoint/geopackage')
-  , FeatureTile = require('@ngageoint/geopackage/lib/tiles/features')
-  , ShadedFeaturesTile = require('@ngageoint/geopackage/lib/tiles/features/custom/shadedFeaturesTile')
+  , geopackageManager = require('@ngageoint/geopackage').GeoPackage
+  , FeatureTile = require('@ngageoint/geopackage').FeatureTiles
+  , ShadedFeaturesTile = require('@ngageoint/geopackage').ShadedFeaturesTile
   , GeoPackageOptimizer = require('@ngageoint/geopackage/optimizer')
   , environment = require('../environment/env');
 
@@ -14,11 +14,12 @@ module.exports = {
   tile: tile,
   features: features,
   vectorTile: vectorTile,
+  validate,
   getClosestFeatures
 };
 
 async function open(file) {
-  var geopackage = await geopackageManager.open(file.path);
+  var geopackage = await geopackageManager.open(file);
   const tables = geopackage.getTables();
   const tileTables = tables.tiles.map(tableName => ({name: tableName, type: 'tile'}));
   const featureTables = tables.features.map(tableName => ({name: tableName, type: 'feature'}));
@@ -35,7 +36,39 @@ async function optimize(path, progress) {
   var geopackage = await geopackageManager.open(path);
   var outputGeopackage = await geopackageManager.open(path);
   await GeoPackageOptimizer.optimize({inputGeoPackage: geopackage, outputGeoPackage: outputGeopackage, same: true, progress: progress});
+  precacheTiles(outputGeopackage, 1000);
   outputGeopackage.close();
+}
+
+async function precacheTiles(geopackage, maxTilesPerTable) {
+  // For now let's not do this
+  // var featureTables = geopackage.getFeatureTables();
+  // for (const featureTable of featureTables) {
+  //   console.log('Pre-Caching tiles from feature table', featureTable);
+  // }
+}
+
+async function validate(file) {
+  try {
+    var geopackage = await geopackageManager.open(file.path);
+    var tables = geopackage.getTables();
+    const tileTables = tables.tiles.map(tableName => ({name: tableName, type: 'tile'}));
+    const featureTables = tables.features.map(tableName => ({name: tableName, type: 'feature'}));
+
+    for (const tileTable of tileTables) {
+      var tileDao = geopackage.getTileDao(tileTable.name);
+      tileTable.minZoom = tileDao.minWebMapZoom;
+      tileTable.maxZoom = tileDao.maxWebMapZoom;
+    }
+
+    return {
+      metadata: {
+        tables: tileTables.concat(featureTables)
+      }
+    };
+  } catch (e) {
+    console.log('Error validating geopackage', e);
+  }
 }
 
 async function tile(layer, tableName, {x, y, z}) {
@@ -47,7 +80,7 @@ async function tile(layer, tableName, {x, y, z}) {
   var tile;
   switch(table.type) {
   case 'tile':
-    tile = geopackageManager.getTileFromXYZ(geopackage, table.name, x, y, z, tileSize, tileSize);
+    tile = await geopackageManager.getTileFromXYZ(geopackage, table.name, x, y, z, tileSize, tileSize);
     break;
   case 'feature':
     x = Number(x);
@@ -59,9 +92,13 @@ async function tile(layer, tableName, {x, y, z}) {
     if (!featureDao) return;
     var ft = new FeatureTile(featureDao, width, height);
     ft.setMaxFeaturesPerTile(10000);
+    ft.setPolygonFillColor("#0000FF11");
+    ft.setPolygonColor("#0000FF");
+    ft.setLineColor("#0000FF");
+    ft.setLineStrokeWidth(2.0);
     var numberFeaturesTile = new ShadedFeaturesTile();
     ft.setMaxFeaturesTileDraw(numberFeaturesTile);
-    tile = ft.drawTile(x, y, z);
+    tile = await ft.drawTile(x, y, z);
     break;
   }
 
@@ -107,7 +144,7 @@ async function getClosestFeatures(layers, lat, lng, {x, y, z}) {
     var geopackage = await geopackageManager.open(geopackagePath);
     const table = layer.tables.find(table => table.name === tableName);
     if (!table) throw new Error("Table '" + table + "' does not exist in GeoPackage");
-    var closestFeature = await geopackageManager.getClosestFeatureInXYZTile(geopackage, table.name, x, y, z, lat, lng);
+    var closestFeature = geopackageManager.getClosestFeatureInXYZTile(geopackage, table.name, x, y, z, lat, lng);
     if (closestFeature) closestFeatures.push(closestFeature);
   }
   closestFeatures.sort(function(first, second) {

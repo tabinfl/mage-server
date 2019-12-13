@@ -39,7 +39,8 @@ function AdminLayerEditController($scope, $location, $routeParams, Layer, LayerS
       LayerService.uploadGeopackage(geopackage).then(function(newLayer) {
         $scope.saving = false;
         $location.path('/admin/layers/' + newLayer.id);
-      }, function() { // failure
+      }, function(e) { // failure
+        $scope.error = e.responseText;
         $scope.saving = false;
       }, function(e) { //progress
         $scope.progress = e.loaded;
