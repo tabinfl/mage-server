@@ -1,8 +1,6 @@
 import angular from 'angular';
-import L from 'leaflet';
 import mgrs from 'mgrs';
-import {textField}  from 'material-components-web';
-import MageFeatureEdit from '../../leaflet-extensions/FeatureEdit';
+import {textField, snackbar}  from 'material-components-web';
 import template from './location-edit.component.html';
 
 class LocationEditController {
@@ -11,101 +9,81 @@ class LocationEditController {
     this._$element = $element;
     this._$timeout = $timeout;
     this._MapService = MapService;
-    this._GeometryService = GeometryService;
+    this.GeometryService = GeometryService;
     this._LocalStorageService = LocalStorageService;
 
     this._layers = {};
-    this._valid = {
-      mgrs: true
-    };
-
     this.coordinateSystem = LocalStorageService.getCoordinateSystemEdit();
   }
 
-  $postLink() {
-    this._map = L.map(this._$element.find('.map-container')[0], {
-      center: [0,0],
-      zoom: 3,
-      minZoom: 0,
-      maxZoom: 18,
-      zoomControl: true,
-      trackResize: true,
-      scrollWheelZoom: true,
-      attributionControl: false,
-      editable: true
-    });
-
-    this.mapListener = {
-      onBaseLayerSelected: this.onBaseLayerSelected.bind(this)
-    };
-    this._MapService.addListener(this.mapListener);
-    this.currentGeometry = {
-      geometry: this.shape
-    };
-
-    this.featureEdit = new MageFeatureEdit(this._map, this._MapService, this._GeometryService, this.geometryChangedListener.bind(this), this.vertexClickListener.bind(this));
-    this.editingFeature = this.addObservation({type: 'Feature', geometry: this.shape, style: this.geometryStyle});
-    this.featureEdit.startEdit(this.editingFeature, this.selectedVertexIndex);
+  $onInit() {
+    this.invalidGeometrySnackbar = new snackbar.MDCSnackbar(this._$element.find('#invalid-geometry-snackbar')[0]);
+    this.invalidGeometrySnackbar.timeoutMs = 4000;
   }
 
   $onChanges() {
-    this.shape = angular.copy(this.field.value);
-    this.value = angular.copy(this.field.value);
-    this.selectedVertexIndex = 0;
-    this.mgrs = this.toMgrs(this.field);
-    this.updateSelectedVertex();
-    this.initializeTextFields();
+    if (this.feature) {
+      this.feature = angular.copy(this.feature);
+
+      this.featureEdit = this._MapService.createFeature(this.feature, {
+        geometryChanged: geometry => {
+          this.geometryChanged(geometry);
+        }, vertexClick: vertex => {
+          this.vertexClick(vertex);
+        }
+      });
+
+      this.selectedVertexIndex = 0;
+      this.mgrs = this.toMgrs(this.feature);
+      this.updateSelectedVertex();
+      this.initializeTextFields();
+    }
+  }
+
+  geometryChanged(geometry) {
+    this._$timeout(() => {
+      this.feature.geometry = geometry;
+      this.updateSelectedVertex();
+      this.mgrs = this.toMgrs(this.feature);
+      this.setFieldValues();
+    });
+  }
+
+  vertexClick(vertex) {
+    this._$timeout(() => {
+      this.selectedVertexIndex = vertex.index;
+      this.selectedVertex = vertex.geometry.coordinates;
+      this.mgrs = mgrs.forward(this.selectedVertex);
+      this.setFieldValues();
+    });
   }
 
   saveLocation() {
-    this.saveEdit({value: this.currentGeometry.geometry});
-  }
+    if (this.feature.geometry.type) {
+      if (this.GeometryService.featureHasIntersections(this.feature)) {
+        this.invalidGeometrySnackbar.open();
+        return;
+      }
 
-  clearLocation() {
-    this.saveEdit({value: undefined});
+      this.featureEdit.save();
+      this.saveEdit({value: this.feature});
+    } else {
+      this._MapService.removeFeatureFromLayer({ id: this.feature.id }, 'Observations');
+      this.featureEdit.cancel();
+      this.saveEdit({value: undefined});
+    }
   }
 
   cancel() {
-    this._MapService.removeListener(this.mapListener);
+    this.featureEdit.cancel();
     this.cancelEdit();
-  }
-
-  onBaseLayerSelected(baseLayer) {
-    var layer = this._layers[baseLayer.name];
-    if (layer) this._map.removeLayer(layer.layer);
-
-    layer = this.createRasterLayer(baseLayer);
-    this._layers[baseLayer.name] = {type: 'tile', layer: baseLayer, rasterLayer: layer};
-
-    layer.addTo(this._map);
-  }
-
-  createRasterLayer(layer) {
-    var baseLayer = null;
-    var options = {};
-    if (layer.format === 'XYZ' || layer.format === 'TMS') {
-      options = { tms: layer.format === 'TMS', maxZoom: 18 };
-      baseLayer = new L.TileLayer(layer.url, options);
-    } else if (layer.format === 'WMS') {
-      options = {
-        layers: layer.wms.layers,
-        version: layer.wms.version,
-        format: layer.wms.format,
-        transparent: layer.wms.transparent
-      };
-
-      if (layer.wms.styles) options.styles = layer.wms.styles;
-      baseLayer = new L.TileLayer.WMS(layer.url, options);
-    }
-
-    return baseLayer;
   }
 
   coordinateSystemChange(coordinateSystem) {
     this._LocalStorageService.setCoordinateSystemEdit(coordinateSystem);
     this.coordinateSystem = coordinateSystem;
     if (coordinateSystem === 'mgrs') {
-      this.mgrs = this.toMgrs(this.field);
+      this.mgrs = this.toMgrs(this.feature);
     }
 
     this._$timeout(() => {
@@ -114,59 +92,56 @@ class LocationEditController {
     });
   }
 
-  toMgrs(field) {
-    switch (this.shape.type) {
+  toMgrs(feature) {
+    switch (feature.geometry.type) {
     case 'Point':
-      return mgrs.forward(field.value.coordinates);
+      return mgrs.forward(feature.geometry.coordinates);
     case 'LineString':
-      return mgrs.forward(field.value.coordinates[this.selectedVertexIndex]);
+      return mgrs.forward(feature.geometry.coordinates[this.selectedVertexIndex]);
     case 'Polygon':
-      return mgrs.forward(field.value.coordinates[0][this.selectedVertexIndex]);
+      return mgrs.forward(feature.geometry.coordinates[0][this.selectedVertexIndex]);
     }
   }
 
   onLatLngChange() {
-    var coordinates = angular.copy(this.shape.coordinates);
+    var coordinates = angular.copy(this.feature.geometry.coordinates);
 
     // copy edit field lat/lng in coordinates at correct index
-    if (this.shape.type === 'LineString') {
+    if (this.feature.geometry.type === 'Point') {
+      coordinates = angular.copy([Number(this.longitudeField.value), Number(this.latitudeField.value)]);
+    } else if (this.feature.geometry.type === 'LineString') {
       coordinates[this.selectedVertexIndex] = angular.copy([Number(this.longitudeField.value), Number(this.latitudeField.value)]);
-    } else if (this.shape.type === 'Polygon') {
+    } else if (this.feature.geometry.type === 'Polygon') {
       if (coordinates[0]) {
         coordinates[0][this.selectedVertexIndex] = angular.copy([Number(this.longitudeField.value), Number(this.latitudeField.value)]);
       }
     }
 
     // transform corrdinates to valid GeoJSON
-    this.toGeoJSON(this.field, coordinates);
+    this.toGeoJSON(this.feature, coordinates);
 
     // Check for polygon for intersections
-    if (this.hasIntersections(this.field, coordinates)) {
+    if (this.hasIntersections(this.feature, coordinates)) {
       return;
     }
 
-    this.shape.coordinates = coordinates;
-    this.featureEdit.stopEdit();
-    this.editingFeature = this.addObservation({type: 'Feature', geometry: this.shape, style: this.geometryStyle});
-
-    this.featureEdit.startEdit(this.editingFeature, this.selectedVertexIndex);
+    this.feature.geometry.coordinates = coordinates;
+    this.featureEdit.update(this.feature);
   }
 
   onMgrsChange() {
     try {
       this.toLatLng();
-      this.valid.mgrs = true;
       this.mgrsField.valid = true;
     } catch(e) {
       this.mgrsField.valid = false;
-      this.valid.mgrs = false;
     }
   }
 
   toLatLng() {
-    var coordinates = angular.copy(this.field.value.coordinates);
+    var coordinates = angular.copy(this.feature.geometry.coordinates);
 
-    switch (this.field.value.type) {
+    switch (this.feature.geometry.type) {
     case 'Point':
       coordinates = mgrs.toPoint(this.mgrs);
       break;
@@ -179,31 +154,15 @@ class LocationEditController {
     }
 
     // transform corrdinates to valid GeoJSON
-    this.toGeoJSON(this.field, coordinates);
+    this.toGeoJSON(this.feature, coordinates);
 
-    // Check for polygon for intersections
-    if (this.hasIntersections(this.field, coordinates)) {
-      return;
-    }
-
-    this.shape.coordinates = coordinates;
-    this.featureEdit.stopEdit();
-    this.editingFeature = this.addObservation({type: 'Feature', geometry: this.shape, style: this.geometryStyle});
-
-    this.featureEdit.startEdit(this.editingFeature, this.selectedVertexIndex);
+    this.feature.geometry.coordinates = coordinates;
+    this.featureEdit.update(this.feature);
   }
 
-  hasIntersections(field, coordinates) {
-    if (field.value.type !== 'Point') {
+  hasIntersections(feature, coordinates) {
+    if (feature.geometry.type !== 'Point') {
       if (this._GeometryService.featureHasIntersections({geometry: {coordinates: coordinates}})) {
-        if (field.value.type === 'LineString') { // Is it ok for line string to intersect
-          field.edit = angular.copy(field.value.coordinates[this.selectedVertexIndex]);
-        } else if (field.value.type === 'Polygon') {
-          if (field.value.coordinates[0]) {
-            field.edit = angular.copy(field.value.coordinates[0][this.selectedVertexIndex]);
-          }
-        }
-
         return true;
       }
     }
@@ -211,25 +170,15 @@ class LocationEditController {
     return false;
   }
 
-  toGeoJSON(field, coordinates) {
+  toGeoJSON(feature, coordinates) {
     // Ensure first and last points are the same for polygon
-    if (field.value.type === 'Polygon') {
-      if (field.editedVertex === 0) {
+    if (feature.geometry.type === 'Polygon') {
+      if (feature.editedVertex === 0) {
         coordinates[0][coordinates[0].length - 1] = coordinates[0][0];
-      } else if (field.editedVertex === coordinates[0].length - 1) {
+      } else if (feature.editedVertex === coordinates[0].length - 1) {
         coordinates[0][0] = coordinates[0][coordinates[0].length - 1];
       }
     }
-  }
-
-  vertexClickListener(vertex) {
-    this._$timeout(() => {
-      this.selectedVertexIndex = vertex.getIndex();
-      this.selectedVertex = [vertex.latlng.lng, vertex.latlng.lat];
-      this.mgrs = mgrs.forward(this.selectedVertex);
-      this.valid.mgrs = true;
-      this.setFieldValues();
-    });
   }
 
   setFieldValues() {
@@ -237,99 +186,50 @@ class LocationEditController {
       this.longitudeField.value = this.selectedVertex[0];
       this.latitudeField.value = this.selectedVertex[1];
     }
+
     if (this.mgrsField) {
       this.mgrsField.value = this.mgrs;
-      this.valid.mgrs = true;
     }
-  }
-
-  geometryChangedListener(geometry) {
-    this._$timeout(() => {
-      this.currentGeometry.geometry = geometry;
-      this.shape = geometry;
-      this.updateSelectedVertex();
-    });
-  }
-
-  addObservation(feature) {
-    if(feature.geometry){
-      if(feature.geometry.type === 'Point'){
-        var observation = L.geoJson(feature, {
-          pointToLayer: (feature, latlng) => {
-            return L.fixedWidthMarker(latlng, {
-              iconUrl: this.geometryStyle ? this.geometryStyle.iconUrl : ''
-            });
-          }
-        });
-        observation.addTo(this._map);
-        this._map.setView(L.GeoJSON.coordsToLatLng(feature.geometry.coordinates), 15);
-        return observation.getLayers()[0];
-      } else {
-        observation = L.geoJson(feature, {
-          style: () => {
-            return this.geometryStyle;
-          }
-        });
-        observation.addTo(this._map);
-
-        var coordinates = feature.geometry.coordinates;
-        if(feature.geometry.type === 'Polygon'){
-          coordinates = coordinates[0];
-        }
-        this._map.fitBounds(L.latLngBounds(L.GeoJSON.coordsToLatLngs(coordinates)));
-        return observation.getLayers()[0];
-      }
-    }
-  }
-
-  validateShapeChange() {
-    if (!this.shape || !this.shape.type || this.shape.type === this.value.type) return;
-
-    switch(this.shape.type) {
-    case 'Point':
-      this.value.coordinates = [];
-      this.value.type = 'Point';
-      break;
-    case 'LineString':
-      this.value.coordinates = [];
-      this.value.type = 'LineString';
-      break;
-    case 'Polygon':
-      this.value.coordinates = [[]];
-      this.value.type = 'Polygon';
-      break;
-    }
-
-    this.value.type = this.shape.type;
   }
 
   shapeTypeChanged(shapeType) {
-    this.shape.type = shapeType;
-    this.validateShapeChange();
-    this.onEditShape();
+    switch(shapeType) {
+    case 'Point':
+      this.feature.geometry.coordinates = [];
+      this.feature.geometry.type = 'Point';
+      break;
+    case 'LineString':
+      this.feature.geometry.coordinates = [];
+      this.feature.geometry.type = 'LineString';
+      break;
+    case 'Polygon':
+      this.feature.geometry.coordinates = [];
+      this.feature.geometry.type = 'Polygon';
+      break;
+    default:
+      this._$timeout(() => {
+        this.longitudeField.value = '';
+        this.latitudeField.value = '';
+        delete this.feature.geometry.type;
+        this.featureEdit.cancel();
+      });
+      break;
+    }
+
+    if (shapeType) this.onEditShape();
   }
 
   onEditShape() {
-    if(!this.editingFeature) return;
-    this.featureEdit.stopEdit();
-
-    if (this.shape.type === 'Point') {
-      var center = this._map.getCenter();
-      this.value.coordinates = [center.lng, center.lat];
-      this.editingFeature = this.addObservation({type: 'Feature', geometry: this.value, style: this.geometryStyle});
-      this.featureEdit.startEdit(this.editingFeature, this.selectedVertexIndex);
-    } else {
-      this.featureEdit.initiateShapeDraw({type: 'Feature', geometry: this.value, style: this.geometryStyle});
-    }
+    this.featureEdit.update(this.feature);
   }
 
   updateSelectedVertex() {
-    if (this.shape.type === 'Point') {
-      this.selectedVertex = [this.shape.coordinates[0], this.shape.coordinates[1]];
-    } else if (this.shape.type === 'Polygon') {
-      this.selectedVertex = [this.shape.coordinates[0][this.selectedVertexIndex][0], this.shape.coordinates[0][this.selectedVertexIndex][1]];
-    } else if (this.shape.type === 'LineString') {
-      this.selectedVertex = [this.shape.coordinates[this.selectedVertexIndex][0], this.shape.coordinates[this.selectedVertexIndex][1]];
+    if (this.feature.geometry.type === 'Point') {
+      this.selectedVertex = [this.feature.geometry.coordinates[0], this.feature.geometry.coordinates[1]];
+    } else if (this.feature.geometry.type === 'Polygon') {
+      this.selectedVertex = [this.feature.geometry.coordinates[0][this.selectedVertexIndex][0], this.feature.geometry.coordinates[0][this.selectedVertexIndex][1]];
+    } else if (this.feature.geometry.type === 'LineString') {
+      this.selectedVertex = [this.feature.geometry.coordinates[this.selectedVertexIndex][0], this.feature.geometry.coordinates[this.selectedVertexIndex][1]];
     }
   }
 
@@ -358,8 +258,7 @@ LocationEditController.$inject = ['$element', '$timeout', 'MapService', 'Geometr
 const LocationEdit = {
   template: template,
   bindings: {
-    field: '<',
-    geometryStyle: '<',
+    feature: '<',
     clearable: '<',
     onFieldChanged: '&',
     cancelEdit: '&',

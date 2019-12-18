@@ -1,33 +1,37 @@
-<location-edit 
-  class="slide-left edit-location-card feed-card ng-animatable" 
-  ng-if="$ctrl.editLocationField" 
-  field="$ctrl.editLocationField" 
-  geometry-style="$ctrl.editGeometryStyle" 
-  save-edit="$ctrl.saveLocationEdit(value)"
-  cancel-edit="$ctrl.cancelLocationEdit()"></location-edit>
+<div class="field top-gap" ng-class="{'geometry-edit__active': $ctrl.edit}">
 
-<div class="field top-gap">
-  <div
-    class="mdc-select mdc-select--outlined location-field-select"
-    ng-click="$ctrl.editGeometry($event)">
-    <div class="mdc-select__selected-text-mine">
-      <div class="map-clip" id="map-outlined" ng-if="$ctrl.field.value && $ctrl.field.value.coordinates.length">
-        <div
-          map-clip="{type: 'Feature', geometry: $ctrl.field.value}"
-          feature-style="$ctrl.geometryStyle"
-          disable-interaction="true"></div>
+  <div id="location-select" class="mdc-select mdc-select--outlined location-field-select">    
+    <div class="flip-inner mdc-select__selected-text-mine" ng-class="{'flipit': $ctrl.edit}">
+      <div class="location-map flip-view" ng-click="$ctrl.gotoGeometry($event)" ng-mouseover="$ctrl.showEdit = !$ctrl.edit" ng-mouseleave="$ctrl.showEdit = false">
+        <div class="map-select">
+          <div map-clip="$ctrl.feature" disable-interaction="true"></div>
+        </div>
+
+        <div class="edit-location-button ng-animatable" ng-if="$ctrl.showEdit" >
+          <button class="mdc-fab mdc-fab--mini mdc-ripple-upgraded" ng-click="$ctrl.editGeometry($event)">
+            <div class="mdc-fab__ripple"></div>
+            <i class="mdc-fab__icon material-icons">edit</i>
+          </button>
+        </div>
+
+        <div class="map-spacer" ng-if="!$ctrl.feature || !$ctrl.feature.geometry.coordinates.length"></div>
       </div>
-      <div class="map-spacer" ng-if="!$ctrl.field.value || !$ctrl.field.value.coordinates.length"></div>
+  
+      <div class="edit-location-card feed-card flip-edit">
+        <location-edit ng-if="$ctrl.initialized" feature="$ctrl.editFeature" save-edit="$ctrl.saveLocationEdit(value)" cancel-edit="$ctrl.cancelLocationEdit()"></location-edit>
+      </div>
     </div>
+
     <select class="mdc-select__native-control" ng-required="$ctrl.field.required">
       <option disabled selected value=" "> </option>
     </select>
+
     <div class="mdc-notched-outline">
       <div class="mdc-notched-outline__leading"></div>
       <div class="mdc-notched-outline__notch">
         <label class="mdc-floating-label">{{$ctrl.field.title}}</label>
       </div>
-      <div class="mdc-notched-outline__trailing"></div>  
+      <div class="mdc-notched-outline__trailing"></div>
     </div>
   </div>
 </div>
