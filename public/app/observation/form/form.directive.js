@@ -145,7 +145,7 @@ function FormDirectiveController($scope, MapService, ObservationService, EventSe
       formToObservation($scope.form, observation);
   
       const style = ObservationService.getObservationStyleForForm(observation, $scope.event, $scope.form.forms[0]);
-      $scope.observation.style = style;
+      observation.style = style;
       $scope.geometryFeature.style = style;
   
       MapService.updateFeatureForLayer(observation, 'Observations');
@@ -203,6 +203,10 @@ function FormDirectiveController($scope, MapService, ObservationService, EventSe
         $scope.saving = false;
       }
     }, function(err) {
+      if (id === 'new') {
+        $scope.observation.id = 'new';
+      }
+
       $scope.saving = false;
       $scope.error = {
         message: err.data

@@ -88,6 +88,7 @@ class LeafletController {
     map.createPane(FALLBACK_LAYER_PANE);
     map.getPane(FALLBACK_LAYER_PANE).style.zIndex = 99;
     map.addLayer(L.geoJSON(countries, {
+      interactive: false,
       style: function () {
         return {
           color: '#BBBBBB',
