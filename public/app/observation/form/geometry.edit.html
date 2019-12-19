@@ -1,8 +1,8 @@
 <div class="field top-gap" ng-class="{'geometry-edit__active': $ctrl.edit}">
 
   <div id="location-select" class="mdc-select mdc-select--outlined location-field-select">    
-    <div class="flip-inner mdc-select__selected-text-mine" ng-class="{'flipit': $ctrl.edit}">
-      <div class="location-map flip-view" ng-click="$ctrl.gotoGeometry($event)" ng-mouseover="$ctrl.showEdit = !$ctrl.edit" ng-mouseleave="$ctrl.showEdit = false">
+    <div class="location-field-card mdc-select__selected-text-mine" ng-class="{'location-field-card__flip': $ctrl.edit}">
+      <div class="location-map location-field-card__view" ng-click="$ctrl.gotoGeometry($event)" ng-mouseover="$ctrl.showEdit = !$ctrl.edit" ng-mouseleave="$ctrl.showEdit = false">
         <div class="map-select">
           <div map-clip="$ctrl.feature" disable-interaction="true"></div>
         </div>
@@ -17,7 +17,7 @@
         <div class="map-spacer" ng-if="!$ctrl.feature || !$ctrl.feature.geometry.coordinates.length"></div>
       </div>
   
-      <div class="edit-location-card feed-card flip-edit">
+      <div class="edit-location-card feed-card location-field-card__edit">
         <location-edit ng-if="$ctrl.initialized" feature="$ctrl.editFeature" save-edit="$ctrl.saveLocationEdit(value)" cancel-edit="$ctrl.cancelLocationEdit()"></location-edit>
       </div>
     </div>
