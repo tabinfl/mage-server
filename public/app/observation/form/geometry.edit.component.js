@@ -10,26 +10,10 @@ class GeometryEditController {
     this.LocalStorageService = LocalStorageService;
 
     this.edit = false;
-    this.shapes = [{
-      display: 'Point',
-      value: 'Point'
-    },{
-      display: 'Line',
-      value: 'LineString'
-    },{
-      display: 'Polygon',
-      value: 'Polygon'
-    }];
-
-    this.shape = {
-      type: 'Point'
-    };
-
-    this.coordinateSystem = LocalStorageService.getCoordinateSystemEdit();
   }
 
   $postLink() {
-    this.initializeDropDown();
+    this._initializeDropDown();
   }
 
   $doCheck() {
@@ -38,15 +22,9 @@ class GeometryEditController {
     }
   }
 
-  gotoGeometry() {
-    // Only the main geometry is on the map, identified by having an id.
-    // Don't zoom to form/field locations as they are not on the map.
-    if (this.feature.id) {
-      this.MapService.zoomToFeatureInLayer(this.feature, 'Observations');
-    }
-  }
-
   startGeometryEdit() {
+    this.edit = true;
+
     if (this.feature.geometry) {
       this.editFeature = angular.copy(this.feature);
     } else {
@@ -61,8 +39,6 @@ class GeometryEditController {
       };
     }
 
-    this.edit = true;
-
     this.onFeatureEdit({
       $event: {
         action: 'edit'
@@ -70,7 +46,7 @@ class GeometryEditController {
     });
   }
 
-  saveLocationEdit(feature) {
+  saveGeometryEdit(feature) {
     this.edit = false;
     this.feature.geometry = this.feature ? this.feature.geometry : null;
 
@@ -87,7 +63,7 @@ class GeometryEditController {
     });
   }
 
-  cancelLocationEdit() {
+  cancelGeometryEdit() {
     this.edit = false;
 
     this.onFeatureEdit({
@@ -97,25 +73,7 @@ class GeometryEditController {
     });
   }
 
-  editGeometry(event) {
-    event.stopPropagation();
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    const mapPos = this.LocalStorageService.getMapPosition();
-
-    this.feature = this.feature || {
-      type: 'Feature',
-      geometry: {
-        type: 'Point', 
-        coordinates: [mapPos.center.lng, mapPos.center.lat]
-      }
-    };
-    this.startGeometryEdit(this.feature);
-
-    this.select.selectedIndex = 0;
-  }
-
-  initializeDropDown() {
+  _initializeDropDown() {
     this.$timeout(() => {
       if (!this.select) {
         this.select = new select.MDCSelect(this.$element.find('.mdc-select')[0]);
@@ -130,7 +88,7 @@ class GeometryEditController {
 
 GeometryEditController.$inject = ['$element', '$timeout', 'MapService', 'LocalStorageService'];
 
-const GeometryEdit = {
+export default {
   template: require('./geometry.edit.html'),
   bindings: {
     field: '<',
@@ -140,5 +98,3 @@ const GeometryEdit = {
   },
   controller: GeometryEditController
 };
-
-export default GeometryEdit;

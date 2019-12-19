@@ -1,9 +1,9 @@
 import angular from 'angular';
 import mgrs from 'mgrs';
 import {textField, snackbar}  from 'material-components-web';
-import template from './location-edit.component.html';
+import template from './geometry.edit.form.html';
 
-class LocationEditController {
+class GeometryEditFormController {
 
   constructor($element, $timeout, MapService, GeometryService, LocalStorageService) {
     this._$element = $element;
@@ -253,9 +253,9 @@ class LocationEditController {
   }
 }
 
-LocationEditController.$inject = ['$element', '$timeout', 'MapService', 'GeometryService', 'LocalStorageService'];
+GeometryEditFormController.$inject = ['$element', '$timeout', 'MapService', 'GeometryService', 'LocalStorageService'];
 
-const LocationEdit = {
+export default {
   template: template,
   bindings: {
     feature: '<',
@@ -264,7 +264,5 @@ const LocationEdit = {
     cancelEdit: '&',
     saveEdit: '&'
   },
-  controller: LocationEditController
+  controller: GeometryEditFormController
 };
-
-export default LocationEdit;
