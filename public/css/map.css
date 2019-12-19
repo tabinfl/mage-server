@@ -17,7 +17,6 @@
   color: #1E88E5;
 }
 
-
 .leaflet-control-geocoder-icon::before {
    font-family: "FontAwesome";
    content: "\f002";
